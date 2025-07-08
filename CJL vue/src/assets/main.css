@@ -1,12 +1,30 @@
 @import './base.css';
 
-#app {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  font-weight: normal;
+/* Garante que body e html ocupem 100% da largura e altura */
+html,
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  min-height: 100vh;
+  overflow-y: auto;
+  scroll-behavior: smooth;
+  box-sizing: border-box;
 }
 
+/* Garante que o app ocupe toda a área visível */
+#app {
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  font-weight: normal;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Estilo base para links */
 a,
 .green {
   text-decoration: none;
@@ -21,15 +39,7 @@ a,
   }
 }
 
+/* Removido o grid e o layout de duas colunas */
 @media (min-width: 1024px) {
-  body {
-    display: flex;
-    place-items: center;
-  }
-
-  #app {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    padding: 0 2rem;
-  }
+  /* Aqui você pode manter estilos se quiser, mas evite alterar o layout */
 }
