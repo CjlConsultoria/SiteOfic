@@ -1,0 +1,109 @@
+package com.example.CJL.controllers;
+
+import com.example.CJL.dtos.JwtResponseDTO;
+import com.example.CJL.dtos.LoginRequestDTO;
+import com.example.CJL.dtos.UserRequestDTO;
+import com.example.CJL.entities.User;
+import com.example.CJL.repositories.UserRepository;
+import com.example.CJL.security.JwtUtil;
+import com.example.CJL.services.ViaCepService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.AuthenticationException;
+
+@RestController
+@RequestMapping("/api/auth")
+@Tag(name = "Autenticação", description = "Endpoints de registro de usuários, login e geração de token JWT")
+public class AuthController {
+
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private JwtUtil jwtUtil;
+
+    @Autowired
+    private ViaCepService viaCepService;
+
+
+    @Operation(summary = "Registrar novo usuário", description = "Cria um novo usuário com os dados fornecidos, incluindo endereço via CEP.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Usuário registrado com sucesso"),
+            @ApiResponse(responseCode = "400", description = "E-mail já utilizado"),
+            @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
+    })
+    @PostMapping("/register")
+    public ResponseEntity<String> register (@RequestBody UserRequestDTO dto){
+        if (userRepository.existsByEmail(dto.getEmail())){
+            return ResponseEntity.badRequest().body("Email já utilizado");
+        }
+
+        User user = new User();
+        user.setNome(dto.getNome());
+        user.setDiaNascimento(dto.getDiaNascimento());
+        user.setMesNascimento(dto.getMesNascimento());
+        user.setAnoNascimento(dto.getAnoNascimento());
+        user.setGenero(dto.getGenero());
+        user.setCep(dto.getCep());
+        user.setNumeroResidencia(dto.getNumeroResidencia());
+        user.setEmail(dto.getEmail());
+        user.setSenha(passwordEncoder.encode(dto.getSenha()));
+
+        var endereco = viaCepService.buscarEnderecoPorCep(dto.getCep());
+        user.setLogradouro(endereco.getLogradouro());
+        user.setBairro(endereco.getBairro());
+        user.setCidade(endereco.getLocalidade());
+        user.setEstado(endereco.getUf());
+
+        userRepository.save(user);
+        return ResponseEntity.ok("Usuário registrado com sucesso");
+    }
+
+    @Operation(
+            summary = "Realizar login",
+            description = "Autentica o usuário e retorna um token JWT para uso em endpoints protegidos"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Login bem-sucedido, token JWT retornado",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = JwtResponseDTO.class,
+                                    example = "{\"token\": \"eyJhbGciOiJIUzI1NiIsInR...\"}"))),
+            @ApiResponse(responseCode = "401", description = "Credenciais inválidas",
+                    content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "500", description = "Erro interno do servidor",
+                    content = @Content(schema = @Schema(hidden = true)))
+    })
+    @PostMapping("/login")
+    public ResponseEntity<?> login (@RequestBody LoginRequestDTO dto){
+        try{
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(dto.getEmail(), dto.getSenha())
+            );
+            String token = jwtUtil.generateToken(dto.getEmail());
+            return ResponseEntity.ok(new JwtResponseDTO(token));
+        } catch (AuthenticationException e){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Credenciais inválidas");
+        }
+    }
+}
