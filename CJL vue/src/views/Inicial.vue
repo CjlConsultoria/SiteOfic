@@ -410,10 +410,387 @@ section.formulario-contato
 </template>
 
 <style scoped>
+@media (max-width: 992px) {
+  .container-form {
+    padding-bottom: 60px !important; /* aumenta espaço interno embaixo */
+    margin-bottom: 40px !important;  /* aumenta espaço externo embaixo */
+  }
+}
+@media (max-width: 992px) {
+  section.slider-nx {
+    min-height: 1500px !important;
+    padding-bottom: 150px !important;
+    box-sizing: border-box !important;
+  }
+}
+@media (max-width: 992px) {
+  .container-form {
+    margin-top: 90px !important; /* aumenta distância do topo, card vai pra baixo */
+  }
+}
+@media (max-width: 992px) {
+
+    .cards-wrapper-nx {
+    margin-top: 250px !important; /* empurra os cards para baixo */
+    align-items: center !important; /* mantém centralizado */
+    padding-left: 90px !important; /* empurra o conteúdo pra direita */
+    }
+  .slide-track-nx {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    width: 100% !important;
+    overflow: visible !important;
+    min-height: 600px; /* aumenta o container dos cards */
+  }
+
+  .card-nx {
+    width: 90% !important;
+    max-width: 320px !important;
+    margin: 1rem auto !important;
+    box-sizing: border-box !important;
+    display: block !important;
+  }
+ .paginacao-nx {
+    position: relative !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    display: flex !important;
+    justify-content: center !important;
+    width: auto !important;
+    margin: 0 auto !important;
+    padding: 0 !important;
+    box-sizing: border-box !important;
+    max-width: 100% !important;
+    overflow: visible !important;
+    z-index: 1000 !important;
+  }
+
+  .ponto-nx {
+    width: 10px !important;
+    height: 10px !important;
+    background: #ccc !important;
+    border-radius: 50% !important;
+    cursor: pointer !important;
+  }
+
+  .ponto-nx.ativo {
+    background: #333 !important;
+  }
+}
+
+/* Para telas médias e menores */
+@media (max-width: 992px) {
+  .sessao-cjl {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1rem;
+  }
+
+
+@media (max-width: 992px) {
+  .card-cjl {
+    display: block !important;
+    width: 100% !important;
+    max-width: 600px !important;
+    margin-left: 100px !important;
+    margin-right: 0 !important;
+    text-align: left !important;
+    box-sizing: border-box !important;
+  }
+}
+
+  .imagem-cjl {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    max-width: 600px;
+    margin: 1rem auto 0 auto;
+    box-sizing: border-box;
+  }
+
+  .imagem-cjl img {
+    width: 100%;
+    height: auto;
+    max-width: 400px;
+    display: block;
+  }
+
+  .btn-contato {
+    display: inline-block;
+    margin-top: 1rem;
+    padding: 0.7rem 1.5rem;
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .card-cjl h2 {
+    font-size: 1.5rem;
+    text-align: center;
+  }
+
+  .card-cjl p.description {
+    font-size: 1rem;
+    text-align: center;
+  }
+
+  .btn-contato {
+    font-size: 0.9rem;
+    padding: 0.6rem 1.2rem;
+  }
+
+  .imagem-cjl img {
+    max-width: 90%;
+    margin-top: 1rem;
+  }
+}
+
+/* Tablets e telas médias */
+@media (max-width: 992px) {
+  .conteudo-clientes {
+    padding: 1rem;
+  }
+
+  .grid-clientes {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+  }
+
+  .grid-esquerda, .grid-direita {
+    width: 100%;
+    max-width: 600px;
+  }
+
+  .grid-esquerda {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+  }
+
+  .card-metrica {
+    flex: 1 1 45%;
+    max-width: 45%;
+  }
+
+  .img-animada {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+  }
+}
+
+/* Celulares */
+@media (max-width: 600px) {
+  .grid-esquerda {
+    display: flex !important;
+    flex-direction: column !important; /* força empilhar vertical */
+    align-items: center !important;    /* centraliza horizontal */
+    gap: 1rem !important;
+    width: 100% !important;
+  }
+
+  .card-metrica {
+    max-width: 300px !important;
+    width: 90% !important;
+    margin: 0 auto !important;
+  }
+}
+
+@media (max-width: 600px) {
+  .img-animada {
+    display: block !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    margin-top: 7rem !important;
+    max-width: 80% !important;
+    height: auto !important;
+  }
+}
+
+
+  .titulo-clientes h2.titulo-grande {
+    font-size: 1.5rem; /* diminui título no celular */
+  }
+
+  .p.grande {
+    font-size: 1.2rem; /* diminui números grandes */
+  }
+
+  .p.pequeno {
+    font-size: 0.9rem;
+  }
+
+  .img-animada {
+    max-width: 90%;
+    height: auto;
+    margin: 1rem auto 0 auto;
+  }
+
+
+/* Tablets e telas médias */
+@media (max-width: 992px) {
+  .conteudo-solucao-nx {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .texto-solucao-nx {
+    align-items: center;
+    text-align: center;
+  }
+
+  .logo-solucao-nx {
+    max-width: 140px;
+    display: block; /* aparece */
+  }
+
+  .grade-cartoes-nx {
+    justify-content: center;
+    gap: 1rem;
+  }
+
+  .cartao-nx {
+    width: 180px;
+  }
+}
+@media (max-width: 768px) {
+    .bloco-solucao-nx {
+    height: auto;
+    padding-top: 8rem;  /* muito espaço em cima */
+    padding-bottom: 2rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    display: flex;
+    justify-content: flex-start; /* conteúdo começa mais pra cima, mas com padding empurra pra baixo */
+    align-items: flex-start;
+    box-sizing: border-box;
+    min-height: 1250px; /* altura maior para não sobrepor conteúdo */
+    gap: 0.8rem; /* diminui o espaçamento entre título e cards */
+  }
+
+  .conteudo-solucao-nx {
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 600px;
+    gap: 1.5rem;
+  }
+
+  .texto-solucao-nx {
+    text-align: center;
+    width: 100%;
+    margin-bottom: 0 !important; /* tira margem abaixo do título */
+    padding-bottom: 0 !important;
+    
+  }
+
+  .grade-cartoes-nx {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+    width: 100%;
+  }
+
+  .cartao-nx {
+    width: 160px;
+    margin: 0 auto;
+  }
+}
+
+/* Celulares */
+@media (max-width: 600px) {
+  .subtitulo-nx {
+    font-size: 1.6rem;
+  }
+
+  .logo-solucao-nx {
+    display: none; /* some no celular */
+  }
+
+  .cartao-nx {
+    width: 160px;
+    font-size: 0.9rem;
+    padding: 0.8rem;
+  }
+
+  .botao-nx {
+    font-size: 1rem;
+    padding: 0.15rem 0.5rem;
+  }
+}
+
+/* Celulares muito pequenos */
+@media (max-width: 360px) {
+  .subtitulo-nx {
+    font-size: 1.3rem;
+  }
+
+  .logo-solucao-nx {
+    display: none; /* garante que no menor também fique escondido */
+  }
+
+  .cartao-nx {
+    width: 140px;
+    padding: 0.6rem;
+  }
+
+  .botao-nx {
+    font-size: 0.9rem;
+    padding: 0.1rem 0.4rem;
+  }
+}
+
 section.formulario-contato {
   margin-top: -300px;
   padding-top: 300px; /* se necessário, para afastar do conteúdo anterior */
 
+}
+/* Tamanho base para telas grandes */
+.hero h1 {
+  font-size: 3.5rem; /* seu tamanho original */
+  margin: 0.5rem 0;
+}
+
+.hero .subtitulo {
+  font-size: 1.5rem; /* seu tamanho original */
+  margin-bottom: 2rem;
+}
+
+/* Para tablets e telas médias */
+@media (max-width: 992px) {
+  .hero h1 {
+    font-size: 3rem; /* um pouco maior que antes */
+  }
+  .hero .subtitulo {
+    font-size: 1.4rem;
+  }
+}
+
+/* Para celulares grandes e pequenos */
+@media (max-width: 600px) {
+  .hero h1 {
+    font-size: 2.4rem; /* maior que o anterior */
+  }
+  .hero .subtitulo {
+    font-size: 1.2rem;
+  }
+}
+
+/* Para celulares muito pequenos (ex: 320px) */
+@media (max-width: 360px) {
+  .hero h1 {
+    font-size: 2rem; /* maior que antes */
+  }
+  .hero .subtitulo {
+    font-size: 1rem;
+  }
 }
 
 .tras {
@@ -605,9 +982,20 @@ h1 {
 .sobre h2 {
   font-size: 2rem;
   margin-bottom: 1rem;
-  margin-top: 40px;
+  margin-top: 30px;
+}
+/* Responsivo: diminui a margem superior para subir o texto */
+@media (max-width: 768px) {
+  .sobre h2 {
+    margin-top: 10px; /* menos espaço em cima */
+  }
 }
 
+@media (max-width: 400px) {
+  .sobre h2 {
+    margin-top: 5px; /* ainda menos em telas muito pequenas */
+  }
+}
 .sobre p {
   font-size: 1.1rem;
   color: #1f1f1f;
@@ -1395,9 +1783,14 @@ textarea {
     height: auto;
   }
 
-  .slider-container-nx {
-    overflow-x: scroll;
-    scroll-snap-type: x mandatory;
+ .slider-container-nx {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important; /* centraliza horizontalmente */
+    justify-content: center !important; /* centraliza verticalmente */
+    min-height: 100vh !important; /* ocupa toda altura da tela */
+    margin: 0 auto !important;
+  
   }
 
   .card-nx {

@@ -4,9 +4,31 @@ import contaImg from '@/assets/conta.png'  // ajuste a extensão conforme sua im
 import logoImg from '@/assets/logocjl.png'  // ajuste o caminho e nome da logo
 import ImagemEquipe from '@/assets/consultoria.webp'
 
-const visibleCards = 3
-const cardWidthPx = 320 // largura fixa de cada card em px (ajuste se quiser)
+// Definição das configurações básicas
+const cardWidthPx = 375 // largura fixa do card em px (ajuste se necessário)
+const visibleCardsDesktop = 3
+const visibleCardsMobile = 1
 
+// Estado para monitorar largura da janela (responsividade)
+const windowWidth = ref(window.innerWidth)
+
+// Atualiza o windowWidth ao redimensionar a tela
+function onResize() {
+  windowWidth.value = window.innerWidth
+}
+onMounted(() => {
+  window.addEventListener('resize', onResize)
+})
+onUnmounted(() => {
+  window.removeEventListener('resize', onResize)
+})
+
+// Retorna quantos cards ficam visíveis conforme largura da tela
+const visibleCards = computed(() => {
+  return windowWidth.value <= 768 ? visibleCardsMobile : visibleCardsDesktop
+})
+
+// Dados dos cards de consultoria
 const consultoriaCards = [
   { title: 'Essencial', desc: 'Ideal para pequenas empresas que estão começando sua jornada digital.', items: ['Diagnóstico inicial', 'Suporte remoto mensal', 'Relatório estratégico'], preco: 'R$ 499/mês', buttonText: 'Contratar' },
   { title: 'Profissional', desc: 'Consultoria com acompanhamento mais próximo e reuniões estratégicas.', items: ['Tudo do Essencial', '2 reuniões mensais', 'Acesso a especialista dedicado'], preco: 'R$ 899/mês', buttonText: 'Contratar' },
@@ -21,6 +43,7 @@ const consultoriaCards = [
   { title: 'Extra 7', desc: 'Plano extra 7', items: ['Item 1', 'Item 2'], preco: 'R$ 1200/mês', buttonText: 'Contratar' },
 ]
 
+// Dados dos cards de software
 const softwareCards = [
   { title: 'MVP Rápido', desc: 'Ideal para startups que precisam lançar rápido com baixo custo.', items: ['Até 3 telas principais', 'Backend básico incluso', 'Entrega em até 3 semanas'], preco: 'R$ 3.500', buttonText: 'Solicitar Orçamento' },
   { title: 'Projeto Personalizado', desc: 'Para empresas que precisam de uma solução sob medida.', items: ['Levantamento de requisitos', 'Design de interface personalizado', 'Integração com APIs'], preco: 'A partir de R$ 7.000', buttonText: 'Solicitar Orçamento' },
@@ -35,32 +58,46 @@ const softwareCards = [
   { title: 'Extra 7', desc: 'Software extra 7', items: ['Item 1', 'Item 2'], preco: 'R$ 10.000', buttonText: 'Solicitar Orçamento' },
 ]
 
-// Estados dos sliders
+// Índices dos sliders
 const currentIndexConsultoria = ref(0)
 const currentIndexSoftware = ref(0)
 
-const maxIndexConsultoria = consultoriaCards.length - visibleCards
-const maxIndexSoftware = softwareCards.length - visibleCards
+// Calcula o máximo índice para cada slider considerando quantos cards estão visíveis
+const maxIndexConsultoria = computed(() => consultoriaCards.length - visibleCards.value)
+const maxIndexSoftware = computed(() => softwareCards.length - visibleCards.value)
 
-// Calcula o deslocamento em px para cada slider
+// Calcula o deslocamento em px para aplicar o transform no slide
 const translateXConsultoria = computed(() => currentIndexConsultoria.value * cardWidthPx)
 const translateXSoftware = computed(() => currentIndexSoftware.value * cardWidthPx)
 
+// Funções para controlar os sliders
 function prevConsultoria() {
-  if (currentIndexConsultoria.value > 0) currentIndexConsultoria.value--
+  if (currentIndexConsultoria.value > 0) {
+    currentIndexConsultoria.value--
+  }
 }
+
 function nextConsultoria() {
-  if (currentIndexConsultoria.value < maxIndexConsultoria) currentIndexConsultoria.value++
+  if (currentIndexConsultoria.value < maxIndexConsultoria.value) {
+    currentIndexConsultoria.value++
+  }
 }
 
 function prevSoftware() {
-  if (currentIndexSoftware.value > 0) currentIndexSoftware.value--
+  if (currentIndexSoftware.value > 0) {
+    currentIndexSoftware.value--
+  }
 }
+
 function nextSoftware() {
-  if (currentIndexSoftware.value < maxIndexSoftware) currentIndexSoftware.value++
+  if (currentIndexSoftware.value < maxIndexSoftware.value) {
+    currentIndexSoftware.value++
+  }
 }
+
+// Depoimentos para o slider de depoimentos
 const depoimentos = [
- {
+  {
     texto: `“A CJL transformou completamente a forma como gerenciamos nossos processos internos. 
     Desde a implementação das soluções, nossa equipe está muito mais produtiva e os resultados saltaram significativamente. 
     O atendimento personalizado faz toda a diferença e a parceria tem sido fundamental para o nosso sucesso. 
@@ -100,10 +137,12 @@ const depoimentos = [
     nome: 'Ana Beatriz Souza',
     cargo: 'Coordenadora de Projetos – Innovatech'
   }
-
 ]
 
+// Estado atual do depoimento que está sendo mostrado
 const depoimentoAtual = ref(0)
+
+// Intervalo para trocar depoimentos automaticamente
 let intervalo: number
 
 onMounted(() => {
@@ -116,6 +155,7 @@ onUnmounted(() => {
   clearInterval(intervalo)
 })
 </script>
+
 
 <template lang="pug">
 section.banner-container
@@ -205,6 +245,351 @@ main.planos
   </template>
 
 <style scoped>
+@media (max-width: 768px) {
+  .cards-wrapper {
+    width: 360px !important;
+    overflow: hidden !important;
+    transform: translateX(-50px); /* ajusta o valor negativo conforme quiser */
+  }
+
+  .cards {
+    display: flex;
+    transition: transform 0.4s ease;
+  }
+
+  .card {
+    flex: 0 0 360px !important;
+  }
+
+  .btn-prev,
+  .btn-next {
+    position: absolute !important;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
+    font-size: 32px;
+    background: transparent;
+    border: none;
+    color: rgb(44, 44, 44) !important;
+    cursor: pointer;
+  }
+
+  .btn-prev {
+    left: -35px !important; /* totalmente fora do card */
+  }
+
+  .btn-next {
+    right: -45px !important; /* totalmente fora do card */
+  }
+}
+
+@media (max-width: 768px) {
+  .rbm-centro-conteudo {
+    text-align: left !important;
+    padding-left: 15px !important;
+    padding-right: 15px !important;
+    width: 100% !important;
+    margin: 0 auto !important;
+  }
+}
+@media (max-width: 768px) {
+  .rbm-titulo-central {
+    font-size: 25px !important;
+    
+  }
+
+  .rbm-descricao-cinza {
+    font-size: 14px !important;
+    margin-top: 15px !important;
+  }
+}
+
+
+
+@media (max-width: 768px) {
+  .titulo-depoimento {
+    width: 100%;
+    display: flex;
+    justify-content: left;
+    padding: 0 10px;
+    box-sizing: border-box;
+  }
+
+  .titulo-depoimento h2 {
+    text-align: left;
+    font-size: 25px;
+    max-width: 650px;      /* Espaço para o texto */
+    width: 100%;
+    line-height: 1.3;
+    white-space: normal;
+    word-break: keep-all;
+    margin: 0 auto;         /* Centraliza o bloco */
+    display: block;         /* Garante que o h2 seja um bloco */
+  }
+}
+
+
+@media (max-width: 768px) {
+  .sessao-consultoria {
+    flex-direction: column;
+  }
+
+  .imagem-lado,
+  .texto-lado {
+    flex: 1 1 100%;
+    margin-bottom: 40px;
+  }
+
+  .titulo-consultoria {
+    text-align: center;
+  }
+
+  .texto-lado {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    margin: 0; /* remove margens laterais */
+  }
+
+  .texto-lado p,
+  .texto-lado h2 {
+    text-align: left; /* garante alinhamento natural */
+  }
+}
+
+@media (max-width: 768px) {
+  .depoimento-texto {
+    font-size: 15px !important; /* tamanho do texto do depoimento */
+  }
+
+  .depoimento-nome {
+    font-size: 13px !important; /* tamanho do nome */
+  }
+
+  .depoimento-cargo {
+    font-size: 13px !important; /* tamanho do cargo */
+  }
+}
+@media (max-width: 768px) {
+  .depoimento-nome {
+    margin-top: 0;       /* tira a margem superior */
+    margin-bottom: 2px;  /* diminui o espaço abaixo para ficar mais “colado” */
+    position: relative;
+    top: -45px;           /* sobe 5px */
+  }
+
+  .depoimento-cargo {
+    margin-top: 0;
+    position: relative;
+    top: -50px;           /* sobe 8px */
+  }
+}
+
+@media (max-width: 768px) {
+  .depoimento-card {
+    min-height: 500px !important; /* aumenta a altura */
+    overflow: auto; /* pra garantir rolagem se necessário */
+    height: 900px;
+  }
+}
+
+@media (max-width: 768px) {
+  .depoimento-card-area {
+    padding-left: 20px;
+    padding-right: 20px;
+    box-sizing: border-box;
+  }
+}
+@media (max-width: 992px) {
+  .depoimento-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: left;
+  }
+
+
+  .depoimento-card-area {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding-left: 0px;
+    margin-left: 20px;
+  }
+
+  .card-depoimento {
+    width: 100%;         /* 80% do container pai */
+    min-width: 400px;   /* largura mínima para não ficar muito fino */
+    max-width: 1000px;   /* limite máximo para telas maiores */
+    display: flex;
+    justify-content: center;
+    
+  }
+
+  .depoimento-card {
+    width: 100%;
+    
+  }
+
+  .depoimento-bolinhas {
+    margin-top: 1rem;
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    width: 100%;
+    height: 50px;
+  }
+}
+
+@media (max-width: 992px) {
+  .banner-with-text {
+    max-width: 100% !important;
+    width: 100% !important;
+    margin: 0 auto !important; /* centraliza */
+    
+  }
+
+  .shape-left {
+    width: 100% !important;
+    padding: 1rem 2rem !important;
+  }
+
+  .shape-left h1.title {
+    font-size: 2rem !important;
+    line-height: 2.5rem !important;
+    text-align: center;
+  }
+
+  .shape-left p.description {
+    font-size: 1rem !important;
+    line-height: 1.6rem !important;
+    text-align: center;
+    margin-top: 1rem;
+  }
+
+  .arrow {
+    text-align: center;
+    display: block;
+    margin-top: 1.8rem;
+    font-size: 1.5rem;
+  }
+}
+@media (max-width: 992px) {
+  .shape-left h1.title {
+    font-size: 1.6rem !important;      /* diminui o tamanho da fonte */
+    margin-top: 120px !important;    /* empurra o título mais pra baixo */
+    text-align: left;
+  }
+
+  .shape-left p.description {
+    font-size: 0.90rem !important;      /* mantém o texto legível */
+    line-height: 1.6rem !important;
+    text-align: left;
+  }
+
+  .arrow {
+    margin-top: 1.5rem;
+    text-align: center;
+  }
+}
+@media (max-width: 400px) {
+  .shape-left h1.title {
+    font-size: 1.4rem !important;
+    line-height: 1.8rem !important;
+    margin-top: 110px !important; /* empurra pra baixo */
+    text-align: left;
+  }
+
+   .shape-left p.description {
+    font-size: 0.80rem !important;
+    line-height: 1.2rem !important;
+    text-align: left;
+    padding-left: -2rem !important;  /* empurra mais para a esquerda */
+    padding-right: 1rem !important; /* mantém um pouco de espaço à direita */
+  }
+}
+@media (max-width: 992px) {
+  .arrow {
+    display: none !important;
+  }
+}
+@media (max-width: 600px) {
+  .arrow {
+    display: none !important;
+  }
+}
+
+@media (max-width: 400px) {
+  .arrow {
+    display: none !important;
+  }
+}
+@media (max-width: 992px) {
+  .sessao-cjl {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1rem;
+  }
+
+
+@media (max-width: 992px) {
+  .card-cjl {
+    display: block !important;
+    width: 100% !important;
+    max-width: 600px !important;
+    margin-left: 100px !important;
+    margin-right: 0 !important;
+    text-align: left !important;
+    box-sizing: border-box !important;
+  }
+}
+
+  .imagem-cjl {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    max-width: 600px;
+    margin: 1rem auto 0 auto;
+    box-sizing: border-box;
+  }
+
+  .imagem-cjl img {
+    width: 100%;
+    height: auto;
+    max-width: 400px;
+    display: block;
+  }
+
+  .btn-contato {
+    display: inline-block;
+    margin-top: 1rem;
+    padding: 0.7rem 1.5rem;
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .card-cjl h2 {
+    font-size: 1.5rem;
+    text-align: center;
+  }
+
+  .card-cjl p.description {
+    font-size: 1rem;
+    text-align: center;
+  }
+
+  .btn-contato {
+    font-size: 0.9rem;
+    padding: 0.6rem 1.2rem;
+  }
+
+  .imagem-cjl img {
+    max-width: 90%;
+    margin-top: 1rem;
+  }
+}
+
 .titulo-depoimento h2 {
   font-weight: bold;
 }
@@ -213,6 +598,7 @@ main.planos
   width: 100%;
   padding: 60px 20px;
   margin-bottom: -40px;
+  margin-top: -65px;
 }
 
 .rbm-centro-conteudo {
@@ -568,6 +954,7 @@ main.planos
   color: #222;
   padding: 4rem 2rem;
   font-family: 'Times New Roman', Times, serif;
+  margin-top: -65px;
 }
 
 section {
@@ -590,7 +977,7 @@ h2 {
 
 .slider {
   position: relative;
-  overflow: hidden;
+  overflow: visible;
   user-select: none;
   width: 100%;
   padding: 0 3.5rem; /* mais espaço para os botões */
