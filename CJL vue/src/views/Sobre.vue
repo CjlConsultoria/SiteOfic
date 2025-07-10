@@ -319,6 +319,193 @@ section.bloco-recursos-tec
 </template>
 
 <style scoped>
+
+
+@media (max-width: 768px) {
+  .figura-esq-ti {
+    display: block !important;
+    max-width: 90% !important;
+    height: auto !important;
+    margin: 13rem 0 0 0 !important; /* aumenta a margem superior pra empurrar pra baixo */
+    transform: translateX(20px) !important; /* mantém o deslocamento pra direita */
+    max-height: 300px !important; /* aumenta altura máxima da imagem */
+    width: auto !important; /* largura automática para manter proporção */
+  }
+}
+@media (max-width: 768px) {
+ 
+  .etiqueta-sys,
+  .titulo-destaque-ti,
+  .descricao-detalhe-ti {
+    margin-left: 0;
+    margin-right: 0;
+    text-align: center;
+  }
+}
+
+
+  /* Se quiser espaçar individualmente: */
+  .etiqueta-sys {
+    margin-top: 2rem;
+  }
+
+  .titulo-destaque-ti {
+    margin-top: 1rem;
+  }
+
+  .descricao-detalhe-ti {
+    margin-top: 1rem;
+  }
+@media (max-width: 768px) {
+  .area-texto-sys {
+    margin-top: 13rem !important;
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    text-align: justify !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+
+  /* Força texto justificado e alinhado à esquerda */
+  .area-texto-sys h3,
+  .area-texto-sys h2,
+  .area-texto-sys p {
+    text-align: left !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+}
+
+/* Para telas maiores (desktop) */
+@media (min-width: 769px) {
+  .area-imagens-sys {
+    display: flex;
+    justify-content: center; /* centraliza horizontalmente */
+    align-items: center; /* centraliza verticalmente se quiser */
+  }
+
+  .figura-esq-ti, .figura-dir-ti {
+    max-width: 300px;
+    height: auto;
+  }
+}
+
+
+
+@media (max-width: 768px) {
+ 
+
+  .figura-esq-ti {
+    display: block; /* mantém visível */
+    width: 80%;
+    max-width: 300px;
+    height: auto;
+    margin-top: 220px;
+  }
+
+  .figura-dir-ti {
+    display: none; /* esconde a segunda imagem */
+  }
+
+
+  .titulo-destaque-ti {
+    font-size: 1.4rem;
+  }
+
+  .descricao-detalhe-ti {
+    font-size: 1rem;
+    line-height: 1.6rem;
+  }
+}
+
+@media (max-width: 992px) {
+  .banner-with-text {
+    max-width: 100% !important;
+    width: 100% !important;
+    margin: 0 auto !important; /* centraliza */
+    
+  }
+
+  .shape-left {
+    width: 100% !important;
+    padding: 1rem 2rem !important;
+  }
+
+  .shape-left h1.title {
+    font-size: 2rem !important;
+    line-height: 2.5rem !important;
+    text-align: center;
+  }
+
+  .shape-left p.description {
+    font-size: 1rem !important;
+    line-height: 1.6rem !important;
+    text-align: center;
+    margin-top: 1rem;
+  }
+
+  .arrow {
+    text-align: center;
+    display: block;
+    margin-top: 1.8rem;
+    font-size: 1.5rem;
+  }
+}
+@media (max-width: 992px) {
+  .shape-left h1.title {
+    font-size: 1.6rem !important;      /* diminui o tamanho da fonte */
+    margin-top: 120px !important;    /* empurra o título mais pra baixo */
+    text-align: left;
+  }
+
+  .shape-left p.description {
+    font-size: 0.90rem !important;      /* mantém o texto legível */
+    line-height: 1.6rem !important;
+    text-align: left;
+  }
+
+  .arrow {
+    margin-top: 1.5rem;
+    text-align: center;
+  }
+}
+@media (max-width: 400px) {
+  .shape-left h1.title {
+    font-size: 1.4rem !important;
+    line-height: 1.8rem !important;
+    margin-top: 110px !important; /* empurra pra baixo */
+    text-align: left;
+  }
+
+   .shape-left p.description {
+    font-size: 0.80rem !important;
+    line-height: 1.2rem !important;
+    text-align: left;
+    padding-left: -2rem !important;  /* empurra mais para a esquerda */
+    padding-right: 1rem !important; /* mantém um pouco de espaço à direita */
+  }
+}
+@media (max-width: 992px) {
+  .arrow {
+    display: none !important;
+  }
+}
+@media (max-width: 600px) {
+  .arrow {
+    display: none !important;
+  }
+}
+
+@media (max-width: 400px) {
+  .arrow {
+    display: none !important;
+  }
+}
+
 html {
   scroll-behavior: smooth;
 }
@@ -348,6 +535,7 @@ html {
   background-color: #fff;
   display: flex;
   justify-content: center;
+  margin-top: -70px;
 }
 
 .estrutura-recursos-tec {
@@ -429,6 +617,7 @@ html {
   padding: 4rem 2rem;
   display: flex;
   justify-content: center;
+  margin-top: -60px
   
 }
 
@@ -599,14 +788,28 @@ html {
   .sessao-consultoria {
     flex-direction: column;
   }
+
   .imagem-lado,
   .texto-lado {
     flex: 1 1 100%;
   }
+
   .titulo-consultoria {
     text-align: center;
   }
+
+  .texto-lado {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    margin: 0; /* remove margens laterais */
+  }
+
+  .texto-lado p,
+  .texto-lado h2 {
+    text-align: left; /* garante alinhamento natural */
+  }
 }
+
 
 
 .planos {
