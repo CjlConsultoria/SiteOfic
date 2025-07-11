@@ -157,7 +157,7 @@ h2 {
   .cards-wrapper {
     width: 360px !important;
     overflow: hidden !important;
-    transform: translateX(-50px); /* ajusta o valor negativo conforme quiser */
+    transform: translateX(-72jpx); /* ajusta o valor negativo conforme quiser */
     margin-bottom: 100px;
   }
 
@@ -169,6 +169,7 @@ h2 {
   .card {
     flex: 0 0 360px !important;
   }
+  
 
   .btn-prev,
   .btn-next {

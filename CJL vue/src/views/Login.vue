@@ -44,23 +44,22 @@ section.registro-multi
 </template>
 
 <script setup>
-import { ref } from 'vue'
-
+import { ref, watch, onMounted } from 'vue'
+import { login } from '@/services/authServices'
 const email = ref('')
 const senha = ref('')
 const mostrarSenha = ref(false)
 
 const erroEmail = ref(false)
 const erroSenha = ref(false)
-
-const logarUsuario = () => {
+const logarUsuario = async () => {
   erroEmail.value = email.value.trim() === ''
   erroSenha.value = senha.value.trim() === ''
+    console.log("erroEmail ", email.value)
+    console.log("erroSenha ", senha.value)
 
-  if (!erroEmail.value && !erroSenha.value) {
-    alert('Login realizado com sucesso!')
-    // Aqui você pode fazer o redirecionamento ou chamada à API
-  }
+  const response = await login(email.value, senha.value)
+  console.log("Logou com sucesso ", response.token)
 }
 </script>
 <style>

@@ -246,19 +246,59 @@ onUnmounted(() => {
   clearInterval(intervalo)
 })
 
-// Cartões flip — para seção soluções
 const cartoes = ref([
-  { titulo: 'Gestão de planos de saúde', icon: LogoNexdom, textoTraseiro: 'Texto explicativo sobre planos de saúde...', flip: false },
-  { titulo: 'Autorização e Atendimento', icon: LogoNexdom, textoTraseiro: 'Texto explicativo sobre autorização...', flip: false },
-  { titulo: 'Ressarcimento ao SUS', icon: LogoNexdom, textoTraseiro: 'Texto explicativo sobre ressarcimento...', flip: false },
-  { titulo: 'Portal da empresa e beneficiário', icon: LogoNexdom, textoTraseiro: 'Texto explicativo sobre portal...', flip: false },
-  { titulo: 'Gestão de relacionamento e Ouvidoria', icon: LogoNexdom, textoTraseiro: 'Texto explicativo sobre relacionamento...', flip: false },
-  { titulo: 'Business Intelligence', icon: LogoNexdom, textoTraseiro: 'Texto explicativo sobre BI...', flip: false },
+  {
+    titulo: 'Gestão de planos de saúde',
+    icon: LogoNexdom,
+    textoTraseiro: 'Texto explicativo sobre planos de saúde...',
+    flip: false
+  },
+  {
+    titulo: 'Autorização e Atendimento',
+    icon: LogoNexdom,
+    textoTraseiro: 'Texto explicativo sobre autorização...',
+    flip: false
+  },
+  {
+    titulo: 'Ressarcimento ao SUS',
+    icon: LogoNexdom,
+    textoTraseiro: 'Texto explicativo sobre ressarcimento...',
+    flip: false
+  },
+  {
+    titulo: 'Portal da empresa e beneficiário',
+    icon: LogoNexdom,
+    textoTraseiro: 'Texto explicativo sobre portal...',
+    flip: false
+  },
+  {
+    titulo: 'Gestão de relacionamento e Ouvidoria',
+    icon: LogoNexdom,
+    textoTraseiro: 'Texto explicativo sobre relacionamento...',
+    flip: false
+  },
+  {
+    titulo: 'Business Intelligence',
+    icon: LogoNexdom,
+    textoTraseiro: 'Texto explicativo sobre BI...',
+    flip: false
+  }
 ])
 
 function toggleFlip(index: number) {
-  cartoes.value[index].flip = !cartoes.value[index].flip
+  // Faz um deep clone do array para forçar reatividade completa
+  cartoes.value = cartoes.value.map((card, i) => {
+    if (i === index) {
+      return { ...card, flip: !card.flip }
+    } else {
+      return { ...card, flip: false }
+    }
+  })
 }
+
+
+
+
 </script>
 
 
@@ -280,8 +320,8 @@ main.home
   section.sobre(ref="sobre")
     .container
       h2 Sobre a CJL
-      p O Sistema CJL foi desenvolvido para oferecer uma solução completa e intuitiva para oficinas.
-      p Controle de estoque, cadastro de clientes, gestão de veículos e muito mais, tudo em um só lugar.
+      p A CJL Consultoria é uma empresa especializada em tecnologia da informação, focada em oferecer soluções inteligentes e personalizadas para pequenas e médias empresas, com ênfase no setor automotivo. Atuamos com consultoria estratégica, desenvolvimento de sistemas e suporte técnico, sempre com o compromisso de transformar desafios tecnológicos em oportunidades de crescimento.
+      p Entre nossos principais produtos, destaca-se o Sistema CJL, uma plataforma completa, prática e intuitiva, desenvolvida especialmente para atender às necessidades de oficinas mecânicas. Com ele, é possível gerenciar:
 
   //- SOLUÇÕES
   section.bloco-solucao-nx
@@ -297,7 +337,7 @@ main.home
         .cartao-nx(
           v-for="(card, index) in cartoes"
           :key="index"
-          :class="[card.flip ? 'vermelho' : 'preto']"
+           :class="[card.flip ? 'vermelho' : 'preto']"
         )
           //- Frente do card
           .frente(v-if="!card.flip")
@@ -410,6 +450,56 @@ section.formulario-contato
 </template>
 
 <style scoped>
+.cartao-nx {
+  background-color: #ccc;
+  padding: 20px;
+  border-radius: 12px;
+  color: #fff;
+  font-size: 1rem;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  justify-content: space-between;
+  width: 90%;
+  transition: height 0.4s ease;
+  overflow: hidden;
+  position: relative;
+  transition: none;
+
+  /* Altura padrão quando o card está fechado */
+  height: 150px;
+}
+
+.cartao-nx.vermelho {
+  /* Altura expandida quando o card está aberto */
+  height: 240px;
+}
+
+/* Parte da frente sempre visível quando fechado */
+.cartao-nx .frente {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Parte de trás oculta por padrão */
+.cartao-nx .tras {
+  display: none;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Mostrar verso quando aberto */
+.cartao-nx.vermelho .frente {
+  display: none;
+}
+
+.cartao-nx.vermelho .tras {
+  display: flex;
+   padding-top: 60px;
+}
+
 @media (max-width: 992px) {
   .container-form {
     padding-bottom: 60px !important; /* aumenta espaço interno embaixo */
@@ -653,6 +743,7 @@ section.formulario-contato
   .grade-cartoes-nx {
     justify-content: center;
     gap: 1rem;
+     position: relative; /* importante para conter os filhos com absolute */
   }
 
   .cartao-nx {
@@ -795,7 +886,7 @@ section.formulario-contato {
 
 .tras {
   width: 100%;
-  height: 100%;
+  height: auto;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -830,20 +921,6 @@ section.formulario-contato {
   color: white; /* para o texto ficar visível */
 }
 
-.cartao-nx.vermelho {
-  background-color: rgb(255, 255, 255) !important;
-  color: white;
-}
-.tras .botao-nx {
-  margin-top: 10px;
-  background-color: rgb(34, 34, 34); /* preto fixo */
-  color: white;            /* texto branco */
-  border: none;
-  padding: 6px 12px;
-  border-radius: 4px;
-  font-size: 1.2rem;
-  cursor: pointer;
-}
 .tras .botao-nx:hover {
   background-color: #222; /* escurece levemente ao passar o mouse */
 }
@@ -968,7 +1045,7 @@ h1 {
   text-align: center;
   z-index: 1;
   position: relative;
-  height: 350px;
+  height: 450px;
 }
 .frase-atual {
   transition: opacity 0.5s ease;
@@ -1000,7 +1077,7 @@ h1 {
   font-size: 1.1rem;
   color: #1f1f1f;
   margin-bottom: 1rem;
-  line-height: 1;
+  line-height: 1.5;
 }
 
 .metricas {
@@ -1179,24 +1256,12 @@ textarea:focus {
   gap: 20px;
   padding-left: 40px;
   min-width: 300px;
+  position: relative;
+  
+  
 }
 
-.cartao-nx {
-  background-color: #ccc;
-  padding: 20px;
-  border-radius: 12px;
-  color: #fff;
-  font-size: 1rem;
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  justify-content: space-between;
-  width: 90%;
-  height: 140px;
-  max-height: 150px;
-  overflow: hidden;
-}
+
 
 .icone-nx {
   width: 120px;

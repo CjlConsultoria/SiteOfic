@@ -57,8 +57,8 @@ div.layout-wrapper
         RouterLink(to="/planos") Planos
 
       .auth-buttons
-        //- button.login-btn(@click="irParaLogin") Login
-        //- button.register-btn(@click="irParaRegistre") Registre-se
+        button.login-btn(@click="irParaLogin") Login
+        button.register-btn(@click="irParaRegistre") Registre-se
 
   main.main-content
     RouterView
