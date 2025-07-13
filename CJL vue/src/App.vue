@@ -336,7 +336,7 @@ nav a.router-link-exact-active {
 
 /* Rodapé fixo */
 .fixed-footer {
-  position: fixed;
+  position: relative;
   bottom: 0;
   left: 0;
   width: 100%;

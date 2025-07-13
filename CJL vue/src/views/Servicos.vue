@@ -3,6 +3,7 @@ import { ref, computed, onMounted, onUnmounted } from 'vue'
 import contaImg from '@/assets/conta.png'  // ajuste a extensão conforme sua imagem
 import logoImg from '@/assets/logocjl.png'  // ajuste o caminho e nome da logo
 import ImagemEquipe from '@/assets/consultoria.webp'
+import { useRouter } from 'vue-router'
 
 // Definição das configurações básicas
 const cardWidthPx = 375 // largura fixa do card em px (ajuste se necessário)
@@ -30,18 +31,78 @@ const visibleCards = computed(() => {
 
 // Dados dos cards de consultoria
 const consultoriaCards = [
-  { title: 'Essencial', desc: 'Ideal para pequenas empresas que estão começando sua jornada digital.', items: ['Diagnóstico inicial', 'Suporte remoto mensal', 'Relatório estratégico'], preco: 'R$ 499/mês', buttonText: 'Contratar' },
-  { title: 'Profissional', desc: 'Consultoria com acompanhamento mais próximo e reuniões estratégicas.', items: ['Tudo do Essencial', '2 reuniões mensais', 'Acesso a especialista dedicado'], preco: 'R$ 899/mês', buttonText: 'Contratar' },
-  { title: 'Corporativo', desc: 'Consultoria personalizada para times e empresas em escala.', items: ['Tudo do Profissional', 'Treinamentos exclusivos', 'Plano de ação trimestral'], preco: 'R$ 1499/mês', buttonText: 'Contratar' },
-  // repetidos para totalizar 10 cards
-  { title: 'Extra 1', desc: 'Plano extra 1', items: ['Item 1', 'Item 2'], preco: 'R$ 600/mês', buttonText: 'Contratar' },
-  { title: 'Extra 2', desc: 'Plano extra 2', items: ['Item 1', 'Item 2'], preco: 'R$ 700/mês', buttonText: 'Contratar' },
-  { title: 'Extra 3', desc: 'Plano extra 3', items: ['Item 1', 'Item 2'], preco: 'R$ 800/mês', buttonText: 'Contratar' },
-  { title: 'Extra 4', desc: 'Plano extra 4', items: ['Item 1', 'Item 2'], preco: 'R$ 900/mês', buttonText: 'Contratar' },
-  { title: 'Extra 5', desc: 'Plano extra 5', items: ['Item 1', 'Item 2'], preco: 'R$ 1000/mês', buttonText: 'Contratar' },
-  { title: 'Extra 6', desc: 'Plano extra 6', items: ['Item 1', 'Item 2'], preco: 'R$ 1100/mês', buttonText: 'Contratar' },
-  { title: 'Extra 7', desc: 'Plano extra 7', items: ['Item 1', 'Item 2'], preco: 'R$ 1200/mês', buttonText: 'Contratar' },
+  {
+    title: 'Plano Iniciante',
+    desc: 'Ideal para pequenos negócios que precisam de soluções básicas de TI.',
+    items: ['5 licenças de software', 'Suporte técnico via e-mail', 'Atualizações automáticas'],
+    preco: 'R$ 29,90/mês | R$ 299,00/ano',
+    buttonText: 'CONTRATAR'
+  },
+  {
+    title: 'Plano Essencial',
+    desc: 'Perfeito para equipes em crescimento que precisam de estabilidade e suporte.',
+    items: ['10 licenças de software', 'Suporte por chat e e-mail', 'Backups semanais', 'Painel de controle'],
+    preco: 'R$ 49,90/mês | R$ 499,00/ano',
+    buttonText: 'CONTRATAR'
+  },
+  {
+    title: 'Plano Profissional',
+    desc: 'Para empresas que precisam de escalabilidade e segurança avançada.',
+    items: ['20 licenças de software', 'Suporte remoto 24/7', 'Monitoramento de rede', 'Antivírus corporativo'],
+    preco: 'R$ 99,90/mês | R$ 999,00/ano',
+    buttonText: 'CONTRATAR'
+  },
+  {
+    title: 'Plano Corporativo',
+    desc: 'Solução completa para médias empresas com estrutura tecnológica robusta.',
+    items: ['30 licenças de software', 'Suporte dedicado', 'Controle de acesso por usuário', 'Integrações com ERP'],
+    preco: 'R$ 149,90/mês | R$ 1.499,00/ano',
+    buttonText: 'CONTRATAR'
+  },
+  {
+    title: 'Plano Empresarial',
+    desc: 'Consultoria e infraestrutura de TI sob demanda para grandes empresas.',
+    items: ['50 licenças de software', 'Gestão de TI completa', 'Treinamentos mensais', 'Automação de processos'],
+    preco: 'R$ 249,90/mês | R$ 2.499,00/ano',
+    buttonText: 'CONTRATAR'
+  },
+  {
+    title: 'Plano Avançado',
+    desc: 'Recursos avançados para equipes técnicas que precisam de flexibilidade.',
+    items: ['75 licenças de software', 'APIs dedicadas', 'Ambiente de testes', 'Logs em tempo real'],
+    preco: 'R$ 349,90/mês | R$ 3.499,00/ano',
+    buttonText: 'CONTRATAR'
+  },
+  {
+    title: 'Plano Premium',
+    desc: 'Experiência completa de TI com suporte exclusivo e SLA garantido.',
+    items: ['100 licenças de software', 'Suporte SLA 1h', 'Ambiente em nuvem privado', 'Acesso via VPN'],
+    preco: 'R$ 499,90/mês | R$ 4.999,00/ano',
+    buttonText: 'CONTRATAR'
+  },
+  {
+    title: 'Plano Ultra',
+    desc: 'Para empresas que exigem alta disponibilidade e segurança.',
+    items: ['150 licenças de software', 'Alta redundância', 'Auditorias de segurança trimestrais', 'Disaster Recovery'],
+    preco: 'R$ 699,90/mês | R$ 6.999,00/ano',
+    buttonText: 'CONTRATAR'
+  },
+  {
+    title: 'Plano Mega',
+    desc: 'Infraestrutura e consultoria contínua para operações críticas.',
+    items: ['200 licenças de software', 'Equipe dedicada de TI', 'Consultoria mensal personalizada', 'Relatórios de performance'],
+    preco: 'R$ 899,90/mês | R$ 8.999,00/ano',
+    buttonText: 'CONTRATAR'
+  },
+  {
+    title: 'Plano Enterprise',
+    desc: 'Pacote completo com gestão de tecnologia ponta a ponta.',
+    items: ['Licenças ilimitadas', 'TI terceirizada 360º', 'Projetos customizados', 'Integração com sistemas legados'],
+    preco: 'R$ 1.299,90/mês | R$ 12.999,00/ano',
+    buttonText: 'CONTRATAR'
+  }
 ]
+
 
 // Dados dos cards de software
 const softwareCards = [
@@ -138,6 +199,15 @@ const depoimentos = [
     cargo: 'Coordenadora de Projetos – Innovatech'
   }
 ]
+const router = useRouter()
+
+// Função de clique no botão
+const contratarPlano = (card: any) => {
+  console.log(`Plano selecionado: ${card.title}`)
+  router.push('/planos') // Rota para a página desejada
+}
+
+
 
 // Estado atual do depoimento que está sendo mostrado
 const depoimentoAtual = ref(0)
@@ -172,14 +242,14 @@ section.banner-container
 
 section.sessao-cjl(id="sessao")
   .card-cjl
-    h2.titulo-cinza Muito além de um mero cara da TI ou um simples apagador de incêndios.
+    h2.titulo-cinza Consultoria Estratégica de TI
     p.description
-      | Oferecemos um grupo de profissionais especializados, prontos para atendê-lo de forma excepcional e eliminar definitivamente os seus problemas tecnológicos.
+      | A Consultoria Estratégica de TI é fundamental para alinhar a tecnologia aos objetivos de negócio, transformando investimentos em inovação, eficiência e competitividade. Nosso trabalho vai além da simples implementação de soluções; ajudamos sua empresa a definir prioridades.
     a.btn-contato(
-      href="https://wa.me/5527992828470?text=Olá,%20gostaria%20de%20solicitar%20um%20orçamento."
+      href="https://wa.me/5511940090003?text=Olá,%20gostaria%20de%20solicitar%20um%20orçamento."
       target="_blank"
       rel="noopener noreferrer"
-    ) CONTATE-NOS
+      ) CONTATE-NOS
 
   .imagem-cjl
     img(:src="ImagemEquipe" alt="Equipe de TI")
@@ -209,16 +279,21 @@ section.depoimento-bloco(id="depoimento")
         )
 section.rbm-fundo-total
   .rbm-centro-conteudo
-    h2.rbm-titulo-central Título Centralizado
-    p.rbm-descricao-cinza Esta é uma descrição em cinza claro explicando os detalhes da sessão.
+    h2.rbm-titulo-central Sistema para Testes
+    p.rbm-descricao-cinza Um ambiente seguro e controlado para validar softwares antes da entrega final. Permite simular cenários reais e identificar falhas com antecedência. Aumenta a qualidade, reduz retrabalho e melhora o desempenho do sistema. Ideal para testes funcionais, de segurança, integração e automação. Essencial para garantir soluções confiáveis, estáveis e alinhadas ao negócio.
 
 section.sessao-consultoria
   .imagem-lado
     img(:src="contaImg" alt="Consultoria de TI")
   .texto-lado
-    h2.titulo-consultoria Consultoria de TI Especializada
+    h2.titulo-consultoria Garantindo Qualidade e Confiabilidade através de Testes Rigorosos
     p.descricao-consultoria
-      | Nossa empresa de tecnologia oferece soluções inovadoras e personalizadas para transformar o seu negócio. Com uma equipe especializada em consultoria, desenvolvimento de software e suporte técnico, garantimos eficiência e segurança em cada projeto. Utilizamos as mais modernas ferramentas e metodologias para atender às necessidades específicas dos nossos clientes. Nosso compromisso é entregar resultados que impulsionem a produtividade e a competitividade no mercado. Valorizamos a transparência, o atendimento ágil e a parceria duradoura. Estamos prontos para ajudar sua empresa a crescer com tecnologia de ponta. Junte-se a nós e transforme o futuro da sua organização.
+      | Garantir a qualidade de um sistema vai muito além de desenvolver funcionalidades: é preciso validá-las de forma estratégica. Com testes rigorosos, identificamos falhas antes que elas afetem o ambiente produtivo, evitando prejuízos e retrabalhos. Simulamos diferentes cenários de uso, avaliando desempenho, segurança, integração e estabilidade. Nossa abordagem inclui testes funcionais, automatizados, de carga e segurança, todos adaptados às necessidades do projeto. Ao integrar esses testes ao ciclo de desenvolvimento, promovemos entregas mais ágeis, confiáveis e alinhadas com os objetivos do cliente. O resultado são soluções sólidas, prontas para operar com excelência desde o primeiro dia.
+    a.btn-contato(
+      href="https://wa.me/5511940090003?text=Olá,%20gostaria%20de%20solicitar%20um%20orçamento."
+      target="_blank"
+      rel="noopener noreferrer"
+      ) CONTATE-NOS
 
 
 
@@ -226,7 +301,7 @@ section.sessao-consultoria
 main.planos
   section.consultoria
     .container
-      h2 Planos de Consultoria
+      h2 Sistema para testes
       .slider
         button.btn-prev(@click="prevConsultoria" :disabled="currentIndexConsultoria === 0") ‹
         .cards-wrapper
@@ -239,12 +314,87 @@ main.planos
                   template(v-for="(item, j) in card.items" :key="j")
                     li {{ item }}
                 span.preco {{ card.preco }}
-                button {{ card.buttonText }}
+                button(@click="contratarPlano") {{ card.buttonText }}
+
+
         button.btn-next(@click="nextConsultoria" :disabled="currentIndexConsultoria >= maxIndexConsultoria") ›
 
   </template>
 
 <style scoped>
+body, * {
+  font-family: 'SuaFonteEscolhida', sans-serif !important;
+}
+
+.btn-centralizado {
+display: block;              
+  margin: 0 auto;              
+  padding: 10px 20px;          /* diminuiu um pouco o padding horizontal */
+  font-size: 16px;
+  font-weight: 600;
+  color: #ffffff;              
+  background-color: #15b600;
+  border: 0.5px solid #1e5200; /* borda mais fina */
+  border-radius: 6px;          
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  text-align: left;
+  text-decoration: none;       
+  font-family: inherit;
+  width: fit-content;          /* botão com largura mínima para o conteúdo */
+  min-width: 120px;
+  margin-top: 20px;
+}
+.btn-centralizado:hover {
+  background-color: #34ff45;
+}
+button {
+display: block;              
+  margin: 0 auto;              
+  padding: 10px 20px;          /* diminuiu um pouco o padding horizontal */
+  font-size: 16px;
+  font-weight: 600;
+  color: #ffffff;              
+  background-color: #15b600;
+  border: 0.5px solid #1e5200; /* borda mais fina */
+  border-radius: 6px;          
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  text-align: left;
+  text-decoration: none;       
+  font-family: inherit;
+  width: fit-content;          /* botão com largura mínima para o conteúdo */
+  min-width: 120px;
+  margin-top: 20px;
+}
+button:hover {
+  background-color: #34ff45;
+}
+.titulo-consultoria {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  text-align: left;
+  color: #ffffff;
+  font-family: 'Times New Roman', Times, serif;
+}
+
+.descricao-consultoria {
+  text-align: justify;
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: #b1b1b1;
+  font-family: 'Times New Roman', Times, serif;
+
+}
+.arrow:hover {
+  color: #000000; /* muda a cor no hover */
+  transform: translateY(5px); /* anima a seta pra baixo */
+  cursor: pointer;
+  background-color: aliceblue;
+ 
+}
+
 @media (max-width: 768px) {
   .cards-wrapper {
     width: 360px !important;
@@ -612,12 +762,15 @@ main.planos
   font-weight: bold;
   color: hsl(0, 0%, 100%);
   margin-bottom: 1rem;
+  font-family: 'Times New Roman', Times, serif;
 }
 
 .rbm-descricao-cinza {
   font-size: 1.1rem;
   color: #adadad;
-  margin-top: -20px;
+  margin-top: -10px;
+  font-family: 'Times New Roman', Times, serif;
+  margin-bottom: 40px;
 }
 .depoimento-bloco {
   width: 100%;
@@ -699,6 +852,7 @@ main.planos
   transition: opacity 0.4s ease;
 }
 
+
 .depoimento-texto {
   font-size: 1rem;
   line-height: 1.6;
@@ -741,7 +895,7 @@ main.planos
   flex-direction: column;
   justify-content: center;
   padding-left: 1.5rem; /* margem interna à esquerda para o texto */
-  font-family: 'Times New Roman', Times, serif;
+   font-family: Arial, Helvetica, sans-serif;
   color: #ffffff;
 }
 
@@ -750,6 +904,7 @@ main.planos
   height: 400px; /* ajuste o valor conforme desejar */
   border-radius: 8px;
   object-fit: cover;
+  margin-top: -80px;
 }
 
 .texto-lado {
@@ -757,7 +912,7 @@ main.planos
   display: flex;
   flex-direction: column;
   justify-content: center;
-  font-family: 'Times New Roman', Times, serif;
+   font-family: Arial, Helvetica, sans-serif;
 }
 
 .titulo-consultoria {
@@ -766,15 +921,15 @@ main.planos
   margin-bottom: 1rem;
   text-align: left;
   color: #ffffff;
-  font-family: 'Times New Roman', Times, serif;
+ font-family: Arial, Helvetica, sans-serif;
 }
 
 .descricao-consultoria {
-  text-align: justify;
-  font-size: 1.1rem;
-  line-height: 1.6;
-  color: #b1b1b1;
-  font-family: 'Times New Roman', Times, serif;
+  font-size: 1rem;
+  color: #adadad;
+  margin-top: -10px;
+  font-family: Arial, Helvetica, sans-serif;
+  margin-bottom: 40px;
 }
 
 /* Responsivo */
@@ -881,6 +1036,7 @@ main.planos
   color: #d3d3d3;
   font-weight: 100;
   font-family: 'Times New Roman', Times, serif;
+  text-align: center;
 }
 .btn-contato {
   display: block;              
@@ -955,6 +1111,7 @@ main.planos
   padding: 4rem 2rem;
   font-family: 'Times New Roman', Times, serif;
   margin-top: -65px;
+  margin-bottom: -60px;
 }
 
 section {
@@ -997,7 +1154,7 @@ h2 {
 }
 
 .card {
-  background: #1f1f1f;
+  background: #202020;
   border-radius: 12px;
   padding: 2rem;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
@@ -1024,22 +1181,24 @@ h2 {
   margin-bottom: 0.5rem;
   color: #ffffff;
   font-family: 'Times New Roman', Times, serif;
+  margin-bottom: 30px;
 }
 
 .card p {
   font-size: 1rem;
-  color: #acacac;
-  margin-bottom: 1rem;
+  color: #cfcfcf;
+  margin-bottom: 30px;
   font-family: 'Times New Roman', Times, serif;
 }
 
 ul {
   list-style: none;
   padding: 0;
-  margin-bottom: 1rem;
+  margin-bottom: 40px;
   text-align: left;
-  color: #ffff;
+  color: #e6e6e6;
   font-family: 'Times New Roman', Times, serif;
+ line-height: 2.1; /* aumenta o espaçamento entre linhas */
 }
 
 ul li::before {
@@ -1051,27 +1210,12 @@ ul li::before {
 
 .preco {
   font-size: 1.2rem;
-  font-weight: bold;
   color: #ffffff;
   margin-bottom: 1rem;
   display: inline-block;
   font-family: 'Times New Roman', Times, serif;
 }
 
-button {
-  background-color: rgb(255, 245, 158);
-  color: #000000;
-  border: none;
-  padding: 0.75rem 1.5rem;
-  border-radius: 8px;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: background-color 0.3s;
-  font-family: 'Times New Roman', Times, serif;
-}
-button:hover {
-  background-color: #f7f463; /* verde claro */
-}
 
 
 button:disabled {

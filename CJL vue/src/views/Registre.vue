@@ -425,6 +425,10 @@ const proximaEtapa = () => {
 </script>
 
 <style scoped>
+body, * {
+  font-family: 'SuaFonteEscolhida', sans-serif !important;
+}
+
 /* Espaçamento extra somente nas mensagens de erro da Etapa 2 */
 .mensagem-erro-etapa2 + .mensagem-erro-etapa2 {
   margin-top: 8px;

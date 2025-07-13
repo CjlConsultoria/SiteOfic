@@ -77,6 +77,9 @@ input:-webkit-autofill:active {
 
 <style scoped>
 /* IDÊNTICO AO REGISTRO */
+body, * {
+  font-family: 'SuaFonteEscolhida', sans-serif !important;
+}
 
 .registro-multi {
   max-width: 900px;

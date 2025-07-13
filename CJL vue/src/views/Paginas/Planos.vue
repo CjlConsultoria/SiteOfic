@@ -28,29 +28,233 @@ const visibleCards = computed(() => {
 })
 
 const consultoriaCards = [
-  { title: 'Essencial', desc: 'Ideal para pequenas empresas que estão começando sua jornada digital.', items: ['Diagnóstico inicial', 'Suporte remoto mensal', 'Relatório estratégico'], preco: 'R$ 499/mês', buttonText: 'Contratar' },
-  { title: 'Profissional', desc: 'Consultoria com acompanhamento mais próximo e reuniões estratégicas.', items: ['Tudo do Essencial', '2 reuniões mensais', 'Acesso a especialista dedicado'], preco: 'R$ 899/mês', buttonText: 'Contratar' },
-  { title: 'Corporativo', desc: 'Consultoria personalizada para times e empresas em escala.', items: ['Tudo do Profissional', 'Treinamentos exclusivos', 'Plano de ação trimestral'], preco: 'R$ 1499/mês', buttonText: 'Contratar' },
-  { title: 'Extra 1', desc: 'Plano extra 1', items: ['Item 1', 'Item 2'], preco: 'R$ 600/mês', buttonText: 'Contratar' },
-  { title: 'Extra 2', desc: 'Plano extra 2', items: ['Item 1', 'Item 2'], preco: 'R$ 700/mês', buttonText: 'Contratar' },
-  { title: 'Extra 3', desc: 'Plano extra 3', items: ['Item 1', 'Item 2'], preco: 'R$ 800/mês', buttonText: 'Contratar' },
-  { title: 'Extra 4', desc: 'Plano extra 4', items: ['Item 1', 'Item 2'], preco: 'R$ 900/mês', buttonText: 'Contratar' },
-  { title: 'Extra 5', desc: 'Plano extra 5', items: ['Item 1', 'Item 2'], preco: 'R$ 1000/mês', buttonText: 'Contratar' },
-  { title: 'Extra 6', desc: 'Plano extra 6', items: ['Item 1', 'Item 2'], preco: 'R$ 1100/mês', buttonText: 'Contratar' },
-  { title: 'Extra 7', desc: 'Plano extra 7', items: ['Item 1', 'Item 2'], preco: 'R$ 1200/mês', buttonText: 'Contratar' },
+  {
+    title: 'Essencial',
+    desc: 'Suporte básico e orientação pontual via e-mail ou WhatsApp. Ideal para autônomos e pequenos negócios iniciando na tecnologia.',
+    items: [
+      'Até 1 reunião mensal (30 min)',
+      'Suporte via e-mail/WhatsApp',
+      'Avaliação inicial da infraestrutura'
+    ],
+    preco: 'R$ 297/mês | R$ 2.970/ano',
+    buttonText: 'Contratar'
+  },
+  {
+    title: 'Diagnóstico',
+    desc: 'Análise técnica completa da empresa, com relatório de melhorias e riscos.',
+    items: [
+      'Reunião inicial + entrega de diagnóstico técnico',
+      'Avaliação de sistemas, segurança, e processos'
+    ],
+    preco: 'R$ 497/mês | R$ 4.970/ano',
+    buttonText: 'Contratar'
+  },
+  {
+    title: 'Orientação Técnica',
+    desc: 'Suporte técnico contínuo com foco em boas práticas, ferramentas e processos.',
+    items: [
+      '2 reuniões mensais (até 1h)',
+      'Orientação sobre ferramentas e processos',
+      'Acesso a materiais técnicos'
+    ],
+    preco: 'R$ 697/mês | R$ 6.970/ano',
+    buttonText: 'Contratar'
+  },
+  {
+    title: 'Operacional',
+    desc: 'Acompanhamento próximo de rotinas técnicas e suporte à equipe interna.',
+    items: [
+      'Até 4 reuniões mensais',
+      'Apoio a decisões operacionais',
+      'Treinamentos leves sob demanda'
+    ],
+    preco: 'R$ 997/mês | R$ 9.970/ano',
+    buttonText: 'Contratar'
+  },
+  {
+    title: 'Otimização de Processos',
+    desc: 'Consultoria focada em automatizar tarefas, melhorar performance e reduzir desperdícios.',
+    items: [
+      'Mapeamento de processos',
+      'Implementação de ferramentas low-code/no-code',
+      'KPI básico'
+    ],
+    preco: 'R$ 1.297/mês | R$ 12.970/ano',
+    buttonText: 'Contratar'
+  },
+  {
+    title: 'Transformação Digital',
+    desc: 'Planejamento e execução de iniciativas para transformar digitalmente os processos da empresa.',
+    items: [
+      'Roadmap de transformação',
+      'Treinamento de equipe',
+      'Recomendação de soluções e fornecedores'
+    ],
+    preco: 'R$ 1.697/mês | R$ 16.970/ano',
+    buttonText: 'Contratar'
+  },
+  {
+    title: 'Estratégico de TI',
+    desc: 'Criação de um plano de TI alinhado aos objetivos do negócio. Ideal para empresas que querem crescer com base em dados e tecnologia.',
+    items: [
+      'Planejamento estratégico de TI',
+      'Indicadores (KPIs)',
+      'Relatórios executivos mensais'
+    ],
+    preco: 'R$ 2.497/mês | R$ 24.970/ano',
+    buttonText: 'Contratar'
+  },
+  {
+    title: 'CTO as a Service (CTOaaS)',
+    desc: 'Você atua como um CTO externo, liderando tecnicamente a empresa de forma contínua.',
+    items: [
+      'Participação em decisões de alto nível',
+      'Gestão de equipe técnica (ou terceirizados)',
+      'Apresentações estratégicas para diretoria'
+    ],
+    preco: 'R$ 3.997/mês | R$ 39.970/ano',
+    buttonText: 'Contratar'
+  },
+  {
+    title: 'Full Stack Empresarial',
+    desc: 'Consultoria técnica + de produto + de negócios. Apoia desenvolvimento, marketing e estruturação completa.',
+    items: [
+      'Equipe de especialistas sob demanda',
+      'Projetos de software + infraestrutura',
+      'Suporte a lançamento de produtos'
+    ],
+    preco: 'R$ 6.997/mês | R$ 69.970/ano',
+    buttonText: 'Contratar'
+  },
+  {
+    title: 'Elite / C-Level Advisory',
+    desc: 'Consultoria confidencial e estratégica para sócios, CEOs, diretores. Suporte em tecnologia, inovação, segurança e posicionamento.',
+    items: [
+      'Acesso direto ao consultor (nível executivo)',
+      'Reuniões ilimitadas com agendamento',
+      'Diagnóstico profundo com parceiros de confiança'
+    ],
+    preco: 'R$ 9.997/mês | R$ 99.970/ano',
+    buttonText: 'Contratar'
+  }
 ]
 
+
 const softwareCards = [
-  { title: 'MVP Rápido', desc: 'Ideal para startups que precisam lançar rápido com baixo custo.', items: ['Até 3 telas principais', 'Backend básico incluso', 'Entrega em até 3 semanas'], preco: 'R$ 3.500', buttonText: 'Solicitar Orçamento' },
-  { title: 'Projeto Personalizado', desc: 'Para empresas que precisam de uma solução sob medida.', items: ['Levantamento de requisitos', 'Design de interface personalizado', 'Integração com APIs'], preco: 'A partir de R$ 7.000', buttonText: 'Solicitar Orçamento' },
-  { title: 'Software Completo', desc: 'Solução empresarial com painel administrativo e suporte contínuo.', items: ['Dashboard completo', 'Usuários e permissões', 'Suporte e manutenção 6 meses'], preco: 'Sob consulta', buttonText: 'Solicitar Orçamento' },
-  { title: 'Extra 1', desc: 'Software extra 1', items: ['Item 1', 'Item 2'], preco: 'R$ 4.000', buttonText: 'Solicitar Orçamento' },
-  { title: 'Extra 2', desc: 'Software extra 2', items: ['Item 1', 'Item 2'], preco: 'R$ 5.000', buttonText: 'Solicitar Orçamento' },
-  { title: 'Extra 3', desc: 'Software extra 3', items: ['Item 1', 'Item 2'], preco: 'R$ 6.000', buttonText: 'Solicitar Orçamento' },
-  { title: 'Extra 4', desc: 'Software extra 4', items: ['Item 1', 'Item 2'], preco: 'R$ 7.000', buttonText: 'Solicitar Orçamento' },
-  { title: 'Extra 5', desc: 'Software extra 5', items: ['Item 1', 'Item 2'], preco: 'R$ 8.000', buttonText: 'Solicitar Orçamento' },
-  { title: 'Extra 6', desc: 'Software extra 6', items: ['Item 1', 'Item 2'], preco: 'R$ 9.000', buttonText: 'Solicitar Orçamento' },
-  { title: 'Extra 7', desc: 'Software extra 7', items: ['Item 1', 'Item 2'], preco: 'R$ 10.000', buttonText: 'Solicitar Orçamento' },
+  {
+    title: 'Starter (MVP Rápido)',
+    desc: 'Ideal para validar uma ideia com um produto mínimo viável (MVP).',
+    items: [
+      'Levantamento de requisitos simplificado',
+      'Protótipo funcional (1 tela principal)',
+      'Backend leve (CRUD simples)',
+      'Hospedagem inicial'
+    ],
+    preco: 'R$ 1.497/mês (3 meses) | R$ 4.490 total',
+    buttonText: 'Solicitar Orçamento'
+  },
+  {
+    title: 'Essencial',
+    desc: 'Projeto pequeno com funcionalidades básicas de gestão e interface personalizada.',
+    items: [
+      'Até 3 módulos funcionais',
+      'Integração com banco de dados',
+      'Painel administrativo simples',
+      'Entrega em 30 a 45 dias'
+    ],
+    preco: 'R$ 2.497/mês | R$ 24.970/ano',
+    buttonText: 'Solicitar Orçamento'
+  },
+  {
+    title: 'Profissional',
+    desc: 'Solução com foco em controle, segurança e usabilidade. Ideal para empresas em crescimento.',
+    items: [
+      'Autenticação de usuários',
+      'Controle de permissões',
+      'Dashboard com indicadores',
+      'APIs documentadas'
+    ],
+    preco: 'R$ 3.497/mês | R$ 34.970/ano',
+    buttonText: 'Solicitar Orçamento'
+  },
+  {
+    title: 'Corporativo',
+    desc: 'Plataforma robusta com foco em automação e escalabilidade.',
+    items: [
+      'Arquitetura em microserviços ou modular',
+      'Integrações com sistemas externos (ERP, CRM)',
+      'Testes automatizados'
+    ],
+    preco: 'R$ 5.497/mês | R$ 54.970/ano',
+    buttonText: 'Solicitar Orçamento'
+  },
+  {
+    title: 'Growth (Expansão)',
+    desc: 'Focado em crescimento, analytics e performance.',
+    items: [
+      'Módulo de relatórios avançados',
+      'Otimização de performance',
+      'Integração com ferramentas de BI e marketing'
+    ],
+    preco: 'R$ 6.997/mês | R$ 69.970/ano',
+    buttonText: 'Solicitar Orçamento'
+  },
+  {
+    title: 'SaaS (Software como Serviço)',
+    desc: 'Desenvolvimento completo de um sistema no modelo SaaS (multiusuário com cobrança).',
+    items: [
+      'Painel de gestão multiempresa',
+      'Billing (assinaturas e pagamentos)',
+      'Hospedagem escalável (AWS, GCP ou Azure)'
+    ],
+    preco: 'R$ 8.997/mês | R$ 89.970/ano',
+    buttonText: 'Solicitar Orçamento'
+  },
+  {
+    title: 'App + Web',
+    desc: 'Entrega de plataforma completa com sistema web + aplicativo Android/iOS.',
+    items: [
+      'Backend unificado',
+      'App híbrido com design responsivo',
+      'Publicação nas lojas'
+    ],
+    preco: 'R$ 9.997/mês | R$ 99.970/ano',
+    buttonText: 'Solicitar Orçamento'
+  },
+  {
+    title: 'Integrações Corporativas',
+    desc: 'Ideal para empresas que precisam conectar seu sistema a outros softwares, ERPs, gateways ou APIs.',
+    items: [
+      'Integração com ERPs (SAP, TOTVS, Bling, etc.)',
+      'Integrações com Correios, PagSeguro, MercadoPago...',
+      'APIs REST, Webhooks e filas (Kafka/RabbitMQ)',
+      'Monitoramento e logs das integrações'
+    ],
+    preco: 'R$ 11.997/mês | R$ 119.970/ano',
+    buttonText: 'Solicitar Orçamento'
+  },
+  {
+    title: 'Full Outsourcing',
+    desc: 'Time de desenvolvimento dedicado para demandas contínuas e personalizadas.',
+    items: [
+      'Equipe alocada (PO, Devs, QA, UX)',
+      'Sprints quinzenais',
+      'Gestão via Jira ou ClickUp'
+    ],
+    preco: 'R$ 14.997/mês | R$ 149.970/ano',
+    buttonText: 'Solicitar Orçamento'
+  },
+  {
+    title: 'Elite / CTO Estratégico',
+    desc: 'Desenvolvimento contínuo + liderança estratégica de tecnologia.',
+    items: [
+      'Acompanhamento direto de um CTO',
+      'Inovação, AI, análise de dados, cibersegurança',
+      'Relatórios executivos e decisões técnicas'
+    ],
+    preco: 'R$ 19.997/mês | R$ 199.970/ano',
+    buttonText: 'Solicitar Orçamento'
+  }
 ]
 
 const currentIndexConsultoria = ref(0)
@@ -105,7 +309,10 @@ main.planos
     .container
       h2 Planos de Consultoria
       .slider
-        button.btn-prev(@click="prevConsultoria" :disabled="currentIndexConsultoria === 0") ‹
+        button.btn-prev(
+          @click="prevConsultoria"
+          :disabled="currentIndexConsultoria === 0"
+        ) ‹
         .cards-wrapper
           .cards(:style="`transform: translateX(-${translateXConsultoria}px)`")
             template(v-for="(card, i) in consultoriaCards" :key="i")
@@ -113,17 +320,27 @@ main.planos
                 h3 {{ card.title }}
                 p {{ card.desc }}
                 ul
-                  template(v-for="(item, j) in card.items" :key="j")
-                    li {{ item }}
+                  li.bullet-item(v-for="(item, j) in card.items" :key="j")
+                    span {{ item }}
                 span.preco {{ card.preco }}
-                button {{ card.buttonText }}
-        button.btn-next(@click="nextConsultoria" :disabled="currentIndexConsultoria >= maxIndexConsultoria") ›
+                a.btn-contato(
+                  href="https://wa.me/5511940090003?text=Olá,%20gostaria%20de%20solicitar%20um%20orçamento."
+                  target="_blank"
+                  rel="noopener noreferrer"
+                ) CONTATE-NOS
+        button.btn-next(
+          @click="nextConsultoria"
+          :disabled="currentIndexConsultoria >= maxIndexConsultoria"
+        ) ›
 
   section.software
     .container
       h2 Planos de Desenvolvimento de Software
       .slider
-        button.btn-prev(@click="prevSoftware" :disabled="currentIndexSoftware === 0") ‹
+        button.btn-prev(
+          @click="prevSoftware"
+          :disabled="currentIndexSoftware === 0"
+        ) ‹
         .cards-wrapper
           .cards(:style="`transform: translateX(-${translateXSoftware}px)`")
             template(v-for="(card, i) in softwareCards" :key="i")
@@ -131,19 +348,89 @@ main.planos
                 h3 {{ card.title }}
                 p {{ card.desc }}
                 ul
-                  template(v-for="(item, j) in card.items" :key="j")
-                    li {{ item }}
+                  li.bullet-item(v-for="(item, j) in card.items" :key="j")
+                    span {{ item }}
                 span.preco {{ card.preco }}
-                button {{ card.buttonText }}
-        button.btn-next(@click="nextSoftware" :disabled="currentIndexSoftware >= maxIndexSoftware") ›
+                a.btn-contato(
+                  href="https://wa.me/5511940090003?text=Olá,%20gostaria%20de%20solicitar%20um%20orçamento."
+                  target="_blank"
+                  rel="noopener noreferrer"
+                ) CONTATE-NOS
+        button.btn-next(
+          @click="nextSoftware"
+          :disabled="currentIndexSoftware >= maxIndexSoftware"
+        ) ›
+
+
 </template>
 
 <style scoped>
+
+body, * {
+  font-family: 'SuaFonteEscolhida', sans-serif !important;
+}
+.btn-contato {
+display: block;              
+  margin: 0 auto;              
+  padding: 10px 20px;          /* diminuiu um pouco o padding horizontal */
+  font-size: 16px;
+  font-weight: 600;
+  color: #ffffff;              
+  background-color: #15b600;
+  border: 0.5px solid #1e5200; /* borda mais fina */
+  border-radius: 6px;          
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  text-align: left;
+  text-decoration: none;       
+  font-family: inherit;
+  width: fit-content;          /* botão com largura mínima para o conteúdo */
+  min-width: 120px;
+  margin-top: -10px;
+}
+
+
+.btn-contato:hover {
+background-color: #34ff45;
+}
+.bullet-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+.check {
+  color: #567e5f;
+  font-weight: bold;
+  margin-right: 8px;
+}
+
+
+
+.check {
+  color: #000000; /* exemplo: laranja */
+  font-weight: bold;
+  margin-top: 0px;
+  flex-shrink: 0;
+}
+
+
+
+
+.arrow:hover {
+  color: #000000; /* muda a cor no hover */
+  transform: translateY(5px); /* anima a seta pra baixo */
+  cursor: pointer;
+  background-color: aliceblue;
+ 
+}
+
 .container {
-  max-width: 1200px;
+  max-width: 1500px;
   margin: 0 auto;
   text-align: center;
   position: relative;
+ 
 }
 
 h2 {
@@ -278,8 +565,9 @@ h2 {
 
 .planos {
   background-color: #f8f8f8;
-  color: #222;
+  color: #c9c9c9;
   padding: 4rem 2rem;
+  margin-bottom: -60px;
 }
 
 section {
@@ -296,7 +584,7 @@ section {
 h2 {
   font-size: 2.5rem;
   margin-bottom: 2rem;
-  color: #111;
+  color: #000000;
 }
 
 .slider {
@@ -320,7 +608,7 @@ h2 {
 }
 
 .card {
-  background: #fff;
+  background: #202020;
   border-radius: 12px;
   padding: 2rem;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
@@ -340,20 +628,23 @@ h2 {
 }
 
 .card:hover {
-  transform: translateY(-5px);
+ 
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
 }
 
 .card h3 {
   font-size: 1.5rem;
   margin-bottom: 0.5rem;
-  color: #000000;
+  color: #ffffff;
+  font-family: 'Times New Roman', Times, serif;
+  
 }
 
 .card p {
   font-size: 1rem;
-  color: #6e6e6e;
-  margin-bottom: 1rem;
+  color: #cfcfcf;
+  margin-bottom: 30px;
+  font-family: 'Times New Roman', Times, serif;
 }
 
 ul {
@@ -365,32 +656,16 @@ ul {
 
 ul li::before {
   content: '✓ ';
-  color: #fffd91;
+  color: #ffffff;
   margin-right: 0.5rem;
 }
 
 .preco {
   font-size: 1.2rem;
-  font-weight: bold;
-  color: #111;
+  color: #ffffff;
   margin-bottom: 1rem;
   display: inline-block;
 }
-
-button {
-  background-color: rgb(255, 245, 158);
-  color: #000000;
-  border: none;
-  padding: 0.75rem 1.5rem;
-  border-radius: 8px;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-button:hover {
-  background-color: #f7f463; /* verde claro */
-}
-
 
 button:disabled {
   opacity: 0.3;

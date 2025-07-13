@@ -6,6 +6,9 @@ import contaImg from '@/assets/conta.png'
 import logoImg from '@/assets/logocjl.png'
 import imagemEsquerda from '@/assets/img.jpg'
 import imagemDireita from '@/assets/tecnologiaa.webp'
+import imgPc from '@/assets/pc.webp'
+import imgPc2 from '@/assets/pc2.jpg'
+import imgCodigo1 from '@/assets/codigo1.jpg'
 
 // Quantidade visível de cards nos sliders
 const visibleCards = 3
@@ -223,36 +226,41 @@ onUnmounted(() => {
 // Lista de recursos com cards expansíveis
 const recursos = ref([
   {
-    titulo: 'Arquitetura robusta',
-    conteudo: 'Sistema com escalabilidade e performance aprimorada.',
+    titulo: 'Infraestrutura Resiliente',
+    conteudo: 'Oferecemos uma infraestrutura tecnológica robusta e altamente disponível, capaz de suportar o crescimento do seu negócio e resistir a falhas ou ataques. Nosso foco é garantir a continuidade operacional, com recursos que promovem escalabilidade, redundância e rápida recuperação em caso de incidentes.',
     aberto: false
   },
   {
-    titulo: 'Integração seamless',
-    conteudo: 'Integração fluida com outros sistemas e APIs.',
+    titulo: 'Integração Segura',
+    conteudo: 'Conectamos seus sistemas e plataformas de forma eficiente e segura, utilizando protocolos avançados que garantem a proteção dos dados em trânsito e em repouso. Essa integração otimiza processos internos, reduz falhas de comunicação e assegura que as informações trafeguem de forma confiável entre diferentes ambientes tecnológicos.',
     aberto: false
   },
   {
-    titulo: 'Base de dados centralizada',
-    conteudo: 'Gerenciamento central de dados com alta disponibilidade.',
+    titulo: 'Gerenciamento Centralizado de Riscos',
+    conteudo: 'Implementamos soluções que permitem monitorar, identificar e controlar riscos digitais em um único painel de gestão. Isso facilita a rápida tomada de decisões e a mitigação proativa de vulnerabilidades, protegendo sua empresa contra ameaças cibernéticas e garantindo conformidade com normas regulatórias.',
     aberto: false
   },
   {
-    titulo: 'Segurança avançada',
-    conteudo: 'Proteção de dados com criptografia e autenticação.',
+    titulo: 'Proteção Avançada de Dados',
+    conteudo: 'Adotamos práticas de segurança como criptografia de ponta a ponta, autenticação multifator e rigorosas políticas de controle de acesso para assegurar a confidencialidade e integridade das informações sensíveis da sua empresa. Dessa forma, minimizamos riscos de vazamentos e acessos não autorizados.',
     aberto: false
   },
   {
-    titulo: 'Tecnologia omnicanal',
-    conteudo: 'Experiência unificada em múltiplos canais de atendimento.',
+    titulo: 'Atendimento Multicanal Seguro',
+    conteudo: 'Disponibilizamos suporte técnico e atendimento ao cliente por múltiplos canais, todos protegidos por mecanismos de segurança que garantem a privacidade e a integridade das informações compartilhadas. Isso proporciona uma experiência confiável e eficiente, independentemente do meio utilizado para comunicação.',
     aberto: false
   }
 ])
 
-// Função para alternar o card aberto/fechado
-const alternar = (index: number) => {
+function alternar(index: number) {
   recursos.value[index].aberto = !recursos.value[index].aberto
 }
+
+
+function contrateNos() {
+  alert('Obrigado pelo interesse! Entraremos em contato em breve.')
+}
+
 </script>
 
 
@@ -273,24 +281,27 @@ section.banner-container
 
 section.rbm-fundo-total(id="sobre")
   .rbm-centro-conteudo
-    h2.rbm-titulo-central SOBRE A CONSULTORIA CJL
-    p.rbm-descricao-cinza Somos uma empresa de tecnologia especializada em soluções digitais personalizadas, consultoria estratégica e desenvolvimento de sistemas.
+    h2.rbm-titulo-central Soluções sob medida
+    p.rbm-descricao-cinza Cada negócio é único — e suas necessidades tecnológicas também. Por isso, nossa abordagem é totalmente personalizada. Desenvolvemos soluções sob medida, alinhadas aos objetivos estratégicos de cada cliente, considerando seu setor, porte, desafios operacionais e metas de crescimento.
 
 section.sessao-consultoria
   .imagem-lado
-    img(:src="contaImg" alt="Consultoria de TI")
+    img(:src="imgPc" alt="Consultoria de TI")
   .texto-lado
-    h2.titulo-consultoria Consultoria de TI Especializada
+    h2.titulo-consultoria Personalização e eficiência em cada etapa
     p.descricao-consultoria
-      | Nossa empresa de tecnologia oferece soluções inovadoras e personalizadas para transformar o seu negócio. Com uma equipe especializada em consultoria, desenvolvimento de software e suporte técnico, garantimos eficiência e segurança em cada projeto. Utilizamos as mais modernas ferramentas e metodologias para atender às necessidades específicas dos nossos clientes. Nosso compromisso é entregar resultados que impulsionem a produtividade e a competitividade no mercado. Valorizamos a transparência, o atendimento ágil e a parceria duradoura. Estamos prontos para ajudar sua empresa a crescer com tecnologia de ponta. Junte-se a nós e transforme o futuro da sua organização.
-
+      |Na nossa consultoria, entendemos que cada projeto de tecnologia exige atenção única e detalhada. Por isso, acompanhamos nossos clientes em todas as fases do processo — desde a análise inicial até a implementação e o suporte contínuo — garantindo que cada solução seja personalizada para atender às necessidades específicas e entregue com máxima eficiência. Ao combinar conhecimento técnico aprofundado com metodologias ágeis, conseguimos adaptar rapidamente nossas abordagens conforme os desafios evoluem, otimizando recursos e tempo. Essa dedicação faz toda a diferença para que as soluções não sejam apenas funcionais, mas também escaláveis e alinhadas aos objetivos estratégicos do negócio.
+    a.btn-contato(
+        href="https://wa.me/5511940090003?text=Olá,%20gostaria%20de%20solicitar%20um%20orçamento."
+        target="_blank"
+        rel="noopener noreferrer"
+      ) CONTATE-NOS
 section.bloco-sys(ref="secaoRef")
   .estrutura-sys
     .area-imagens-sys
-      img.figura-esq-ti(:src="imagemEsquerda" alt="Imagem esquerda" :class="{ 'ativo-esq': ativado }")
-      img.figura-dir-ti(:src="imagemDireita" alt="Imagem direita" :class="{ 'ativo-dir': ativado }")
+      img.figura-esq-ti(:src="imgPc2" alt="Imagem esquerda" :class="{ 'ativo-esq': ativado }")
+      img.figura-dir-ti(:src="imgCodigo1" alt="Imagem direita" :class="{ 'ativo-dir': ativado }")
     .area-texto-sys
-      h3.etiqueta-sys SOBRE NÓS
       h2.titulo-destaque-ti A CJL é uma empresa especializada na gestão de Tecnologia da Informação para pequenas e médias empresas.
 
       p.descricao-detalhe-ti
@@ -315,11 +326,97 @@ section.bloco-recursos-tec
           transition(name="deslizar")
             .conteudo-card-tec(v-show="item.aberto")
               p {{ item.conteudo }}
+              a.btn-contato(
+                href="https://wa.me/5511940090003?text=Olá,%20gostaria%20de%20solicitar%20um%20orçamento."
+                target="_blank"
+                rel="noopener noreferrer"
+              ) SAIBA MAIS
 
 </template>
 
 <style scoped>
+body, * {
+  font-family: 'SuaFonteEscolhida', sans-serif !important;
+}
+.btn-contato {
+  display: block;              
+  margin: 0 auto;              
+  padding: 10px 20px;          /* diminuiu um pouco o padding horizontal */
+  font-size: 16px;
+  font-weight: 600;
+  color: #ffffff;              
+  background-color: rgba(0, 0, 0, 0.8);
 
+  border: 0.5px solid #ffffff; /* borda mais fina */
+  border-radius: 6px;          
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  text-align: center;
+  text-decoration: none;       
+  font-family: inherit;
+  width: fit-content;          /* botão com largura mínima para o conteúdo */
+  min-width: 120px;            /* largura mínima opcional para o botão não ficar muito pequeno */
+  margin-top: 50px;
+  margin-bottom: 20px;
+}
+
+
+.btn-contato:hover {
+  background-color: #8f8f8f;
+  color: white;
+}
+.btn-centralizado {
+ display: block;              
+  margin: 0 auto;              
+  padding: 10px 20px;          /* diminuiu um pouco o padding horizontal */
+  font-size: 16px;
+  font-weight: 600;
+  color: #ffffff;              
+  background-color: #15b600;
+  border: 0.5px solid #1e5200; /* borda mais fina */
+  border-radius: 6px;          
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  text-align: left;
+  text-decoration: none;       
+  font-family: inherit;
+  width: fit-content;          /* botão com largura mínima para o conteúdo */
+  min-width: 120px;
+  margin-top: 20px;
+}
+.btn-centralizado:hover {
+  background-color: #34ff45;
+}
+.btn-contrate {
+display: block;              
+  margin: 0 auto;              
+  padding: 10px 20px;          /* diminuiu um pouco o padding horizontal */
+  font-size: 16px;
+  font-weight: 600;
+  color: #ffffff;              
+  background-color: #15b600;
+  border: 0.5px solid #1e5200; /* borda mais fina */
+  border-radius: 6px;          
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  text-align: left;
+  text-decoration: none;       
+  font-family: inherit;
+  width: fit-content;          /* botão com largura mínima para o conteúdo */
+  min-width: 120px;
+  margin-top: 20px;
+}
+
+.btn-contrate:hover {
+  background-color: #34ff45;
+}
+.arrow:hover {
+  color: #000000; /* muda a cor no hover */
+  transform: translateY(5px); /* anima a seta pra baixo */
+  cursor: pointer;
+  background-color: aliceblue;
+ 
+}
 
 @media (max-width: 768px) {
   .figura-esq-ti {
@@ -536,6 +633,7 @@ html {
   display: flex;
   justify-content: center;
   margin-top: -70px;
+  margin-bottom: -60px;
 }
 
 .estrutura-recursos-tec {
@@ -655,7 +753,7 @@ html {
 
    .figura-dir-ti {
     width: 340px;  
-    height: 350px; 
+    height: 250px; 
     top: -70px;       
     left: 170px;  
     z-index: 2;     
@@ -755,6 +853,7 @@ html {
   height: 400px; /* ajuste o valor conforme desejar */
   border-radius: 8px;
   object-fit: cover;
+  margin-top: -40px;
 }
 
 .texto-lado {

@@ -5,6 +5,8 @@ import LogoNexdom from '@/assets/logocjl.png'
 import FogosImg from '@/assets/fogos.png'
 import ImagemEquipe from '@/assets/consultoria.webp'
 import TecnologiaImg from '@/assets/tecnologia.png'
+import TecnologiaEmpresa from '@/assets/empresaa.avif'
+import Tecnologiamao from '@/assets/mao.png'
 
 
 // Formulário
@@ -25,56 +27,57 @@ const enviarFormulario = () => {
 // Cards do slider (exemplo com 2 por página)
 const cards = [
   {
-    icon: 'https://cdn-icons-png.flaticon.com/512/270/270798.png',
-    titulo: 'Gestão Inteligente',
-    descricao: 'Nossa plataforma oferece ferramentas modernas que otimizam a gestão de processos internos. Com ela, você consegue integrar setores, reduzir erros manuais e tomar decisões mais estratégicas com base em dados reais.'
+    icon: 'https://cdn-icons-png.flaticon.com/512/10471/10471457.png', // escudo com gráfico
+    titulo: 'Gestão de Riscos Digitais',
+    descricao: 'Identificamos e avaliamos riscos cibernéticos com precisão, criando estratégias robustas para proteger seus ativos digitais e garantir a continuidade do negócio diante de ameaças tecnológicas.'
   },
   {
-    icon: 'https://cdn-icons-png.flaticon.com/512/2011/2011448.png',
-    titulo: 'Automação de Tarefas',
-    descricao: 'A automação permite que tarefas repetitivas sejam executadas com rapidez e precisão. Isso libera sua equipe para focar em ações mais importantes, aumentando a produtividade e reduzindo o retrabalho nas rotinas operacionais.'
+    icon: 'https://cdn-icons-png.flaticon.com/512/5432/5432655.png', // robô com engrenagem
+    titulo: 'Automação de Segurança',
+    descricao: 'Automatize respostas a incidentes e atividades de monitoramento com soluções inteligentes. Isso garante reação rápida a ameaças e reduz o tempo de exposição a riscos.'
   },
   {
-    icon: 'https://cdn-icons-png.flaticon.com/512/847/847969.png',
-    titulo: 'Infraestrutura Digital',
-    descricao: 'Oferecemos uma infraestrutura digital robusta e escalável, capaz de suportar o crescimento do seu negócio. Com servidores em nuvem e segurança reforçada, sua operação permanece estável e protegida o tempo todo.'
+    icon: 'https://cdn-icons-png.flaticon.com/512/10471/10471299.png', // servidor com escudo
+    titulo: 'Infraestrutura Segura',
+    descricao: 'Desenvolvemos e gerenciamos uma infraestrutura digital com foco em segurança, resiliência e conformidade. Ideal para empresas que não podem correr riscos com seus dados e operações.'
   },
   {
-    icon: 'https://cdn-icons-png.flaticon.com/512/684/684908.png',
-    titulo: 'Suporte Técnico Ágil',
-    descricao: 'Nosso time de especialistas está sempre pronto para atender você. Resolvemos problemas técnicos com agilidade e oferecemos orientação personalizada para garantir o bom funcionamento das ferramentas utilizadas.'
+    icon: 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png', // equipe de resposta
+    titulo: 'Resposta a Incidentes',
+    descricao: 'Oferecemos suporte rápido e especializado para lidar com incidentes de segurança. Nossa equipe atua com planos de contenção, investigação e recuperação para minimizar impactos.'
   },
   {
-    icon: 'https://cdn-icons-png.flaticon.com/512/2721/2721295.png',
-    titulo: 'Inteligência Artificial',
-    descricao: 'Utilize o poder da inteligência artificial para antecipar necessidades, automatizar decisões e melhorar a experiência do cliente. Nossas soluções usam algoritmos avançados para transformar dados em estratégias.'
+    icon: 'https://cdn-icons-png.flaticon.com/512/10253/10253303.png', // IA cibernética
+    titulo: 'Inteligência em Ameaças',
+    descricao: 'Utilizamos inteligência artificial para detectar ameaças em tempo real, antecipar ataques e fortalecer sua defesa cibernética com base em dados e comportamentos anômalos.'
   },
   {
-    icon: 'https://cdn-icons-png.flaticon.com/512/2518/2518028.png',
-    titulo: 'Serviços em Nuvem',
-    descricao: 'Armazene e acesse suas informações de forma segura em qualquer lugar. Com nossos serviços em nuvem, você elimina riscos com backups automáticos e garante disponibilidade contínua para seus sistemas e dados.'
+    icon: 'https://cdn-icons-png.flaticon.com/512/4149/4149726.png', // nuvem protegida
+    titulo: 'Segurança em Nuvem',
+    descricao: 'Proteja seus ambientes em nuvem com configurações seguras, criptografia e monitoramento constante. Garantimos que sua operação remota esteja sempre protegida e disponível.'
   },
   {
-    icon: 'https://cdn-icons-png.flaticon.com/512/994/994928.png',
-    titulo: 'Análise de Dados',
-    descricao: 'Transforme informações brutas em insights valiosos com nossas ferramentas de análise. Entenda padrões de comportamento, visualize tendências e tome decisões baseadas em dados concretos e atualizados.'
+    icon: 'https://cdn-icons-png.flaticon.com/512/8274/8274645.png', // lupa com código
+    titulo: 'Análise Forense e de Logs',
+    descricao: 'Realizamos análise forense digital para investigar ataques, rastrear ações maliciosas e produzir evidências confiáveis. Monitoramento de logs auxilia na prevenção e auditoria contínua.'
   },
   {
-    icon: 'https://cdn-icons-png.flaticon.com/512/1139/1139983.png',
-    titulo: 'Integrações Inteligentes',
-    descricao: 'Conecte diferentes sistemas e plataformas em um único ambiente. Com integrações inteligentes, sua empresa ganha agilidade, reduz falhas de comunicação e garante maior eficiência em todos os setores.'
+    icon: 'https://cdn-icons-png.flaticon.com/512/2972/2972810.png', // integração de sistema
+    titulo: 'Integração de Soluções de Segurança',
+    descricao: 'Unificamos ferramentas e sistemas de segurança em uma plataforma integrada, promovendo maior visibilidade, controle centralizado e eficiência operacional.'
   },
   {
-    icon: 'https://cdn-icons-png.flaticon.com/512/906/906175.png',
-    titulo: 'Segurança da Informação',
-    descricao: 'Adotamos as melhores práticas de segurança digital para proteger seus dados. Com criptografia, controle de acesso e monitoramento constante, você trabalha com tranquilidade e conformidade com a LGPD.'
+    icon: 'https://cdn-icons-png.flaticon.com/512/4213/4213975.png', // privacidade e proteção de dados
+    titulo: 'Proteção de Dados e LGPD',
+    descricao: 'Garantimos a proteção de dados pessoais com medidas técnicas e administrativas adequadas, assegurando conformidade com a LGPD e outras regulamentações de privacidade.'
   },
   {
-    icon: 'https://cdn-icons-png.flaticon.com/512/483/483361.png',
-    titulo: 'Inovação Constante',
-    descricao: 'Estamos sempre buscando novas tecnologias para aprimorar nossos serviços. Inovamos continuamente para oferecer soluções modernas que acompanham as mudanças do mercado e impulsionam o seu crescimento.'
+    icon: 'https://cdn-icons-png.flaticon.com/512/3969/3969213.png', // inovação digital
+    titulo: 'Inovação em Cibersegurança',
+    descricao: 'Estamos sempre na vanguarda da cibersegurança, aplicando novas tecnologias e tendências para oferecer soluções modernas, eficazes e alinhadas às exigências do mercado digital.'
   }
 ]
+
 
 const cardsPerPage = 2
 const totalGroups = Math.ceil(cards.length / cardsPerPage)
@@ -248,42 +251,43 @@ onUnmounted(() => {
 
 const cartoes = ref([
   {
-    titulo: 'Gestão de planos de saúde',
-    icon: LogoNexdom,
-    textoTraseiro: 'Texto explicativo sobre planos de saúde...',
+    titulo: 'Sistema de Gestão para Condomínios',
+    icon: 'https://cdn.jsdelivr.net/npm/lucide-static/icons/home.svg',
+    textoTraseiro: 'Automatize a administração condominial com controle de boletos, reservas de áreas comuns, gestão de inadimplência, assembleias online e comunicação entre moradores e síndicos.',
     flip: false
   },
   {
-    titulo: 'Autorização e Atendimento',
-    icon: LogoNexdom,
-    textoTraseiro: 'Texto explicativo sobre autorização...',
+  titulo: 'Sistema para Oficinas Mecânicas',
+  icon: 'https://cdn.jsdelivr.net/npm/lucide-static/icons/wrench.svg',
+  textoTraseiro: 'Tenha total controle sobre ordens de serviço, estoque de peças, histórico de clientes, controle financeiro e gestão de agendamentos.',
+  flip: false
+},
+  {
+    titulo: 'Gestão de Folha de Pagamento',
+    icon: 'https://cdn.jsdelivr.net/npm/lucide-static/icons/file-text.svg',
+    textoTraseiro: 'Solução completa para cálculo de salários, encargos, benefícios, geração de holerites, integração com eSocial e relatórios contábeis.',
     flip: false
   },
   {
-    titulo: 'Ressarcimento ao SUS',
-    icon: LogoNexdom,
-    textoTraseiro: 'Texto explicativo sobre ressarcimento...',
+    titulo: 'Integração de Serviços',
+    icon: 'https://cdn.jsdelivr.net/npm/lucide-static/icons/link.svg',
+    textoTraseiro: 'Conectamos sistemas, APIs e bancos de dados para garantir a fluidez das suas operações e automatizar tarefas entre diferentes plataformas.',
     flip: false
   },
   {
-    titulo: 'Portal da empresa e beneficiário',
-    icon: LogoNexdom,
-    textoTraseiro: 'Texto explicativo sobre portal...',
+    titulo: 'Desenvolvimento de Softwares Sob Medida',
+    icon: 'https://cdn.jsdelivr.net/npm/lucide-static/icons/code.svg',
+    textoTraseiro: 'Criamos soluções personalizadas para atender às necessidades específicas do seu negócio, com foco em escalabilidade, segurança e performance.',
     flip: false
   },
   {
-    titulo: 'Gestão de relacionamento e Ouvidoria',
-    icon: LogoNexdom,
-    textoTraseiro: 'Texto explicativo sobre relacionamento...',
-    flip: false
-  },
-  {
-    titulo: 'Business Intelligence',
-    icon: LogoNexdom,
-    textoTraseiro: 'Texto explicativo sobre BI...',
+    titulo: 'Desenvolvimento de Aplicativos',
+    icon: 'https://cdn.jsdelivr.net/npm/lucide-static/icons/smartphone.svg',
+    textoTraseiro: 'Projetamos e desenvolvemos apps Android e iOS com interfaces modernas, usabilidade intuitiva e foco na experiência do usuário.',
     flip: false
   }
 ])
+
 
 function toggleFlip(index: number) {
   // Faz um deep clone do array para forçar reatividade completa
@@ -328,10 +332,11 @@ main.home
     .conteudo-solucao-nx
       .texto-solucao-nx
         p.subtitulo-nx
-          | Conheça
-          br
-          | nossas soluções
-        img.logo-solucao-nx(:src="LogoNexdom" alt="Logo Nexdom")
+        | Conheça nossas
+        br
+        | soluções
+        
+        img.logo-solucao-nx(:src="TecnologiaEmpresa" alt="Logo Nexdom")
 
       .grade-cartoes-nx
         .cartao-nx(
@@ -389,21 +394,21 @@ main.home
               span federações
 
         .grid-direita
-           img.img-animada(:src="TecnologiaImg" alt="Mapa do Brasil")
+           img.img-animada(:src="Tecnologiamao" alt="Mapa do Brasil")
 
   //- SESSÃO CJL
   section.sessao-cjl
     .card-cjl
       h2
-        strong.titulo-cinza Muito além
-        |  de um mero
-        span "cara da TI"
-        |  ou um simples
+        strong.titulo-cinza Muito além de um 
+        |  mero 
+        span "cara da TI" ou um
+        |   simples 
         span "apagador de incêndios".
       p.description
         | Oferecemos um grupo de profissionais especializados, prontos para atendê-lo de forma excepcional e eliminar definitivamente os seus problemas tecnológicos.
       a.btn-contato(
-        href="https://wa.me/5527992828470?text=Olá,%20gostaria%20de%20solicitar%20um%20orçamento."
+        href="https://wa.me/5511940090003?text=Olá,%20gostaria%20de%20solicitar%20um%20orçamento."
         target="_blank"
         rel="noopener noreferrer"
       ) CONTATE-NOS
@@ -415,7 +420,7 @@ section.slider-nx
   .fundo-laranja-nx
     .container-titulo-nx
       span.balao-nx Diferenciais
-      h2.titulo-nx Ser referência em tecnologia para a gestão da saúde.
+      h2.titulo-nx Cibersegurança Corporativa e Gestão Estratégica de Riscos Digitais.
     .slider-container-nx
       .cards-wrapper-nx
         .slide-track-nx
@@ -450,6 +455,30 @@ section.formulario-contato
 </template>
 
 <style scoped>
+body, * {
+  font-family: 'SuaFonteEscolhida', sans-serif !important;
+}
+
+.subtitulo-nx {
+  font-size: 10rem;
+  font-weight: bold;
+  color: white;
+  text-align: center;
+  margin-bottom: 50px;
+  line-height: 1.1;
+}
+
+.icone-nx {
+  width: 40px;
+  height: 40px;
+  margin-top: 0px;
+  margin-left: 0px;
+  filter: invert(1); /* deixa branco */
+  opacity: 0.9;
+  margin-bottom: 3rem;
+}
+
+
 .cartao-nx {
   background-color: #ccc;
   padding: 20px;
@@ -473,7 +502,8 @@ section.formulario-contato
 
 .cartao-nx.vermelho {
   /* Altura expandida quando o card está aberto */
-  height: 240px;
+  height: 150px;
+  background-color: #fdff9b;
 }
 
 /* Parte da frente sempre visível quando fechado */
@@ -488,6 +518,7 @@ section.formulario-contato
   display: none;
   flex-direction: column;
   gap: 10px;
+  font-size: 0.9rem;
 }
 
 /* Mostrar verso quando aberto */
@@ -761,7 +792,7 @@ section.formulario-contato
     justify-content: flex-start; /* conteúdo começa mais pra cima, mas com padding empurra pra baixo */
     align-items: flex-start;
     box-sizing: border-box;
-    min-height: 1250px; /* altura maior para não sobrepor conteúdo */
+    min-height: 150px; /* altura maior para não sobrepor conteúdo */
     gap: 0.8rem; /* diminui o espaçamento entre título e cards */
   }
 
@@ -908,7 +939,7 @@ section.formulario-contato {
   background: transparent;
   border: none;
   font-size: 1.5rem;
-  color: white;
+  color: rgb(80, 80, 80);
   cursor: pointer;
 }
 
@@ -918,13 +949,15 @@ section.formulario-contato {
 
 .cartao-nx.preto {
   background-color: rgb(20, 20, 20) !important; /* ou a cor preta que estiver usando */
-  color: white; /* para o texto ficar visível */
+  color: rgb(172, 172, 172); /* para o texto ficar visível */
 }
 
 .tras .botao-nx:hover {
   background-color: #222; /* escurece levemente ao passar o mouse */
 }
-
+.tras .botao-nx {
+  background-color: #2c2c2c; /* escurece levemente ao passar o mouse */
+}
 .espaco-rolagem {
  
   width: 100%;
@@ -940,7 +973,11 @@ section.sobre h2 {
   display: inline-block; /* pra que o pseudo fique alinhado ao texto */
   padding-left: 10px; /* espaço para a linha */
 }
-
+.tras .botao-nx {
+  background-color: rgb(26, 26, 26);
+  color: white;
+  border: none;
+}
 section.sobre h2::before {
   content: "";
   position: absolute;
@@ -1208,7 +1245,7 @@ textarea:focus {
   background-color: #000000;
   padding: 60px 30px;
   font-family: Arial, sans-serif;
-  max-height: 600px;
+  max-height: 1500px;
 }
 
 .conteudo-solucao-nx {
@@ -1224,29 +1261,21 @@ textarea:focus {
   flex: 1;
   min-width: 250px;
   position: relative; /* necessário para posicionar a logo dentro dele */
-  margin-top: 0px;
+  margin-top: -50px;
+  align-items: c;
+  font-size: 2.0rem;
 }
 
-.subtitulo-nx {
-  font-size: 2.2rem;
-  color: #ffffff;
-  margin-top: 10px; /* empurra o subtítulo para baixo */
-  margin-bottom: 50px;
-  text-align: left;
-  margin-left: 35px;
-  font-family: inherit;
-  line-height: 1;
-}
 
 .logo-solucao-nx {
-  width: 500px;
+  width: 400px;
   height: auto;
   position: absolute;
   top: 0;
   left: 0;
   margin: 0;
-  transform: translate(-60px, -80px);
-  margin-top: 100px;
+  transform: translate(-10px, 20px);
+  margin-top: 160px;
 }
 
 .grade-cartoes-nx {
@@ -1259,15 +1288,6 @@ textarea:focus {
   position: relative;
   
   
-}
-
-
-
-.icone-nx {
-  width: 120px;
-  height: 120px;
-  margin-top: -40px;
-  margin-left: -30px;
 }
 
 .botao-nx {
@@ -1398,19 +1418,19 @@ textarea:focus {
   align-self: flex-start;
 }
 .card-metrica.dourado {
-  background-color: #dddddd;
+  background-color: #282288;
   color: #ffffff;
 }
 .card-metrica.branco {
-  background-color: #999999;
+  background-color: #ff841f;
   color: #ffffff;
 }
 .card-metrica.cinza-escuro {
-  background-color: #686868;
+  background-color: #fcee2b;
   color: #ffffff;
 }
 .card-metrica.preto {
- background-color: #a7a7a7;
+ background-color: #2c5f1f;
   color: #ffffff;
 }
 .titulo-clientes {
@@ -1756,6 +1776,7 @@ textarea:focus {
   padding: 40px 20px;
   display: flex;
   justify-content: center;
+  margin-bottom: -60px;
 }
 
 .container-form {
@@ -1766,6 +1787,7 @@ textarea:focus {
   width: 100%;
   max-width: 500px;
   box-sizing: border-box;
+  margin-top: -60px;
 }
 
 .titulo-contato {
