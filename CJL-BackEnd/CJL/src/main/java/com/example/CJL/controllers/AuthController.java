@@ -18,12 +18,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.AuthenticationException;
+import java.util.HashMap;
+import java.util.Map;
+
 
 @RestController
 @RequestMapping("/api/auth")
@@ -105,5 +107,48 @@ public class AuthController {
         } catch (AuthenticationException e){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Credenciais inválidas");
         }
+    }
+
+    @Operation(
+            summary = "Obter dados do usuário autenticado",
+            description = "Retorna os dados do usuário logado com base no token JWT fornecido no header Authorization"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Dados do usuário retornados com sucesso",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(example = """
+                {
+                  "nome": "Henrique",
+                  "email": "henrique@email.com",
+                  "genero": "Masculino",
+                  "cidade": "São Paulo",
+                  "estado": "SP",
+                  "cep": "01001-000"
+                }
+            """))),
+            @ApiResponse(responseCode = "404", description = "Usuário não encontrado",
+                    content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "401", description = "Token JWT ausente ou inválido",
+                    content = @Content(schema = @Schema(hidden = true)))
+    })
+    @GetMapping("/dados")
+    public ResponseEntity<?> getLoggerUser(@AuthenticationPrincipal UserDetails userDetails){
+        String email = userDetails.getUsername();
+
+        var user = userRepository.findByEmail(email);
+        if (user.isEmpty()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuário não encontrado");
+        }
+
+        var dadosUser = user.get();
+        Map<String, Object> response = new HashMap<>();
+        response.put("nome", dadosUser.getNome());
+        response.put("email",dadosUser.getEmail());
+        response.put("genero",dadosUser.getGenero());
+        response.put("cidade",dadosUser.getCidade());
+        response.put("estado",dadosUser.getEstado());
+        response.put("cep",dadosUser.getCep());
+
+        return ResponseEntity.ok(response);
     }
 }
