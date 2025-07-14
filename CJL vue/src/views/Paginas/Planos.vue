@@ -444,7 +444,7 @@ h2 {
   .cards-wrapper {
     width: 360px !important;
     overflow: hidden !important;
-    transform: translateX(-72jpx); /* ajusta o valor negativo conforme quiser */
+    transform: translateX(-74px); /* ajusta o valor negativo conforme quiser */
     margin-bottom: 100px;
   }
 
@@ -462,7 +462,7 @@ h2 {
   .btn-next {
     position: absolute !important;
     top: 50%;
-    transform: translateY(-50%);
+    transform: translateX(-72px); /* agora sim! */
     z-index: 10;
     font-size: 32px;
     background: transparent;
@@ -472,13 +472,24 @@ h2 {
   }
 
   .btn-prev {
-    left: -35px !important; /* totalmente fora do card */
+    left: -50px !important; /* totalmente fora do card */
   }
 
   .btn-next {
-    right: -45px !important; /* totalmente fora do card */
+    right: -50px !important; /* totalmente fora do card */
   }
 }
+@media (max-width: 430px) and (min-width: 426px) {
+  .cards-wrapper {
+    transform: translateX(-55px) !important; /* menos puxado à esquerda */
+  }
+
+  .btn-prev,
+  .btn-next {
+    transform: translateY(-50%) translateX(0px) !important; /* corrige a seta */
+  }
+}
+
 @media (max-width: 992px) {
   .banner-with-text {
     max-width: 100% !important;

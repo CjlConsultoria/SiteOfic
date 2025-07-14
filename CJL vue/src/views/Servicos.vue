@@ -420,16 +420,17 @@ button:hover {
     font-size: 32px;
     background: transparent;
     border: none;
-    color: rgb(44, 44, 44) !important;
+    color: rgb(68, 68, 68) !important;
     cursor: pointer;
   }
 
   .btn-prev {
-    left: -35px !important; /* totalmente fora do card */
+    left: -80px !important; /* totalmente fora do card */
+ 
   }
 
   .btn-next {
-    right: -45px !important; /* totalmente fora do card */
+    right: -80px !important; /* totalmente fora do card */
   }
 }
 
@@ -531,6 +532,13 @@ button:hover {
     margin-top: 0;
     position: relative;
     top: -50px;           /* sobe 8px */
+  }
+}
+@media (max-width: 768px) {
+  .cards-wrapper {
+    width: 360px !important;
+    overflow: hidden !important;
+    transform: translateX(-74px); /* aumentei o deslocamento */
   }
 }
 

@@ -338,6 +338,24 @@ section.bloco-recursos-tec
 body, * {
   font-family: 'SuaFonteEscolhida', sans-serif !important;
 }
+@media (max-width: 768px) {
+  section.bloco-sys .estrutura-sys .area-imagens-sys img.figura-esq-ti {
+    margin-left: 30px !important;
+    
+  }
+}
+@media (max-width: 768px) {
+  section.bloco-sys .estrutura-sys .area-imagens-sys {
+    margin-bottom: 90px;
+  }
+}
+@media (max-width: 428px) {
+  .figura-esq-ti {
+    left: 20px !important;
+  }
+}
+
+
 .btn-contato {
   display: block;              
   margin: 0 auto;              

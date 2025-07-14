@@ -458,6 +458,20 @@ section.formulario-contato
 body, * {
   font-family: 'SuaFonteEscolhida', sans-serif !important;
 }
+@media (max-width: 768px) {
+  section.bloco-solucao-nx .grade-cartoes-nx .cartao-nx .tras {
+    font-size: 13px !important;
+  }
+}
+@media (max-width: 768px) {
+  section.sobre {
+    padding: 600px 20px;  /* aumenta o padding superior e inferior para deixar o fundo maior */
+    /* Ou você pode usar min-height, se preferir */
+    /* min-height: 400px; */
+    padding-top: 60px;
+  }
+}
+
 
 .subtitulo-nx {
   font-size: 10rem;
@@ -837,7 +851,7 @@ body, * {
   }
 
   .cartao-nx {
-    width: 160px;
+    width: 270px;
     font-size: 0.9rem;
     padding: 0.8rem;
   }
@@ -1343,6 +1357,7 @@ textarea:focus {
     text-align: center;
     margin-bottom: 40px;
   }
+  
 }
 
 .grade-cartoes-nx .cartao-nx p {
