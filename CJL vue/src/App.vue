@@ -11,6 +11,9 @@ function irParaLogin() {
 function irParaRegistre() {
   router.push('/registre')
 }
+function irParaURLExterna() {
+  window.open('https://convivium-front.onrender.com/inicio', '_blank') // ou use window.location.href se quiser na mesma aba
+}
 
 const isScrolled = ref(false)
 const isMenuOpen = ref(false)
@@ -59,6 +62,7 @@ div.layout-wrapper
       .auth-buttons
         //-button.login-btn(@click="irParaLogin") Login
         //-button.register-btn(@click="irParaRegistre") Registre-se
+        button.external-btn(@click="irParaURLExterna") Sistema
 
   main.main-content
     RouterView

@@ -36,7 +36,7 @@ const consultoriaCards = [
       'Suporte via e-mail/WhatsApp',
       'Avaliação inicial da infraestrutura'
     ],
-    preco: 'R$ 297/mês | R$ 2.970/ano',
+    preco: 'R$ 297,00/mês | R$ 2.970,00/ano',
     buttonText: 'Contratar'
   },
   {
@@ -46,7 +46,7 @@ const consultoriaCards = [
       'Reunião inicial + entrega de diagnóstico técnico',
       'Avaliação de sistemas, segurança, e processos'
     ],
-    preco: 'R$ 497/mês | R$ 4.970/ano',
+    preco: 'R$ 497,00/mês | R$ 4.970,00/ano',
     buttonText: 'Contratar'
   },
   {
@@ -57,7 +57,7 @@ const consultoriaCards = [
       'Orientação sobre ferramentas e processos',
       'Acesso a materiais técnicos'
     ],
-    preco: 'R$ 697/mês | R$ 6.970/ano',
+    preco: 'R$ 697,00/mês | R$ 6.970,00/ano',
     buttonText: 'Contratar'
   },
   {
@@ -68,7 +68,7 @@ const consultoriaCards = [
       'Apoio a decisões operacionais',
       'Treinamentos leves sob demanda'
     ],
-    preco: 'R$ 997/mês | R$ 9.970/ano',
+    preco: 'R$ 997,00/mês | R$ 9.970,00/ano',
     buttonText: 'Contratar'
   },
   {
@@ -79,7 +79,7 @@ const consultoriaCards = [
       'Implementação de ferramentas low-code/no-code',
       'KPI básico'
     ],
-    preco: 'R$ 1.297/mês | R$ 12.970/ano',
+    preco: 'R$ 1.297,00/mês | R$ 12.970,00/ano',
     buttonText: 'Contratar'
   },
   {
@@ -90,7 +90,7 @@ const consultoriaCards = [
       'Treinamento de equipe',
       'Recomendação de soluções e fornecedores'
     ],
-    preco: 'R$ 1.697/mês | R$ 16.970/ano',
+    preco: 'R$ 1.697,00/mês | R$ 16.970,00/ano',
     buttonText: 'Contratar'
   },
   {
@@ -101,7 +101,7 @@ const consultoriaCards = [
       'Indicadores (KPIs)',
       'Relatórios executivos mensais'
     ],
-    preco: 'R$ 2.497/mês | R$ 24.970/ano',
+    preco: 'R$ 2.497,00/mês | R$ 24.970,00/ano',
     buttonText: 'Contratar'
   },
   {
@@ -112,7 +112,7 @@ const consultoriaCards = [
       'Gestão de equipe técnica (ou terceirizados)',
       'Apresentações estratégicas para diretoria'
     ],
-    preco: 'R$ 3.997/mês | R$ 39.970/ano',
+    preco: 'R$ 3.997,00/mês | R$ 39.970,00/ano',
     buttonText: 'Contratar'
   },
   {
@@ -123,7 +123,7 @@ const consultoriaCards = [
       'Projetos de software + infraestrutura',
       'Suporte a lançamento de produtos'
     ],
-    preco: 'R$ 6.997/mês | R$ 69.970/ano',
+    preco: 'R$ 6.997,00/mês | R$ 69.970,00/ano',
     buttonText: 'Contratar'
   },
   {
@@ -134,7 +134,7 @@ const consultoriaCards = [
       'Reuniões ilimitadas com agendamento',
       'Diagnóstico profundo com parceiros de confiança'
     ],
-    preco: 'R$ 9.997/mês | R$ 99.970/ano',
+    preco: 'R$ 9.997,00/mês | R$ 99.970,00/ano',
     buttonText: 'Contratar'
   }
 ]
@@ -150,7 +150,7 @@ const softwareCards = [
       'Backend leve (CRUD simples)',
       'Hospedagem inicial'
     ],
-    preco: 'R$ 1.497/mês (3 meses) | R$ 4.490 total',
+    preco: 'R$ 1.497,00/mês (3 meses) | R$ 4.490,00 total',
     buttonText: 'Solicitar Orçamento'
   },
   {
@@ -162,7 +162,7 @@ const softwareCards = [
       'Painel administrativo simples',
       'Entrega em 30 a 45 dias'
     ],
-    preco: 'R$ 2.497/mês | R$ 24.970/ano',
+    preco: 'R$ 2.497,00/mês | R$ 24.970,00/ano',
     buttonText: 'Solicitar Orçamento'
   },
   {
@@ -174,7 +174,7 @@ const softwareCards = [
       'Dashboard com indicadores',
       'APIs documentadas'
     ],
-    preco: 'R$ 3.497/mês | R$ 34.970/ano',
+    preco: 'R$ 3.497,00/mês | R$ 34.970,00/ano',
     buttonText: 'Solicitar Orçamento'
   },
   {
@@ -185,7 +185,7 @@ const softwareCards = [
       'Integrações com sistemas externos (ERP, CRM)',
       'Testes automatizados'
     ],
-    preco: 'R$ 5.497/mês | R$ 54.970/ano',
+    preco: 'R$ 5.497,00/mês | R$ 54.970,00/ano',
     buttonText: 'Solicitar Orçamento'
   },
   {
@@ -196,7 +196,7 @@ const softwareCards = [
       'Otimização de performance',
       'Integração com ferramentas de BI e marketing'
     ],
-    preco: 'R$ 6.997/mês | R$ 69.970/ano',
+    preco: 'R$ 6.997,00/mês | R$ 69.970,00/ano',
     buttonText: 'Solicitar Orçamento'
   },
   {
@@ -207,7 +207,7 @@ const softwareCards = [
       'Billing (assinaturas e pagamentos)',
       'Hospedagem escalável (AWS, GCP ou Azure)'
     ],
-    preco: 'R$ 8.997/mês | R$ 89.970/ano',
+    preco: 'R$ 8.997,00/mês | R$ 89.970,00/ano',
     buttonText: 'Solicitar Orçamento'
   },
   {
@@ -218,7 +218,7 @@ const softwareCards = [
       'App híbrido com design responsivo',
       'Publicação nas lojas'
     ],
-    preco: 'R$ 9.997/mês | R$ 99.970/ano',
+    preco: 'R$ 9.997,00/mês | R$ 99.970,00/ano',
     buttonText: 'Solicitar Orçamento'
   },
   {
@@ -230,7 +230,7 @@ const softwareCards = [
       'APIs REST, Webhooks e filas (Kafka/RabbitMQ)',
       'Monitoramento e logs das integrações'
     ],
-    preco: 'R$ 11.997/mês | R$ 119.970/ano',
+    preco: 'R$ 11.997,00/mês | R$ 119.970,00/ano',
     buttonText: 'Solicitar Orçamento'
   },
   {
@@ -241,7 +241,7 @@ const softwareCards = [
       'Sprints quinzenais',
       'Gestão via Jira ou ClickUp'
     ],
-    preco: 'R$ 14.997/mês | R$ 149.970/ano',
+    preco: 'R$ 14.997,00/mês | R$ 149.970,00/ano',
     buttonText: 'Solicitar Orçamento'
   },
   {
@@ -252,7 +252,7 @@ const softwareCards = [
       'Inovação, AI, análise de dados, cibersegurança',
       'Relatórios executivos e decisões técnicas'
     ],
-    preco: 'R$ 19.997/mês | R$ 199.970/ano',
+    preco: 'R$ 19.997,00/mês | R$ 199.970,00/ano',
     buttonText: 'Solicitar Orçamento'
   }
 ]
@@ -366,8 +366,7 @@ main.planos
 
 <style scoped>
 html, body {
-  margin: 0;
-  padding: 0;
+
   overflow-x: hidden; /* para evitar scroll horizontal */
 }
 body, * {
