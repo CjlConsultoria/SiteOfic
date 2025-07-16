@@ -62,7 +62,8 @@ div.layout-wrapper
       .auth-buttons
         //-button.login-btn(@click="irParaLogin") Login
         //-button.register-btn(@click="irParaRegistre") Registre-se
-        button.external-btn(@click="irParaURLExterna") Sistema
+        button.external-btn(@click="irParaURLExterna") Convivium
+
 
   main.main-content
     RouterView
@@ -72,6 +73,24 @@ div.layout-wrapper
 </template>
 
 <style scoped>
+.auth-buttons .external-btn {
+  background-color: transparent;
+  border: 1px solid #FFD700;   /* amarelo ouro */
+  color: #ffffff;
+  padding: 0.4rem 1rem;
+  font-size: 1rem;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+  font-weight: 600;
+}
+
+.auth-buttons .external-btn:hover,
+.auth-buttons .external-btn:focus {
+  background-color: #FFD700;
+  color: #1e1e1e; /* texto escuro quando fundo é amarelo */
+  border-color: #FFD700;
+}
 
 /* Botão hamburguer (visível só em telas pequenas) */
 /* Botão hamburguer */
