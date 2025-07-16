@@ -52,6 +52,11 @@ div.layout-wrapper
         RouterLink(to="/servicos") Serviços
         RouterLink(to="/planos") Planos
 
+        .mobile-auth-buttons
+          button.login-btn(@click="irParaLogin") Login
+          button.register-btn(@click="irParaRegistre") Registre-se
+          button.external-btn(@click="irParaURLExterna") Convivium
+
       // Menu desktop
       nav.menu-desktop
         RouterLink(to="/") Início
@@ -73,6 +78,71 @@ div.layout-wrapper
 </template>
 
 <style scoped>
+@media (max-width: 768px) {
+  .hamburguer {
+    display: block;
+  }
+
+  .menu-desktop {
+    display: none;
+  }
+
+  /* >>> Esconde os botões fora do menu no mobile <<< */
+  .auth-buttons {
+    display: none !important;
+  }
+
+  .menu-mobile {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .menu-mobile::after {
+    content: '';
+    display: block;
+    margin: 10px 0;
+  }
+
+  .menu-mobile .mobile-auth-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 20px;
+  }
+
+  /* Estilo base para TODOS os botões no mobile */
+  .menu-mobile .mobile-auth-buttons button {
+    background-color: transparent;
+    border: 1px solid white;
+    color: white;
+    padding: 0.4rem 1rem;
+    font-size: 1rem;
+    border-radius: 4px;
+    font-weight: 600;
+    transition: background-color 0.3s, color 0.3s;
+    cursor: pointer;
+  }
+
+  /* Hover geral para botões (login e registre) */
+  .menu-mobile .mobile-auth-buttons button:hover {
+    background-color: white;
+    color: #1e1e1e;
+  }
+
+  /* Estilo especial para o último botão (Convivium) */
+  .menu-mobile .mobile-auth-buttons button:last-child {
+    border: 1px solid #FFD700;
+    color: white;
+  }
+
+  .menu-mobile .mobile-auth-buttons button:last-child:hover {
+    background-color: #FFD700;
+    color: #1e1e1e;
+  }
+}
+
+
+
 .auth-buttons .external-btn {
   background-color: transparent;
   border: 1px solid #FFD700;   /* amarelo ouro */
