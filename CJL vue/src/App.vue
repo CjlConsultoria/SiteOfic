@@ -53,8 +53,8 @@ div.layout-wrapper
         RouterLink(to="/planos") Planos
 
         .mobile-auth-buttons
-          button.login-btn(@click="irParaLogin") Login
-          button.register-btn(@click="irParaRegistre") Registre-se
+          -//button.login-btn(@click="irParaLogin") Login
+          //-button.register-btn(@click="irParaRegistre") Registre-se
           button.external-btn(@click="irParaURLExterna") Convivium
 
       // Menu desktop
