@@ -472,7 +472,11 @@ body, * {
   }
 }
 
-
+html, body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden; /* para evitar scroll horizontal */
+}
 .subtitulo-nx {
   font-size: 10rem;
   font-weight: bold;

@@ -365,7 +365,11 @@ main.planos
 </template>
 
 <style scoped>
-
+html, body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden; /* para evitar scroll horizontal */
+}
 body, * {
   font-family: 'SuaFonteEscolhida', sans-serif !important;
 }
