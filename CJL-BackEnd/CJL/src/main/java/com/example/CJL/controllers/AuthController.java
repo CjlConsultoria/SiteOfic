@@ -3,6 +3,7 @@ package com.example.CJL.controllers;
 import com.example.CJL.dtos.JwtResponseDTO;
 import com.example.CJL.dtos.LoginRequestDTO;
 import com.example.CJL.dtos.UserRequestDTO;
+import com.example.CJL.dtos.enums.RoleName;
 import com.example.CJL.entities.Role;
 import com.example.CJL.entities.User;
 import com.example.CJL.repositories.RoleRepository;
@@ -87,7 +88,7 @@ public class AuthController {
         user.setCidade(endereco.getLocalidade());
         user.setEstado(endereco.getUf());
 
-        Role defaultRole = roleRepository.findByNome("ROLE_USER")
+        Role defaultRole = roleRepository.findByNome(RoleName.ROLE_USER)
                 .orElseThrow(() -> new RuntimeException("Role não encontrada"));
 
         user.getRoles().add(defaultRole);

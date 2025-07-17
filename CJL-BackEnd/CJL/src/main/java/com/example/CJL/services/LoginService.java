@@ -31,6 +31,10 @@ public class LoginService {
             return ("Usuário não encontrado");
         }
 
+        if (user.getEmail().isEmpty()){
+            return ("Usuário não encontrado");
+        }
+
         if (bCryptPasswordEncoder.matches(senha, user.getSenha())){
             return jwtUtil.generateToken(email);
 
