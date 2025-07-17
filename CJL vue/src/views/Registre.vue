@@ -222,20 +222,21 @@ section.registro-multi
 <script setup>
 import { reactive, ref } from 'vue'
 
-// Estado da etapa atual do formulário
 const etapaAtual = ref(1)
 
-// Dados para selects de data de nascimento
 const dias = Array.from({ length: 31 }, (_, i) => i + 1)
+
 const meses = [
   'Janeiro', 'Fevereiro', 'Março', 'Abril',
   'Maio', 'Junho', 'Julho', 'Agosto',
   'Setembro', 'Outubro', 'Novembro', 'Dezembro'
 ]
-const anos = []
-for (let a = 2025; a >= 1900; a--) anos.push(a)
 
-// Formulário reativo
+const anos = []
+for (let a = 2025; a >= 1900; a--) {
+  anos.push(a)
+}
+
 const form = reactive({
   nome: '',
   sobrenome: '',
@@ -254,7 +255,6 @@ const form = reactive({
   confirmaSenha: ''
 })
 
-// Estado reativo dos erros de validação
 const erros = reactive({
   nome: false,
   sobrenome: false,
@@ -279,18 +279,21 @@ const erros = reactive({
   senhasDiferentes: false
 })
 
-// Mostrar ou ocultar senha
 const mostrarSenha = ref(false)
 
-// ===== VALIDAÇÃO DAS ETAPAS =====
+const enviando = ref(false)
 
-const validarEtapa1 = () => {
+const mensagemSucesso = ref('')
+
+const mensagemErro = ref('')
+
+function validarEtapa1() {
   erros.nome = form.nome.trim() === ''
   erros.sobrenome = false
   return !erros.nome
 }
 
-const validarEtapa2 = () => {
+function validarEtapa2() {
   const dia = +form.dia
   const mes = +form.mes
   const ano = +form.ano
@@ -326,7 +329,7 @@ function temMaisDe18Anos(dia, mes, ano) {
   return idade >= 18
 }
 
-const validarEtapa3 = () => {
+function validarEtapa3() {
   erros.cepInvalido = !form.cep.match(/^\d{5}-?\d{3}$/)
   erros.ruaInvalida = form.rua.trim() === ''
   erros.numeroInvalido = form.numero.trim() === ''
@@ -345,7 +348,7 @@ const validarEtapa3 = () => {
   return !erros.enderecoIncompleto
 }
 
-const validarEtapa4 = () => {
+function validarEtapa4() {
   erros.emailVazio = form.email.trim() === ''
   erros.emailInvalido = !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)
 
@@ -365,10 +368,8 @@ const validarEtapa4 = () => {
   )
 }
 
-// ===== FUNÇÃO CORRIGIDA PARA BUSCAR ENDEREÇO PELO CEP =====
-
-const buscarEndereco = async () => {
-  const cepLimpo = form.cep.replace(/\D/g, '') // remove tudo que não for número
+async function buscarEndereco() {
+  const cepLimpo = form.cep.replace(/\D/g, '')
   const cepValido = /^\d{8}$/.test(cepLimpo)
   erros.cepInvalido = !cepValido
 
@@ -406,23 +407,79 @@ const buscarEndereco = async () => {
     console.error('Erro ao buscar CEP:', error)
   }
 }
-// ===== FUNÇÃO PARA AVANÇAR ETAPAS =====
 
-const proximaEtapa = () => {
+async function enviarCadastro() {
+  enviando.value = true
+  mensagemErro.value = ''
+  mensagemSucesso.value = ''
+
+  const dadosParaEnviar = {
+    nome: form.nome.trim(),
+    sobrenome: form.sobrenome.trim(),
+    dataNascimento: `${form.ano}-${String(form.mes).padStart(2, '0')}-${String(form.dia).padStart(2, '0')}`,
+    genero: form.genero,
+    endereco: {
+      cep: form.cep,
+      rua: form.rua.trim(),
+      numero: form.numero.trim(),
+      bairro: form.bairro.trim(),
+      cidade: form.cidade.trim(),
+      estado: form.estado.trim()
+    },
+    email: form.email.trim(),
+    senha: form.senha
+  }
+
+  try {
+    const resposta = await fetch('https://seu-backend.com/api/registro', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(dadosParaEnviar)
+    })
+
+    if (!resposta.ok) {
+      const errorData = await resposta.json()
+      mensagemErro.value = errorData.message || 'Erro ao registrar. Tente novamente.'
+      enviando.value = false
+      return
+    }
+
+    mensagemSucesso.value = 'Cadastro concluído com sucesso!'
+    enviando.value = false
+  } catch (error) {
+    mensagemErro.value = 'Erro na comunicação com o servidor. Tente novamente mais tarde.'
+    enviando.value = false
+    console.error('Erro no envio:', error)
+  }
+}
+
+const proximaEtapa = async () => {
+  // Limpar mensagens a cada clique para não acumular
+  mensagemErro.value = ''
+  mensagemSucesso.value = ''
+
   if (etapaAtual.value === 1) {
-    if (validarEtapa1()) etapaAtual.value++
+    if (validarEtapa1()) {
+      etapaAtual.value++
+    }
   } else if (etapaAtual.value === 2) {
-    if (validarEtapa2()) etapaAtual.value++
+    if (validarEtapa2()) {
+      etapaAtual.value++
+    }
   } else if (etapaAtual.value === 3) {
-    if (validarEtapa3()) etapaAtual.value++
+    if (validarEtapa3()) {
+      etapaAtual.value++
+    }
   } else if (etapaAtual.value === 4) {
     if (validarEtapa4()) {
-      alert('Cadastro concluído com sucesso!')
-      // Aqui você pode adicionar envio real dos dados
+      await enviarCadastro()
     }
   }
 }
 </script>
+
 
 <style scoped>
 body, * {
