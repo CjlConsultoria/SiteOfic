@@ -3,9 +3,12 @@ package com.example.CJL.controllers;
 import com.example.CJL.dtos.JwtResponseDTO;
 import com.example.CJL.dtos.LoginRequestDTO;
 import com.example.CJL.dtos.UserRequestDTO;
+import com.example.CJL.entities.Role;
 import com.example.CJL.entities.User;
+import com.example.CJL.repositories.RoleRepository;
 import com.example.CJL.repositories.UserRepository;
 import com.example.CJL.security.JwtUtil;
+import com.example.CJL.services.LoginService;
 import com.example.CJL.services.ViaCepService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -37,6 +40,9 @@ public class AuthController {
     private UserRepository userRepository;
 
     @Autowired
+    private RoleRepository roleRepository;
+
+    @Autowired
     private AuthenticationManager authenticationManager;
 
     @Autowired
@@ -47,6 +53,9 @@ public class AuthController {
 
     @Autowired
     private ViaCepService viaCepService;
+
+    @Autowired
+    private LoginService loginService;
 
 
     @Operation(summary = "Registrar novo usuário", description = "Cria um novo usuário com os dados fornecidos, incluindo endereço via CEP.")
@@ -78,7 +87,13 @@ public class AuthController {
         user.setCidade(endereco.getLocalidade());
         user.setEstado(endereco.getUf());
 
+        Role defaultRole = roleRepository.findByNome("ROLE_USER")
+                .orElseThrow(() -> new RuntimeException("Role não encontrada"));
+
+        user.getRoles().add(defaultRole);
+
         userRepository.save(user);
+
         return ResponseEntity.ok("Usuário registrado com sucesso");
     }
 
@@ -99,10 +114,7 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<?> login (@RequestBody LoginRequestDTO dto){
         try{
-            authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(dto.getEmail(), dto.getSenha())
-            );
-            String token = jwtUtil.generateToken(dto.getEmail());
+            String token =  loginService.LoginAuthentication(dto.getEmail(), dto.getSenha());
             return ResponseEntity.ok(new JwtResponseDTO(token));
         } catch (AuthenticationException e){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Credenciais inválidas");
@@ -148,6 +160,10 @@ public class AuthController {
         response.put("cidade",dadosUser.getCidade());
         response.put("estado",dadosUser.getEstado());
         response.put("cep",dadosUser.getCep());
+
+        response.put("roles", dadosUser.getRoles().stream()
+                .map(Role::getNome)
+                .toList());
 
         return ResponseEntity.ok(response);
     }
