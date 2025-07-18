@@ -21,12 +21,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.security.core.AuthenticationException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -112,15 +111,18 @@ public class AuthController {
             @ApiResponse(responseCode = "500", description = "Erro interno do servidor",
                     content = @Content(schema = @Schema(hidden = true)))
     })
+
     @PostMapping("/login")
     public ResponseEntity<?> login (@RequestBody LoginRequestDTO dto){
-        try{
-            String token =  loginService.LoginAuthentication(dto.getEmail(), dto.getSenha());
+        try {
+            String token = loginService.LoginAuthentication(dto.getEmail(), dto.getSenha());
             return ResponseEntity.ok(new JwtResponseDTO(token));
-        } catch (AuthenticationException e){
+        } catch (UsernameNotFoundException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Credenciais inválidas");
         }
     }
+
+
 
     @Operation(
             summary = "Obter dados do usuário autenticado",
