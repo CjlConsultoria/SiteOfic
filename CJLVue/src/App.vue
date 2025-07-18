@@ -14,8 +14,11 @@ const userDropdownOpen = ref(false)
 const usuario = reactive({
   nomeCompleto: '',
   email: '',
-  fotoUrl:
-    'https://thumbs.dreamstime.com/b/vetor-de-%C3%ADcone-perfil-do-avatar-padr%C3%A3o-foto-usu%C3%A1rio-m%C3%ADdia-social-183042379.jpg'
+  fotoUrl: 'https://thumbs.dreamstime.com/b/vetor-de-%C3%ADcone-perfil-do-avatar-padr%C3%A3o-foto-usu%C3%A1rio-m%C3%ADdia-social-183042379.jpg',
+  cep: '-',
+  cidade: '-',
+  estado: '-',
+  genero: '-'
 })
 
 function irParaLogin() {
@@ -44,7 +47,14 @@ function toggleUserDropdown() {
 
 function logoff() {
   userDropdownOpen.value = false
-  localStorage.removeItem('token') // Remove o token ao fazer logout
+  localStorage.removeItem('token')
+  usuario.nomeCompleto = ''
+  usuario.email = ''
+  usuario.fotoUrl = 'https://thumbs.dreamstime.com/b/vetor-de-%C3%ADcone-perfil-do-avatar-padr%C3%A3o-foto-usu%C3%A1rio-m%C3%ADdia-social-183042379.jpg'
+  usuario.cep = '-'
+  usuario.cidade = '-'
+  usuario.estado = '-'
+  usuario.genero = '-'// Remove o token ao fazer logout
   router.push('/login')
 }
 
@@ -56,40 +66,52 @@ watch(
   { immediate: true }
 )
 
-async function buscarUsuarioLogado() {
-  const token = localStorage.getItem('token')
-  if (!token) {
-    logoff() // Se não tem token, força logout/redireciona login
-    return
-  }
-
-  try {
-    const resposta = await axios.get('https://seubackend.com/api/perfil', {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    })
-
-    const dados = resposta.data
-    usuario.nomeCompleto = dados.nome || 'Usuário'
-    usuario.email = dados.email || 'email@exemplo.com'
-    usuario.fotoUrl =
-      dados.fotoUrl ||
-      'https://thumbs.dreamstime.com/b/vetor-de-%C3%ADcone-perfil-do-avatar-padr%C3%A3o-foto-usu%C3%A1rio-m%C3%ADdia-social-183042379.jpg'
-  } catch (erro) {
-    console.error('Erro ao buscar usuário logado:', erro)
-    logoff() // Token inválido ou erro, força logout
-  }
-}
-
 onMounted(() => {
   window.addEventListener('scroll', onScroll)
-  buscarUsuarioLogado() // Atualiza dados do usuário no load
+  buscarUsuarioLogado()
+
+  window.addEventListener('atualizarUsuario', buscarUsuarioLogado)
 })
 
 onUnmounted(() => {
   window.removeEventListener('scroll', onScroll)
+  window.removeEventListener('atualizarUsuario', buscarUsuarioLogado)
 })
+
+async function buscarUsuarioLogado() {
+  const token = localStorage.getItem('token')
+  if (!token) {
+    logoff()
+    return
+  }
+
+  try {
+    const resposta = await axios.get('http://localhost:8080/api/auth/dados', {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+
+    const dados = resposta.data
+
+    usuario.nomeCompleto = dados.apelido
+      ? dados.apelido
+      : (dados.nome && dados.sobrenome)
+        ? `${dados.nome} ${dados.sobrenome}`
+        : dados.nome || 'Usuário'
+
+    usuario.email = dados.email || 'email@exemplo.com'
+    usuario.cep = dados.cep || '-'
+    usuario.cidade = dados.cidade || '-'
+    usuario.estado = dados.estado || '-'
+    usuario.genero = dados.genero || '-'
+    usuario.fotoUrl = dados.fotoUrl || 'https://thumbs.dreamstime.com/b/vetor-de-%C3%ADcone-perfil-do-avatar-padr%C3%A3o-foto-usu%C3%A1rio-m%C3%ADdia-social-183042379.jpg'
+
+  } catch (erro: any) {
+    console.error('Erro ao buscar usuário logado:', erro)
+    if (erro.response?.status === 401) {
+      logoff()
+    }
+  }
+}
 </script>
 
 
@@ -115,6 +137,10 @@ div.layout-wrapper(:class="{ 'layout-plataforma': ehPlataforma }")
           div.user-dropdown-google(v-if="userDropdownOpen")
             img.foto-perfil-google(:src="usuario.fotoUrl", alt="Foto do perfil")
             h3.ola-msg Olá, {{ usuario.nomeCompleto.split(' ')[0] }}!
+            p {{ usuario.email }}
+            p {{ usuario.genero }}
+            p {{ usuario.cidade }} - {{ usuario.estado }}
+            p CEP: {{ usuario.cep }}
             button.gerenciar-conta Gerenciar sua Conta CJL
             hr
             button.adicionar-conta Visualizar Licenças

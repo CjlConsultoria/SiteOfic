@@ -51,7 +51,7 @@ const cards = [
 <template lang="pug">
 .app
   aside.sidebar(:class="{ open: menuAberto }")
-    .logo 
+    .logo
     nav.menu
       ul.menu-principal
         li(v-for="item in menuPrincipal" :key="item.label")
@@ -77,7 +77,7 @@ const cards = [
           img(:src="card.logo", alt="Logo CJL")
         .software-card-content
           h3 {{ card.title }}
-          p.software-card-author Desenvolvido por 
+          p.software-card-author Desenvolvido por
             strong {{ card.author }}
           p.software-card-description {{ card.description }}
         .software-card-rating
@@ -139,7 +139,7 @@ const cards = [
   position: relative;
   margin-top: 20px;
   min-height: 220px;
-  
+
 }
 
 .software-card-logo img {
