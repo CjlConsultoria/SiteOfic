@@ -92,11 +92,10 @@ async function buscarUsuarioLogado() {
 
     const dados = resposta.data
 
-    usuario.nomeCompleto = dados.apelido
-      ? dados.apelido
-      : (dados.nome && dados.sobrenome)
-        ? `${dados.nome} ${dados.sobrenome}`
-        : dados.nome || 'Usuário'
+    usuario.nomeCompleto = (dados.nome && dados.sobrenome)
+  ? `${dados.nome} ${dados.sobrenome}`
+  : dados.nome || dados.apelido || 'Usuário'
+
 
     usuario.email = dados.email || 'email@exemplo.com'
     usuario.cep = dados.cep || '-'
@@ -118,6 +117,7 @@ async function buscarUsuarioLogado() {
 <template lang="pug">
 div.layout-wrapper(:class="{ 'layout-plataforma': ehPlataforma }")
 
+  //- Se estiver na rota da Plataforma
   template(v-if="ehPlataforma")
     header.fixed-header(:class="{ scrolled: isScrolled }")
       .wrapper
@@ -134,22 +134,31 @@ div.layout-wrapper(:class="{ 'layout-plataforma': ehPlataforma }")
             aria-haspopup="true"
             :aria-expanded="userDropdownOpen"
           )
+
           div.user-dropdown-google(v-if="userDropdownOpen")
+            //- Botão de fechar
+            button.fechar-dropdown(@click="userDropdownOpen = false" aria-label="Fechar") ×
+
             img.foto-perfil-google(:src="usuario.fotoUrl", alt="Foto do perfil")
             h3.ola-msg Olá, {{ usuario.nomeCompleto.split(' ')[0] }}!
+            p.nome-completo {{ usuario.nomeCompleto }}
             p {{ usuario.email }}
-            p {{ usuario.genero }}
-            p {{ usuario.cidade }} - {{ usuario.estado }}
-            p CEP: {{ usuario.cep }}
+
+            //-Informações adicionais, se quiser ativar
+            //-p {{ usuario.genero }}
+            //-p {{ usuario.cidade }} - {{ usuario.estado }}
+            //-p CEP: {{ usuario.cep }}
+
             button.gerenciar-conta Gerenciar sua Conta CJL
             hr
-            button.adicionar-conta Visualizar Licenças
             button.sair(@click="logoff") Sair
+
             .links-google
               a(href="#", target="_blank") Política de Privacidade
               span ·
               a(href="#", target="_blank") Termos de Serviço
 
+  //- Se não estiver na rota da Plataforma
   template(v-else)
     header.fixed-header(:class="{ scrolled: isScrolled }")
       .wrapper
@@ -176,16 +185,26 @@ div.layout-wrapper(:class="{ 'layout-plataforma': ehPlataforma }")
           RouterLink.external-btn.link-btn(to="/registre") Registrar
           button.external-btn(@click="irParaURLExterna") Convivium
 
-
+  //- Conteúdo principal
   main.main-content
     RouterView
 
+  //- Rodapé fixo
   footer.fixed-footer
     p © 2025 - Todos os direitos reservados
 </template>
 
 
+
+
+
 <style scoped>
+.nome-completo {
+  font-size: 0.9rem;
+  color: #444;
+  margin-bottom: 2px;
+}
+
 .fixed-footer {
   position: relative;
   bottom: 0;
@@ -197,6 +216,25 @@ div.layout-wrapper(:class="{ 'layout-plataforma': ehPlataforma }")
   padding: 1rem;
   z-index: 1000;
   margin-top: -50px;
+}
+.layout-plataforma .fechar-dropdown {
+  position: absolute;
+  top: 8px;
+  right: 12px;
+  background: transparent;
+  border: none;
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #555;
+  cursor: pointer;
+  transition: box-shadow 0.2s ease;
+  border-radius: 50%;
+  padding: 2px 8px;
+  line-height: 1;
+}
+
+.layout-plataforma .fechar-dropdown:hover {
+  box-shadow: 0 0 8px 4px rgba(0, 0, 0, 0.2); /* sombra clara arredondada */
 }
 
 :global(html, body) {
@@ -253,8 +291,8 @@ button.external-btn:hover {
   position: absolute;
   top: 60px;
   right: 0;
-  width: 340px;
-  background: white;
+  width: 370px;
+  background: rgb(236, 236, 236);
   color: #202124;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
   border-radius: 20px;
@@ -270,6 +308,7 @@ button.external-btn:hover {
   object-fit: cover;
   border-radius: 50%;
   margin: auto;
+  margin-top: 20px;
 }
 
 .layout-plataforma .ola-msg {
@@ -287,6 +326,7 @@ button.external-btn:hover {
   font-size: 0.9rem;
   border-radius: 25px;
   margin-bottom: 1rem;
+  margin-top: 1rem;
   cursor: pointer;
 }
 .layout-plataforma .gerenciar-conta:hover {
