@@ -64,10 +64,12 @@ public class AuthController {
             @ApiResponse(responseCode = "400", description = "E-mail já utilizado"),
             @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
     })
+
     @PostMapping("/register")
-    public ResponseEntity<String> register (@RequestBody UserRequestDTO dto){
+    public ResponseEntity<Map<String, String>> register(@RequestBody UserRequestDTO dto){
         if (userRepository.existsByEmail(dto.getEmail())){
-            return ResponseEntity.badRequest().body("Email já utilizado");
+            Map<String, String> errorResponse = Map.of("message", "Email já utilizado");
+            return ResponseEntity.badRequest().body(errorResponse);
         }
 
         User user = new User();
@@ -94,7 +96,8 @@ public class AuthController {
 
         userRepository.save(user);
 
-        return ResponseEntity.ok("Usuário registrado com sucesso");
+        Map<String, String> response = Map.of("message", "Usuário registrado com sucesso");
+        return ResponseEntity.ok(response);
     }
 
     @Operation(
@@ -121,8 +124,6 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Credenciais inválidas");
         }
     }
-
-
 
     @Operation(
             summary = "Obter dados do usuário autenticado",
