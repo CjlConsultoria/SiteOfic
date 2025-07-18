@@ -82,10 +82,9 @@ async function buscarUsuarioLogado() {
   }
 }
 
-onMounted(async () => {
+onMounted(() => {
   window.addEventListener('scroll', onScroll)
-  await buscarUsuarioLogado() // Espera os dados chegarem
-  console.log('Usuário:', usuario)
+  buscarUsuarioLogado() // Atualiza dados do usuário no load
 })
 
 onUnmounted(() => {
@@ -103,7 +102,6 @@ div.layout-wrapper(:class="{ 'layout-plataforma': ehPlataforma }")
         img.logo(src="@/assets/logocjl.png" alt="Logo CJL" width="60" height="60")
 
         .user-menu
-          span.user-name {{ usuario.nomeCompleto.split(' ')[0] }}
           img.user-photo(
             :src="usuario.fotoUrl"
             alt="Foto do usuário"
@@ -149,9 +147,9 @@ div.layout-wrapper(:class="{ 'layout-plataforma': ehPlataforma }")
 
         .auth-buttons
           a.external-btn.link-btn(href="/login") Login
-          a.external-btn.link-btn(href="/registre") Registrar
+          RouterLink.external-btn.link-btn(to="/registre") Registrar
           button.external-btn(@click="irParaURLExterna") Convivium
-          
+
 
   main.main-content
     RouterView
@@ -161,46 +159,7 @@ div.layout-wrapper(:class="{ 'layout-plataforma': ehPlataforma }")
 </template>
 
 
-
 <style scoped>
-.user-name {
-  color: white;
-  margin-right: 8px;
-  font-weight: 600;
-}
-
-.layout-plataforma .user-menu {
-  margin-left: auto;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  color: white;
-  font-weight: 600;
-  cursor: default;
-  user-select: none;
-}
-
-.layout-plataforma .user-name {
-  font-size: 1rem;
-  white-space: nowrap;
-}
-
-.layout-plataforma .user-photo {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 2px solid rgb(0, 0, 0);
-  cursor: pointer;
-  transition: box-shadow 0.3s ease;
-}
-
-.layout-plataforma .user-photo:hover,
-.layout-plataforma .user-photo:focus {
-  box-shadow: 0 0 8px 2px #ffe920;
-  outline: none;
-}
-
 .fixed-footer {
   position: relative;
   bottom: 0;
@@ -407,7 +366,7 @@ button.external-btn:hover {
   object-fit: cover;
   border: 2px solid rgb(0, 0, 0);
   transition: box-shadow 0.3s ease;
-  
+
 }
 
 .user-photo:hover,
@@ -430,7 +389,7 @@ button.external-btn:hover {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  
+
 }
 
 .user-dropdown p {

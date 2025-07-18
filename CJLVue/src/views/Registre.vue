@@ -25,28 +25,31 @@ section.registro-multi
             placeholder=" ",
             id="nome"
           )
-          label(for="nome") Nome
-          span.mensagem-erro(v-if="erros.nome") Por favor, insira seu nome.
+          label(for="nome") Nome próprio
+
+        span.mensagem-erro(v-if="erros.nome") Introduza o nome próprio.
 
         .input-group
           input(
-            type="text",
-            v-model="form.sobrenome",
-            :class="{ 'input-erro': erros.sobrenome }",
-            placeholder=" ",
+            type="text"
+            v-model="form.sobrenome"
+            :class="{ 'input-erro': erros.sobrenome }"
+            placeholder=" "
             id="sobrenome"
           )
           label(for="sobrenome") Sobrenome
-          span.mensagem-erro(v-if="erros.sobrenome") Por favor, insira seu sobrenome.
+
+        span.mensagem-erro(v-if="erros.sobrenome") Introduza o sobrenome.
 
         .input-group
           input(
-            type="text",
-            v-model="form.apelido",
-            placeholder=" ",
+            type="text"
+            v-model="form.apelido"
+            :class="{ 'input-erro': erros.apelido }"
+            placeholder=" "
             id="apelido"
           )
-          label(for="apelido") Apelido (opcional)
+          label(for="apelido") Apelido (Opcional)
 
         section.botoes
           button(type="submit") Seguinte
@@ -236,7 +239,9 @@ import router from '@/router'
 const enviarCadastro = async () => {
   try {
     const dadosParaEnviar = {
-      nome: form.nome.trim() + (form.sobrenome.trim() ? ' ' + form.sobrenome.trim() : ''),
+      nome: form.nome.trim(),
+      sobrenome: form.sobrenome.trim(),
+      apelido:form.apelido.trim(),
       diaNascimento: Number(form.dia),
       mesNascimento: Number(form.mes),
       anoNascimento: Number(form.ano),
@@ -301,7 +306,7 @@ for (let a = 2025; a >= 1900; a--) anos.push(a)
 const form = reactive({
   nome: '',
   sobrenome: '',
-  apelido: '', 
+  apelido: '',
   dia: '',
   mes: '',
   ano: '',
@@ -352,8 +357,6 @@ const validarEtapa1 = () => {
   erros.sobrenome = form.sobrenome.trim() === ''
   return !erros.nome && !erros.sobrenome
 }
-
-
 
 const validarEtapa2 = () => {
   const dia = +form.dia
@@ -474,26 +477,20 @@ const buscarEndereco = async () => {
 // ===== FUNÇÃO PARA AVANÇAR ETAPAS =====
 
 const proximaEtapa = () => {
-  switch (etapaAtual.value) {
-    case 1:
-      if (!validarEtapa1()) return
-      break
-    case 2:
-      if (!validarEtapa2()) return
-      break
-    case 3:
-      if (!validarEtapa3()) return
-      break
-    case 4:
-      if (!validarEtapa4()) return
+  if (etapaAtual.value === 1) {
+    if (validarEtapa1()) etapaAtual.value++
+  } else if (etapaAtual.value === 2) {
+    if (validarEtapa2()) etapaAtual.value++
+  } else if (etapaAtual.value === 3) {
+    if (validarEtapa3()) etapaAtual.value++
+  } else if (etapaAtual.value === 4) {
+    if (validarEtapa4()) {
       enviarCadastro()
       alert('Cadastro concluído com sucesso!')
-      return // evita incrementar etapa após finalização
+      // Aqui você pode adicionar envio real dos dados
+    }
   }
-
-  etapaAtual.value++
 }
-
 </script>
 
 <style scoped>
@@ -502,6 +499,7 @@ body, * {
 }
 
 /* Espaçamento extra somente nas mensagens de erro da Etapa 2 */
+
 .mensagem-erro-etapa2 + .mensagem-erro-etapa2 {
   margin-top: 8px;
 }
@@ -517,7 +515,7 @@ body, * {
   display: flex;
   align-items: center;
   gap: 6px; /* espaçamento pequeno entre checkbox e texto */
-  margin-top: -15px; /* se quiser tirar o espaço, ajuste aqui */
+  margin-top: -12px; /* se quiser tirar o espaço, ajuste aqui */
 }
 
 .input-group input[type="checkbox"] {
@@ -569,24 +567,7 @@ body, * {
   flex-direction: column;
   gap:14px; /* reduz o espaçamento entre os campos */
   margin-bottom: 8px;
-  padding-bottom: 90px;
 }
-.input-group {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 40px; /* espaçamento interno entre input, label e span */
-  margin-bottom: 20px; /* espaçamento entre os blocos de campos */
-}
-
-.mensagem-erro {
-  color: red;
-  font-size: 0.875rem;
-  display: block; /* garante que margin e padding funcionem melhor */
-  padding-top: 30px; /* empurra para baixo */
-  margin-top: 0; /* zera margin-top para não conflitar */
-}
-
 
 .endereco .input-group {
   margin-bottom: 8px; /* diminui o espaço entre os inputs */
@@ -796,7 +777,7 @@ form {
   gap: 6px;
   font-family: Roboto, Arial, sans-serif;
   user-select: text;
-  margin-top: -60px;
+  margin-top: -50px;
 }
 
 .mensagem-erro-etapa2 {
