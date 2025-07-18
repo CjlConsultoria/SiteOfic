@@ -20,8 +20,7 @@ section.registro-multi
           id="email"
         )
         label(for="email") Email
-
-      span.mensagem-erro(v-if="erroEmail") O email é obrigatório.
+        span.mensagem-erro(v-if="erroEmail") O email é obrigatório.
 
       .input-group
         input(
@@ -32,8 +31,7 @@ section.registro-multi
           id="senha"
         )
         label(for="senha") Senha
-
-      span.mensagem-erro(v-if="erroSenha") A senha é obrigatória.
+        span.mensagem-erro(v-if="erroSenha") A senha é obrigatória.
 
       .input-group
         input(type="checkbox", id="mostrarSenha", v-model="mostrarSenha")
@@ -43,6 +41,7 @@ section.registro-multi
         button(type="submit") Entrar
         span.mensagem-erro(v-if="mensagemErro")= mensagemErro
 </template>
+
 
 <script setup>
 import { ref, watch, onMounted } from 'vue'
@@ -168,9 +167,12 @@ form {
   position: relative;
   margin-bottom: 16px;
   display: flex;
-  align-items: center;
-  gap: 6px;
+  flex-direction: column; /* 👈 ESSENCIAL */
+  align-items: flex-start; /* Alinha à esquerda */
+  gap: 4px; /* Espaçamento vertical entre os elementos */
+  
 }
+
 
 .input-group input[type="checkbox"] {
   width: 12px;
@@ -256,15 +258,16 @@ form {
 }
 
 .mensagem-erro {
-  font-size: 12px;
+  font-size: 11px;
   color: #d93025;
   display: flex;
   align-items: center;
   gap: 6px;
   font-family: Roboto, Arial, sans-serif;
   user-select: text;
-  margin-top: -30px;
+  margin-top: 2px;
 }
+
 
 .mensagem-erro::before {
   content: '!';
