@@ -27,17 +27,29 @@ section.registro-multi
           )
           label(for="nome") Nome próprio
 
+        span.mensagem-erro(v-if="erros.nome") Introduza o nome próprio.
+
         .input-group
           input(
             type="text"
             v-model="form.sobrenome"
-            :class="{ 'input-erro': erros.nome }"
+            :class="{ 'input-erro': erros.sobrenome }"
             placeholder=" "
             id="sobrenome"
           )
-          label(for="sobrenome") Apelido (opcional)
+          label(for="sobrenome") Sobrenome
 
-        span.mensagem-erro(v-if="erros.nome") Introduza o nome próprio.
+        span.mensagem-erro(v-if="erros.sobrenome") Introduza o sobrenome.
+
+        .input-group
+          input(
+            type="text"
+            v-model="form.apelido"
+            :class="{ 'input-erro': erros.apelido }"
+            placeholder=" "
+            id="apelido"
+          )
+          label(for="apelido") Apelido (Opcional)
 
         section.botoes
           button(type="submit") Seguinte
@@ -227,7 +239,9 @@ import router from '@/router'
 const enviarCadastro = async () => {
   try {
     const dadosParaEnviar = {
-      nome: form.nome.trim() + (form.sobrenome.trim() ? ' ' + form.sobrenome.trim() : ''),
+      nome: form.nome.trim(),
+      sobrenome: form.sobrenome.trim(),
+      apelido:form.apelido.trim(),
       diaNascimento: Number(form.dia),
       mesNascimento: Number(form.mes),
       anoNascimento: Number(form.ano),
@@ -292,6 +306,7 @@ for (let a = 2025; a >= 1900; a--) anos.push(a)
 const form = reactive({
   nome: '',
   sobrenome: '',
+  apelido: '',
   dia: '',
   mes: '',
   ano: '',
@@ -339,8 +354,8 @@ const mostrarSenha = ref(false)
 
 const validarEtapa1 = () => {
   erros.nome = form.nome.trim() === ''
-  erros.sobrenome = false
-  return !erros.nome
+  erros.sobrenome = form.sobrenome.trim() === ''
+  return !erros.nome && !erros.sobrenome
 }
 
 const validarEtapa2 = () => {
@@ -484,6 +499,7 @@ body, * {
 }
 
 /* Espaçamento extra somente nas mensagens de erro da Etapa 2 */
+
 .mensagem-erro-etapa2 + .mensagem-erro-etapa2 {
   margin-top: 8px;
 }

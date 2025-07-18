@@ -74,6 +74,8 @@ public class AuthController {
 
         User user = new User();
         user.setNome(dto.getNome());
+        user.setSobrenome(dto.getSobrenome());
+        user.setApelido(dto.getApelido());
         user.setDiaNascimento(dto.getDiaNascimento());
         user.setMesNascimento(dto.getMesNascimento());
         user.setAnoNascimento(dto.getAnoNascimento());
@@ -147,6 +149,7 @@ public class AuthController {
             @ApiResponse(responseCode = "401", description = "Token JWT ausente ou inválido",
                     content = @Content(schema = @Schema(hidden = true)))
     })
+
     @GetMapping("/dados")
     public ResponseEntity<?> getLoggerUser(@AuthenticationPrincipal UserDetails userDetails){
         String email = userDetails.getUsername();
@@ -159,6 +162,10 @@ public class AuthController {
         var dadosUser = user.get();
         Map<String, Object> response = new HashMap<>();
         response.put("nome", dadosUser.getNome());
+        response.put("sobrenome", dadosUser.getSobrenome());
+        if (dadosUser.getApelido()!= null && !dadosUser.getApelido().isBlank()){
+            response.put("apelido",dadosUser.getApelido());
+        }
         response.put("email",dadosUser.getEmail());
         response.put("genero",dadosUser.getGenero());
         response.put("cidade",dadosUser.getCidade());

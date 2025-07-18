@@ -5,6 +5,8 @@ import lombok.Data;
 @Data
 public class UserRequestDTO {
     private String nome;
+    private String sobrenome;
+    private String apelido;
     private int diaNascimento;
     private int mesNascimento;
     private int anoNascimento;
