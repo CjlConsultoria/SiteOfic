@@ -1,8 +1,25 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref, reactive, watch, onMounted, onUnmounted } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
+import axios from 'axios'
 
 const router = useRouter()
+const route = useRoute()
+
+const isScrolled = ref(false)
+const isMenuOpen = ref(false)
+const ehPlataforma = ref(false)
+const userDropdownOpen = ref(false)
+
+const usuario = reactive({
+  nomeCompleto: '',
+  email: '',
+  fotoUrl: 'https://thumbs.dreamstime.com/b/vetor-de-%C3%ADcone-perfil-do-avatar-padr%C3%A3o-foto-usu%C3%A1rio-m%C3%ADdia-social-183042379.jpg',
+  cep: '-',
+  cidade: '-',
+  estado: '-',
+  genero: '-'
+})
 
 function irParaLogin() {
   router.push('/login')
@@ -11,12 +28,10 @@ function irParaLogin() {
 function irParaRegistre() {
   router.push('/registre')
 }
-function irParaURLExterna() {
-  window.open('https://convivium-front.onrender.com/inicio', '_blank') // ou use window.location.href se quiser na mesma aba
-}
 
-const isScrolled = ref(false)
-const isMenuOpen = ref(false)
+function irParaURLExterna() {
+  window.open('https://convivium-front.onrender.com/inicio', '_blank')
+}
 
 function toggleMenu() {
   isMenuOpen.value = !isMenuOpen.value
@@ -26,48 +41,140 @@ function onScroll() {
   isScrolled.value = window.scrollY > 0
 }
 
+function toggleUserDropdown() {
+  userDropdownOpen.value = !userDropdownOpen.value
+}
+
+function logoff() {
+  userDropdownOpen.value = false
+  localStorage.removeItem('token')
+  usuario.nomeCompleto = ''
+  usuario.email = ''
+  usuario.fotoUrl = 'https://thumbs.dreamstime.com/b/vetor-de-%C3%ADcone-perfil-do-avatar-padr%C3%A3o-foto-usu%C3%A1rio-m%C3%ADdia-social-183042379.jpg'
+  usuario.cep = '-'
+  usuario.cidade = '-'
+  usuario.estado = '-'
+  usuario.genero = '-'// Remove o token ao fazer logout
+  router.push('/login')
+}
+
+watch(
+  () => route.path,
+  (newPath) => {
+    ehPlataforma.value = newPath === '/plataforma'
+  },
+  { immediate: true }
+)
+
 onMounted(() => {
   window.addEventListener('scroll', onScroll)
+  buscarUsuarioLogado()
+
+  window.addEventListener('atualizarUsuario', buscarUsuarioLogado)
 })
 
 onUnmounted(() => {
   window.removeEventListener('scroll', onScroll)
+  window.removeEventListener('atualizarUsuario', buscarUsuarioLogado)
 })
+
+async function buscarUsuarioLogado() {
+  const token = localStorage.getItem('token')
+  if (!token) {
+    logoff()
+    return
+  }
+
+  try {
+    const resposta = await axios.get('http://localhost:8080/api/auth/dados', {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+
+    const dados = resposta.data
+
+    usuario.nomeCompleto = dados.apelido
+      ? dados.apelido
+      : (dados.nome && dados.sobrenome)
+        ? `${dados.nome} ${dados.sobrenome}`
+        : dados.nome || 'Usuário'
+
+    usuario.email = dados.email || 'email@exemplo.com'
+    usuario.cep = dados.cep || '-'
+    usuario.cidade = dados.cidade || '-'
+    usuario.estado = dados.estado || '-'
+    usuario.genero = dados.genero || '-'
+    usuario.fotoUrl = dados.fotoUrl || 'https://thumbs.dreamstime.com/b/vetor-de-%C3%ADcone-perfil-do-avatar-padr%C3%A3o-foto-usu%C3%A1rio-m%C3%ADdia-social-183042379.jpg'
+
+  } catch (erro: any) {
+    console.error('Erro ao buscar usuário logado:', erro)
+    if (erro.response?.status === 401) {
+      logoff()
+    }
+  }
+}
 </script>
 
 
 <template lang="pug">
-div.layout-wrapper
-  header.fixed-header(:class="{ scrolled: isScrolled }")
-    .wrapper
-      img.logo(src="@/assets/logocjl.png" alt="Logo CJL" width="60" height="60")
+div.layout-wrapper(:class="{ 'layout-plataforma': ehPlataforma }")
 
-      // Botão hamburguer
-      button.hamburguer(@click="toggleMenu") ☰
+  template(v-if="ehPlataforma")
+    header.fixed-header(:class="{ scrolled: isScrolled }")
+      .wrapper
+        img.logo(src="@/assets/logocjl.png" alt="Logo CJL" width="60" height="60")
 
-      // Menu de navegação
-      nav.menu-mobile(v-if="isMenuOpen")
-        RouterLink(to="/") Início
-        RouterLink(to="/sobre") Sobre
-        RouterLink(to="/servicos") Serviços
-        RouterLink(to="/planos") Planos
+        .user-menu
+          img.user-photo(
+            :src="usuario.fotoUrl"
+            alt="Foto do usuário"
+            @click="toggleUserDropdown"
+            tabindex="0"
+            @keydown.enter.prevent="toggleUserDropdown"
+            role="button"
+            aria-haspopup="true"
+            :aria-expanded="userDropdownOpen"
+          )
+          div.user-dropdown-google(v-if="userDropdownOpen")
+            img.foto-perfil-google(:src="usuario.fotoUrl", alt="Foto do perfil")
+            h3.ola-msg Olá, {{ usuario.nomeCompleto.split(' ')[0] }}!
+            p {{ usuario.email }}
+            p {{ usuario.genero }}
+            p {{ usuario.cidade }} - {{ usuario.estado }}
+            p CEP: {{ usuario.cep }}
+            button.gerenciar-conta Gerenciar sua Conta CJL
+            hr
+            button.adicionar-conta Visualizar Licenças
+            button.sair(@click="logoff") Sair
+            .links-google
+              a(href="#", target="_blank") Política de Privacidade
+              span ·
+              a(href="#", target="_blank") Termos de Serviço
 
-        .mobile-auth-buttons
-          -//button.login-btn(@click="irParaLogin") Login
-          //-button.register-btn(@click="irParaRegistre") Registre-se
+  template(v-else)
+    header.fixed-header(:class="{ scrolled: isScrolled }")
+      .wrapper
+        img.logo(src="@/assets/logocjl.png" alt="Logo CJL" width="60" height="60")
+        button.hamburguer(@click="toggleMenu") ☰
+
+        nav.menu-mobile(v-if="isMenuOpen")
+          RouterLink(to="/") Início
+          RouterLink(to="/sobre") Sobre
+          RouterLink(to="/servicos") Serviços
+          RouterLink(to="/planos") Planos
+          .mobile-auth-buttons
+            button.external-btn(@click="irParaURLExterna") Convivium
+
+        nav.menu-desktop
+          RouterLink(to="/") Início
+          RouterLink(to="/sobre") Sobre
+          RouterLink(to="/servicos") Serviços
+          RouterLink(to="/planos") Planos
+          RouterLink(to="/plataforma") Plataforma
+
+        .auth-buttons
+          a.external-btn.link-btn(href="/login") Login
+          RouterLink.external-btn.link-btn(to="/registre") Registrar
           button.external-btn(@click="irParaURLExterna") Convivium
-
-      // Menu desktop
-      nav.menu-desktop
-        RouterLink(to="/") Início
-        RouterLink(to="/sobre") Sobre
-        RouterLink(to="/servicos") Serviços
-        RouterLink(to="/planos") Planos
-
-      .auth-buttons
-        button.login-btn(@click="irParaLogin") Login
-        button.register-btn(@click="irParaRegistre") Registre-se
-        button.external-btn(@click="irParaURLExterna") Convivium
 
 
   main.main-content
@@ -77,7 +184,256 @@ div.layout-wrapper
     p © 2025 - Todos os direitos reservados
 </template>
 
+
 <style scoped>
+.fixed-footer {
+  position: relative;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.692);
+  color: white;
+  text-align: center;
+  padding: 1rem;
+  z-index: 1000;
+  margin-top: -50px;
+}
+
+:global(html, body) {
+  margin: 0;
+  padding: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+/* Estilo para os links (Login e Registrar) */
+a.external-btn.link-btn {
+  border: 1px solid white;
+  color: white;
+  background: transparent;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+a.external-btn.link-btn:hover {
+  background-color: #ccc;  /* fundo cinza */
+  color: #000;
+  border-color: white;     /* borda branca no hover */
+}
+
+/* Estilo padrão para o botão Convivium */
+button.external-btn {
+  /* Aqui fica o estilo original do seu botão convivium */
+  background-color: #007BFF; /* Exemplo: azul */
+  color: white;
+  border: none;
+  padding: 0.5rem 1.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+a.external-btn.link-btn,
+button.external-btn {
+  padding: 0.25rem 1rem; /* menos altura, mesma largura */
+  font-size: 0.9rem; /* opcional: deixa o texto um pouco menor */
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+button.external-btn:hover {
+  background-color: #0056b3; /* azul mais escuro no hover */
+}
+
+.layout-plataforma .user-dropdown-google {
+  position: absolute;
+  top: 60px;
+  right: 0;
+  width: 280px;
+  background: white;
+  color: #202124;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  border-radius: 20px;
+  padding: 1.5rem 1rem;
+  z-index: 9999;
+  text-align: center;
+  font-family: 'Arial', sans-serif;
+}
+
+.layout-plataforma .foto-perfil-google {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 50%;
+  margin: auto;
+}
+
+.layout-plataforma .ola-msg {
+  margin: 0.8rem 0 0.6rem;
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+.layout-plataforma .gerenciar-conta {
+  background-color: transparent;
+  border: 1px solid #1a73e8;
+  color: #000000;
+  padding: 0.5rem;
+  width: 100%;
+  font-size: 0.9rem;
+  border-radius: 5px;
+  margin-bottom: 1rem;
+  cursor: pointer;
+}
+.layout-plataforma .gerenciar-conta:hover {
+  background-color: #f1ffff; /* amarelo claro */
+  color: #000; /* texto preto */
+}
+
+.layout-plataforma .adicionar-conta,
+.layout-plataforma .sair {
+  background: none;
+  border: none;
+  color: #1a73e8;
+  padding: 0.4rem 0;
+  width: 100%;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.links-google a:hover {
+  background-color: transparent !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  text-decoration: underline;
+}
+
+.layout-plataforma .adicionar-conta:hover,
+.layout-plataforma .sair:hover {
+  background-color: rgba(60, 64, 67, 0.08);
+  border-radius: 5px;
+}
+
+.layout-plataforma .links-google {
+  margin-top: 1.2rem;
+  font-size: 0.75rem;
+  color: #5f6368;
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+}
+
+.layout-plataforma .links-google a {
+  color: #5f6368;
+  text-decoration: none;
+}
+
+.layout-plataforma .links-google a:hover {
+  text-decoration: underline;
+}
+
+.layout-plataforma .user-photo {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgb(0, 0, 0);
+  transition: box-shadow 0.3s ease;
+}
+
+.layout-plataforma .user-photo:hover,
+.layout-plataforma .user-photo:focus {
+  box-shadow: 0 0 8px 2px #ffe920;
+  outline: none;
+}
+
+.layout-plataforma .user-menu {
+  position: relative;
+  margin-left: auto;
+  cursor: pointer;
+}
+
+/* Botão de sair (header da plataforma) */
+.btn-logoff {
+  margin: auto;
+  background-color: #ff1900;
+  color: white;
+  border: none;
+  padding: 0.4rem 1rem;
+  font-size: 1rem;
+  border-radius: 5px;
+  font-weight: 400; /* menos grossa */
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  align-items: center;
+}
+
+
+.btn-logoff:hover {
+  background-color: #c0392b;
+}
+
+/* Foto do usuário redonda e dropdown */
+.user-menu {
+  position: relative;
+  margin-left: auto;
+  cursor: pointer;
+}
+
+.user-photo {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgb(0, 0, 0);
+  transition: box-shadow 0.3s ease;
+
+}
+
+.user-photo:hover,
+.user-photo:focus {
+  box-shadow: 0 0 8px 2px #18ce00;
+  outline: none;
+}
+
+.user-dropdown {
+  position: absolute;
+  right: 0;
+  top: 50px;
+  background-color: rgba(0,0,0,0.85);
+  padding: 1rem;
+  border-radius: 8px;
+  color: white;
+  width: 220px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+  z-index: 1100;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+}
+
+.user-dropdown p {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.2;
+  word-break: break-word; /* força quebra de palavra para não vazar */
+  white-space: normal; /* permite quebra de linha */
+  overflow-wrap: break-word; /* garante quebra em palavras longas */
+  max-width: 100%; /* limita largura máxima ao container */
+}
+
+.user-dropdown p.nome {
+  font-weight: 600;
+}
+
+/* Mantém os outros estilos originais sem alterações */
+
 @media (max-width: 768px) {
   .hamburguer {
     display: block;
@@ -87,7 +443,6 @@ div.layout-wrapper
     display: none;
   }
 
-  /* >>> Esconde os botões fora do menu no mobile <<< */
   .auth-buttons {
     display: none !important;
   }
@@ -110,7 +465,6 @@ div.layout-wrapper
     margin-top: 20px;
   }
 
-  /* Estilo base para TODOS os botões no mobile */
   .menu-mobile .mobile-auth-buttons button {
     background-color: transparent;
     border: 1px solid white;
@@ -123,13 +477,11 @@ div.layout-wrapper
     cursor: pointer;
   }
 
-  /* Hover geral para botões (login e registre) */
   .menu-mobile .mobile-auth-buttons button:hover {
     background-color: white;
     color: #1e1e1e;
   }
 
-  /* Estilo especial para o último botão (Convivium) */
   .menu-mobile .mobile-auth-buttons button:last-child {
     border: 1px solid #FFD700;
     color: white;
@@ -141,11 +493,9 @@ div.layout-wrapper
   }
 }
 
-
-
 .auth-buttons .external-btn {
   background-color: transparent;
-  border: 1px solid #FFD700;   /* amarelo ouro */
+  border: 1px solid #FFD700;
   color: #ffffff;
   padding: 0.4rem 1rem;
   font-size: 1rem;
@@ -158,12 +508,10 @@ div.layout-wrapper
 .auth-buttons .external-btn:hover,
 .auth-buttons .external-btn:focus {
   background-color: #FFD700;
-  color: #1e1e1e; /* texto escuro quando fundo é amarelo */
+  color: #1e1e1e;
   border-color: #FFD700;
 }
 
-/* Botão hamburguer (visível só em telas pequenas) */
-/* Botão hamburguer */
 .hamburguer {
   display: none;
   font-size: 28px;
@@ -174,11 +522,12 @@ div.layout-wrapper
   position: absolute;
   right: 20px;
   top: 50%;
-  transform: translateY(-50%); /* <- centraliza verticalmente */
+  transform: translateY(-50%);
   z-index: 1100;
 }
+
 .menu-desktop a {
-  color: white;              /* cor padrão: branco */
+  color: white;
   font-weight: 600;
   font-size: 1.1rem;
   text-decoration: none;
@@ -186,18 +535,15 @@ div.layout-wrapper
   cursor: pointer;
 }
 
-
 .menu-desktop a:hover,
 .menu-desktop a:focus {
-  color: #a5a5a5;                /* cor cinza no hover */
-  background: transparent;      /* remove qualquer fundo */
-  outline: none;                /* remove a borda de foco */
-  box-shadow: none;             /* remove sombra de foco */
-  text-shadow: none;            /* remove brilho de texto se tiver */
+  color: #a5a5a5;
+  background: transparent;
+  outline: none;
+  box-shadow: none;
+  text-shadow: none;
 }
 
-/* Menu desktop (mostra sempre em telas grandes) */
-/* Menu desktop centralizado */
 .menu-desktop {
   position: absolute;
   left: 50%;
@@ -207,31 +553,23 @@ div.layout-wrapper
   z-index: 5;
 }
 
-nav.menu {
-  position: absolute; /* tira do fluxo para centralizar */
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  gap: 2rem;
-  z-index: 5;
-}
 .menu-mobile a:hover,
 .menu-mobile a:focus {
-  background: transparent !important;  /* remove fundo */
-  outline: none !important;             /* remove contorno */
-  box-shadow: none !important;          /* remove sombra */
+  background: transparent !important;
+  outline: none !important;
+  box-shadow: none !important;
 }
-/* Menu mobile (escondido por padrão, v-if mostra no clique) */
+
 .menu-mobile {
-  position: fixed; /* fixa na viewport, não mais relativo a pai */
-  top: 80px;       /* abaixo do header */
+  position: fixed;
+  top: 80px;
   left: 0;
   right: 0;
-  width: 100vw;    /* largura total da viewport */
+  width: 100vw;
   height: auto;
   background-color: rgba(0, 0, 0, 0.692);
   padding: 20px 0;
-  z-index: 10000;  /* acima de tudo */
+  z-index: 10000;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -241,9 +579,6 @@ nav.menu {
   box-sizing: border-box;
 }
 
-
-
-/* Links dentro do menu mobile */
 .menu-mobile a {
   color: white;
   font-size: 1rem;
@@ -256,28 +591,14 @@ nav.menu {
   display: inline-block;
 }
 
-/* Hover para todos os links */
 .menu-mobile a:hover {
   color: #a5a5a5;
   border-bottom: 2px solid rgb(187, 187, 187);
 }
+
 .menu-mobile a.router-link-exact-active {
-  border-bottom: none !important; /* ou remova essa regra */
+  border-bottom: none !important;
 }
-
-
-@media (max-width: 768px) {
-  .hamburguer {
-    display: block;
-  }
-
-  .menu-desktop {
-    display: none;
-  }
-}
-
-
-
 
 .layout-wrapper {
   display: flex;
@@ -286,47 +607,36 @@ nav.menu {
   width: 100%;
   margin: 0;
   padding: 0;
-
-  /* Fundo imagem para todo o layout */
-
   background-size: cover;
-  /* se quiser escurecer um pouco o fundo */
   position: relative;
 }
 
-
-/* Garantir que conteúdo fique acima da camada escura */
 .layout-wrapper > * {
   position: relative;
   z-index: 1;
 }
 
-/* Cabeçalho fixo */
 .fixed-header {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
-
-  /* Defina altura fixa desejada para a barra, por exemplo 80px */
   height: 80px;
-
   background-color: rgba(0, 0, 0, 0.692);
   color: white;
-  padding: 0 2rem; /* remova o padding vertical para não aumentar a altura */
-
+  padding: 0 2rem;
   display: flex;
-  align-items: center; /* centraliza verticalmente */
+  align-items: center;
   justify-content: flex-start;
   z-index: 1000;
   box-sizing: border-box;
 }
+
 .fixed-header.scrolled {
-  background-color: rgba(66, 66, 66, 0.95); /* aparece ao rolar */
+  background-color: rgba(66, 66, 66, 0.95);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
-/* Ajuste a logo para caber nessa altura fixa */
 .logo {
   width: 130px;
   height: 130px;
@@ -338,14 +648,6 @@ nav.menu {
   margin-top: 10px;
 }
 
-
-.fixed-header.scrolled {
-  background-color: rgba(0, 0, 0, 0.692);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-}
-
-
-/* Container interno do header para controlar logo, menu e botões */
 .wrapper {
   position: relative;
   width: 100%;
@@ -353,18 +655,6 @@ nav.menu {
   align-items: center;
 }
 
-/* Menu centralizado */
-nav.menu {
-  position: absolute; /* tira do fluxo para centralizar */
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  gap: 2rem;
-  z-index: 5;
-}
-
-/* Links do menu */
-/* Links do menu */
 nav.menu a {
   color: white;
   font-weight: 600;
@@ -375,7 +665,6 @@ nav.menu a {
   cursor: pointer;
 }
 
-/* Remove sombra verde ou qualquer sombra no hover e focus */
 nav.menu a:hover,
 nav.menu a:focus {
   color: #a5a5a5;
@@ -385,21 +674,18 @@ nav.menu a:focus {
   text-shadow: none !important;
 }
 
-/* Link ativo */
 nav a.router-link-exact-active {
   font-weight: bold;
   border-bottom: 2px solid rgb(187, 187, 187);
 }
 
-/* Container dos botões no canto direito */
 .auth-buttons {
-  margin-left: auto; /* empurra para o canto direito */
+  margin-left: auto;
   display: flex;
   gap: 1rem;
   z-index: 10;
 }
 
-/* Estilo geral dos botões */
 .auth-buttons button {
   background-color: transparent;
   border: 1px solid white;
@@ -411,23 +697,20 @@ nav a.router-link-exact-active {
   transition: background-color 0.3s, color 0.3s;
 }
 
-/* Efeito hover para os botões */
 .auth-buttons button:hover {
   background-color: white;
-  color: #1e1e1e; /* texto escuro no hover */
+  color: #1e1e1e;
 }
 
-/* Conteúdo principal - espaço para não ficar atrás do header e footer */
 .main-content {
   flex: 1;
-  padding-top: 80px; /* espaço para header fixo */
-  padding-bottom: 60px; /* espaço para footer fixo */
+  padding-top: 80px;
+  padding-bottom: 60px;
   width: 100%;
   margin: 0;
   box-sizing: border-box;
 }
 
-/* Rodapé fixo */
 .fixed-footer {
   position: relative;
   bottom: 0;
@@ -440,13 +723,12 @@ nav a.router-link-exact-active {
   z-index: 1000;
 }
 
-/* Reset global para html e body */
 :global(html, body) {
   margin: 0;
   padding: 0;
   width: 100vw;
   height: 100vh;
-  overflow: hidden; /* remove rolagem */
+  overflow: hidden;
   box-sizing: border-box;
 }
 </style>

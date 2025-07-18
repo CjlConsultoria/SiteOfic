@@ -5,6 +5,9 @@ import Sobre from '@/views/Sobre.vue'
 import Servicos from '@/views/Servicos.vue'
 import Login from '@/views/Login.vue'
 import Registre from '@/views/Registre.vue'
+import Plataforma from '@/views/Plataforma.vue'
+
+
 
 
 const router = createRouter({
@@ -40,6 +43,12 @@ const router = createRouter({
       name: 'Registre',
       component: Registre,
     },
+    {
+      path: '/plataforma',
+      name: 'Plataforma',
+      component: Plataforma,
+    }
+
   ],
 })
 
