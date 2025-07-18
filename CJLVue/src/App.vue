@@ -202,7 +202,7 @@ a.external-btn.link-btn:hover {
 /* Estilo padrão para o botão Convivium */
 button.external-btn {
   /* Aqui fica o estilo original do seu botão convivium */
-  background-color: #007BFF; /* Exemplo: azul */
+  background-color: #2b8003; /* Exemplo: azul */
   color: white;
   border: none;
   padding: 0.5rem 1.5rem;
@@ -227,7 +227,7 @@ button.external-btn:hover {
   position: absolute;
   top: 60px;
   right: 0;
-  width: 280px;
+  width: 340px;
   background: white;
   color: #202124;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
@@ -257,9 +257,9 @@ button.external-btn:hover {
   border: 1px solid #1a73e8;
   color: #000000;
   padding: 0.5rem;
-  width: 100%;
+  width: 70%;
   font-size: 0.9rem;
-  border-radius: 5px;
+  border-radius: 25px;
   margin-bottom: 1rem;
   cursor: pointer;
 }
