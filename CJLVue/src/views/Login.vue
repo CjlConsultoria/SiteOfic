@@ -65,9 +65,10 @@ const logarUsuario = async () => {
   if (erroEmail.value || erroSenha.value) return
 
   try {
+    localStorage.removeItem('token') // 🔥 Remove antes de tudo
+
     const response = await login(email.value, senha.value)
 
-    // Se o backend respondeu com objeto sem token, trata como erro
     if (!response || !response.token) {
       mensagemErro.value = 'E-mail ou senha incorretos.'
       return
@@ -75,18 +76,19 @@ const logarUsuario = async () => {
 
     console.log("Token recebido:", response.token)
     localStorage.setItem('token', response.token)
+    window.dispatchEvent(new Event('atualizarUsuario'))
     router.push('/plataforma')
 
   } catch (error) {
     console.error("Erro no login:", error)
-
-    if (error.response && error.response.status === 401) {
+    if (error.response?.status === 401) {
       mensagemErro.value = 'E-mail ou senha incorretos.'
     } else {
       mensagemErro.value = 'Erro no login. Tente novamente mais tarde.'
     }
   }
 }
+
 
 
 </script>
