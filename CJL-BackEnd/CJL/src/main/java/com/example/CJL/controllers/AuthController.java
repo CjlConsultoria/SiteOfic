@@ -76,6 +76,8 @@ public class AuthController {
         user.setNome(dto.getNome());
         user.setSobrenome(dto.getSobrenome());
         user.setApelido(dto.getApelido());
+<<<<<<< HEAD
+=======
         user.setPj(dto.isPj());
 
         if (dto.isPj()){
@@ -85,6 +87,7 @@ public class AuthController {
             user.setCpf(dto.getCpf());
             user.setCnpj(null);
         }
+>>>>>>> 9536e66505dbe8f278e3f92786643be36e87df25
         user.setDiaNascimento(dto.getDiaNascimento());
         user.setMesNascimento(dto.getMesNascimento());
         user.setAnoNascimento(dto.getAnoNascimento());

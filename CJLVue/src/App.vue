@@ -18,8 +18,11 @@ const usuario = reactive({
   cep: '-',
   cidade: '-',
   estado: '-',
-  genero: '-'
+  genero: '-',
+  cpf: '-',
+  cnpj: '-'
 })
+
 
 function irParaLogin() {
   router.push('/login')
@@ -103,6 +106,8 @@ async function buscarUsuarioLogado() {
     usuario.estado = dados.estado || '-'
     usuario.genero = dados.genero || '-'
     usuario.fotoUrl = dados.fotoUrl || 'https://thumbs.dreamstime.com/b/vetor-de-%C3%ADcone-perfil-do-avatar-padr%C3%A3o-foto-usu%C3%A1rio-m%C3%ADdia-social-183042379.jpg'
+    usuario.cpf = dados.cpf || ''
+    usuario.cnpj = dados.cnpj || ''
 
   } catch (erro: any) {
     console.error('Erro ao buscar usuário logado:', erro)
@@ -111,6 +116,7 @@ async function buscarUsuarioLogado() {
     }
   }
 }
+
 </script>
 
 
@@ -143,7 +149,8 @@ div.layout-wrapper(:class="{ 'layout-plataforma': ehPlataforma }")
             h3.ola-msg Olá, {{ usuario.nomeCompleto.split(' ')[0] }}!
             p.nome-completo {{ usuario.nomeCompleto }}
             p {{ usuario.email }}
-
+            p(v-if="usuario.cpf && usuario.cpf !== ''") CPF: {{ usuario.cpf }}
+            p(v-else-if="usuario.cnpj && usuario.cnpj !== ''") CNPJ: {{ usuario.cnpj }}
             //-Informações adicionais, se quiser ativar
             //-p {{ usuario.genero }}
             //-p {{ usuario.cidade }} - {{ usuario.estado }}

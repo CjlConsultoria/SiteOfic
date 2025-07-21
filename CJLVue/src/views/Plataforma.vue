@@ -77,7 +77,10 @@ const cards = [
           img(:src="card.logo", alt="Logo CJL")
         .software-card-content
           h3 {{ card.title }}
+
+          p.software-card-author Desenvolvido por 
           p.software-card-author Desenvolvido por
+
             strong {{ card.author }}
           p.software-card-description {{ card.description }}
         .software-card-rating
