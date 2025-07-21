@@ -17,13 +17,17 @@ public class User {
     private String sobrenome;
     private String apelido;
     @Column(unique = true)
+    private String cpf;
+    @Column(unique = true)
+    private String cnpj;
+    private boolean pj;
+    @Column(unique = true)
     private String email;
     private String senha;
     private int diaNascimento;
     private int mesNascimento;
     private int anoNascimento;
     private String genero;
-
     private String cep;
     private String logradouro;
     private String numeroResidencia;

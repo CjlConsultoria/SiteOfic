@@ -76,6 +76,15 @@ public class AuthController {
         user.setNome(dto.getNome());
         user.setSobrenome(dto.getSobrenome());
         user.setApelido(dto.getApelido());
+        user.setPj(dto.isPj());
+
+        if (dto.isPj()){
+            user.setCnpj(dto.getCnpj());
+            user.setCpf(null);
+        } else {
+            user.setCpf(dto.getCpf());
+            user.setCnpj(null);
+        }
         user.setDiaNascimento(dto.getDiaNascimento());
         user.setMesNascimento(dto.getMesNascimento());
         user.setAnoNascimento(dto.getAnoNascimento());
@@ -171,6 +180,12 @@ public class AuthController {
         response.put("cidade",dadosUser.getCidade());
         response.put("estado",dadosUser.getEstado());
         response.put("cep",dadosUser.getCep());
+
+        if (dadosUser.isPj()){
+            response.put("cnpj", dadosUser.getCnpj());
+        } else {
+            response.put("cpf", dadosUser.getCpf());
+        }
 
         response.put("roles", dadosUser.getRoles().stream()
                 .map(Role::getNome)
