@@ -9,7 +9,7 @@ section.registro-multi
 
   .form-container
     small.etapa-titulo(v-if="etapaAtual === 1") Insira seu nome
-    small.etapa-titulo(v-else-if="etapaAtual === 2") 
+    small.etapa-titulo(v-else-if="etapaAtual === 2")
 
     form(@submit.prevent="proximaEtapa")
 
@@ -453,21 +453,21 @@ const proximaEtapa = () => {
 const enviarCadastro = async () => {
   try {
     const dadosParaEnviar = {
-      nome: form.nome.trim(),
-      sobrenome: form.sobrenome.trim(),
-      apelido: form.apelido.trim(),
-      tipoPessoa: form.tipoPessoa,
-      cpf: form.cpf,
-      cnpj: form.cnpj,
-      diaNascimento: Number(form.dia),
-      mesNascimento: Number(form.mes),
-      anoNascimento: Number(form.ano),
-      genero: form.genero,
-      cep: form.cep.replace(/\D/g, ''),
-      numeroResidencia: form.numero,
-      email: form.email.trim(),
-      senha: form.senha
-    }
+    nome: form.nome.trim(),
+    sobrenome: form.sobrenome.trim(),
+    apelido: form.apelido.trim(),
+    pj: form.tipoPessoa === 'pj',
+    cpf: form.tipoPessoa === 'pf' ? form.cpf : null,
+    cnpj: form.tipoPessoa === 'pj' ? form.cnpj : null,
+    diaNascimento: Number(form.dia),
+    mesNascimento: Number(form.mes),
+    anoNascimento: Number(form.ano),
+    genero: form.genero,
+    cep: form.cep.replace(/\D/g, ''),
+    numeroResidencia: form.numero,
+    email: form.email.trim(),
+    senha: form.senha
+  }
 
     const response = await fetch('http://localhost:8080/api/auth/register', {
       method: 'POST',

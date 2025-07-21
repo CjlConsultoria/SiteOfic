@@ -16,14 +16,11 @@ public class User {
     private String nome;
     private String sobrenome;
     private String apelido;
-<<<<<<< HEAD
-=======
     @Column(unique = true)
     private String cpf;
     @Column(unique = true)
     private String cnpj;
     private boolean pj;
->>>>>>> 9536e66505dbe8f278e3f92786643be36e87df25
     @Column(unique = true)
     private String email;
     private String senha;
