@@ -10,6 +10,7 @@ section.registro-multi
   .form-container
     small.etapa-titulo(v-if="etapaAtual === 1") Insira seu nome
     small.etapa-titulo(v-else-if="etapaAtual === 2")
+    small.etapa-titulo(v-else-if="etapaAtual === 3") Data de nascimento e gênero
 
     form(@submit.prevent="proximaEtapa")
 
@@ -50,7 +51,7 @@ section.registro-multi
         section.botoes
           button(type="submit") Seguinte
 
-      // Etapa 2 - Tipo de Pessoa (isolada)
+      // Etapa 2 - Tipo de Pessoa
       template(v-if="etapaAtual === 2")
         .etapa-tipo-pessoa
           p.titulo-etapa2 Selecione o tipo de pessoa e preencha o campo correspondente:
@@ -72,7 +73,12 @@ section.registro-multi
               )
               span Pessoa Jurídica
 
-          span.erro-tipo(v-if="erros.tipoPessoa") Selecione o tipo de pessoa.
+          span.erro-tipo(v-if="erros.tipoPessoa")
+            span.icone-erro !
+            |  Selecione o tipo de pessoa.
+
+          // Mensagem dinâmica antes do campo CPF
+          p.msg-digite-cpf.text-branco(v-if="form.tipoPessoa === 'pf'") Digite o CPF
 
           .grupo-input-cpf(v-if="form.tipoPessoa === 'pf'")
             input(
@@ -86,7 +92,12 @@ section.registro-multi
               :class="{ 'input-erro2': erros.cpfInvalido }"
             )
             label(for="cpf") CPF
-            span.erro-campo(v-if="erros.cpfInvalido") CPF inválido.
+            span.erro-campo(v-if="erros.cpfInvalido")
+              span.icone-erro !
+              | CPF inválido.
+
+          // Mensagem dinâmica antes do campo CNPJ
+          p.msg-digite-cnpj.text-branco(v-if="form.tipoPessoa === 'pj'") Digite o CNPJ
 
           .grupo-input-cnpj(v-if="form.tipoPessoa === 'pj'")
             input(
@@ -100,13 +111,66 @@ section.registro-multi
               :class="{ 'input-erro2': erros.cnpjInvalido }"
             )
             label(for="cnpj") CNPJ
-            span.erro-campo(v-if="erros.cnpjInvalido") CNPJ inválido.
+            span.erro-campo(v-if="erros.cnpjInvalido")
+              span.icone-erro !
+              | CNPJ inválido.
 
           section.botoes
             button(type="submit") Seguinte
 
-      // Etapa 3 - Endereço
+      // Etapa 3 - Data de nascimento e gênero (nova etapa)
       template(v-if="etapaAtual === 3")
+        section.data-nascimento
+          section.data-nascimento-selects
+            section.input-group
+              select(
+                v-model="form.dia"
+                :class="{ 'input-erro': erros.diaInvalido }"
+                id="dia"
+              )
+                option(value="") Dia
+                option(v-for="d in dias" :key="d" :value="d") {{ d }}
+
+            section.input-group
+              select(
+                v-model="form.mes"
+                :class="{ 'input-erro': erros.mesInvalido }"
+                id="mes"
+              )
+                option(value="") Mês
+                option(v-for="(m, index) in meses" :key="index" :value="index + 1") {{ m }}
+
+            section.input-group
+              select(
+                v-model="form.ano"
+                :class="{ 'input-erro': erros.anoInvalido }"
+                id="ano"
+              )
+                option(value="") Ano
+                option(v-for="a in anos" :key="a" :value="a") {{ a }}
+
+          span.mensagem-erro-etapa2(v-if="erros.nascimentoIncompleto") Introduza uma data de nascimento completa.
+
+          section.input-group.genero
+            select(
+              v-model="form.genero"
+              :class="{ 'input-erro': erros.generoInvalido }"
+              id="genero"
+            )
+              option(value="") Gênero
+              option(value="Feminino") Feminino
+              option(value="Masculino") Masculino
+              option(value="Outro") Outro
+
+          section
+            span.mensagem-erro-etapa2(v-if="erros.generoInvalido") Selecione o seu gênero.
+            span.mensagem-erro-etapa2(v-if="erros.idadeInvalida") É necessário ter pelo menos 18 anos para se registrar.
+
+          section.botoes
+            button(type="submit") Seguinte
+
+      // Etapa 4 - Endereço
+      template(v-if="etapaAtual === 4")
         section.endereco
           .input-group
             input(
@@ -176,8 +240,8 @@ section.registro-multi
           section.botoes
             button(type="submit") Seguinte
 
-      // Etapa 4 - Credenciais
-      template(v-if="etapaAtual === 4")
+      // Etapa 5 - Credenciais
+      template(v-if="etapaAtual === 5")
         section.credenciais
           .input-group
             input(
@@ -226,6 +290,7 @@ section.registro-multi
           section.botoes
             button(type="submit") Finalizar
 </template>
+
 
 <script setup>
 import { reactive, ref } from 'vue'
@@ -436,12 +501,22 @@ const buscarEndereco = async () => {
 
 const proximaEtapa = () => {
   if (etapaAtual.value === 1) {
-    if (validarEtapa1()) etapaAtual.value++
+    if (validarEtapa1()) {
+      etapaAtual.value++
+    }
   } else if (etapaAtual.value === 2) {
-    if (validarEtapa2()) etapaAtual.value++
+    if (validarEtapa2()) {
+      etapaAtual.value++
+    }
   } else if (etapaAtual.value === 3) {
-    if (validarEtapa4()) etapaAtual.value++  // chama a validação de endereço aqui, que é a validarEtapa4()
+    if (validarEtapa3()) {  // Aqui é validarEtapa3, não validarEtapa4
+      etapaAtual.value++
+    }
   } else if (etapaAtual.value === 4) {
+    if (validarEtapa4()) {
+      etapaAtual.value++
+    }
+  } else if (etapaAtual.value === 5) {
     if (validarEtapa5()) {
       enviarCadastro()
       alert('Cadastro concluído com sucesso!')
@@ -538,9 +613,42 @@ const formatarCNPJ = () => {
 </script>
 
 <style scoped>
-body, * {
-  font-family: 'SuaFonteEscolhida', sans-serif !important;
+
+.erro-campo {
+  display: flex;
+  align-items: center;
+  color: #ff0000;
+  font-weight: 500;
+  font-size: 0.7rem;
+  text-align: left;
+  margin-top: 0.5rem;
+  gap: 0.5rem;
+  width: 100%;
+  justify-content: flex-start;
 }
+
+.icone-erro {
+  background-color: #ff0000;
+  color: white;
+  font-weight: bold;
+  border-radius: 50%;
+  width: 15px;
+  height: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  line-height: 1;
+  margin-top: -2px;
+}
+
+.text-branco {
+  color: white !important;
+  margin-bottom: 0rem;
+  margin-top: 2rem;
+  text-align: right;  /* aqui o alinhamento */
+}
+
 .etapa-tipo-pessoa input {
   background-color: transparent !important;
   box-shadow: none !important;
@@ -576,11 +684,31 @@ body, * {
   font-weight: 500;
 }
 
-.erro-tipo,
-.erro-campo {
-  color: #ff6b6b;
+
+.erro-tipo {
+  display: flex;
+  align-items: center;
+  color: #ff0000;
+  font-weight: 500;
   font-size: 0.8rem;
-  text-align: center;
+  text-align: left;
+  margin-top: 0.5rem;
+  gap: 0.5rem;
+}
+
+.icone-erro {
+  background-color: #ff0000;
+  color: white;
+  font-weight: bold;
+  border-radius: 50%;
+  width: 15px;
+  height: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  line-height: 1; /* garante centralização vertical da exclamação */
+  margin-top: -2px;
 }
 
 .grupo-input-cpf,
