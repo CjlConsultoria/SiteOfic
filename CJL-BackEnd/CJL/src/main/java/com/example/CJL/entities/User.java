@@ -15,6 +15,9 @@ public class User {
     private Long id;
     private String nome;
     private String sobrenome;
+    private boolean pj;
+    private String cnpj;
+    private String cpf;
     private String apelido;
     @Column(unique = true)
     private String email;

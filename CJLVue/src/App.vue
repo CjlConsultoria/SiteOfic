@@ -57,7 +57,7 @@ function logoff() {
   usuario.cep = '-'
   usuario.cidade = '-'
   usuario.estado = '-'
-  usuario.genero = '-'// Remove o token ao fazer logout
+  usuario.genero = '-'
   router.push('/login')
 }
 
@@ -148,9 +148,10 @@ div.layout-wrapper(:class="{ 'layout-plataforma': ehPlataforma }")
             img.foto-perfil-google(:src="usuario.fotoUrl", alt="Foto do perfil")
             h3.ola-msg Olá, {{ usuario.nomeCompleto.split(' ')[0] }}!
             p.nome-completo {{ usuario.nomeCompleto }}
-            p {{ usuario.email }}
+            p.email-text {{ usuario.email }}
             p(v-if="usuario.cpf && usuario.cpf !== ''") CPF: {{ usuario.cpf }}
-            p(v-else-if="usuario.cnpj && usuario.cnpj !== ''") CNPJ: {{ usuario.cnpj }}
+            p.cnpj-text(v-else-if="usuario.cnpj && usuario.cnpj !== ''") CNPJ: {{ usuario.cnpj }}
+
             //-Informações adicionais, se quiser ativar
             //-p {{ usuario.genero }}
             //-p {{ usuario.cidade }} - {{ usuario.estado }}
@@ -206,10 +207,20 @@ div.layout-wrapper(:class="{ 'layout-plataforma': ehPlataforma }")
 
 
 <style scoped>
+.email-text {
+  color: #444;
+}
+
+.cnpj-text {
+  font-size: 0.8rem; /* ou o tamanho que quiser */
+  color: #444;
+  margin-top: 1rem;
+}
+
 .nome-completo {
   font-size: 0.9rem;
   color: #444;
-  margin-bottom: 2px;
+  margin-bottom: -2px;
 }
 
 .fixed-footer {
