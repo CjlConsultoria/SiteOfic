@@ -9,24 +9,22 @@ section.registro-multi
 
   .form-container
     small.etapa-titulo(v-if="etapaAtual === 1") Insira seu nome
-    small.etapa-titulo(v-else-if="etapaAtual === 2") Insira sua data de nascimento
-    small.etapa-titulo(v-else-if="etapaAtual === 3") Insira seu endereço
-    small.etapa-titulo(v-else-if="etapaAtual === 4") Crie uma senha forte com uma combinação de letras, números e símbolos
+    small.etapa-titulo(v-else-if="etapaAtual === 2")
+    small.etapa-titulo(v-else-if="etapaAtual === 3") Data de nascimento e gênero
 
     form(@submit.prevent="proximaEtapa")
 
-      // Etapa 1
+      // Etapa 1 - Nome
       template(v-if="etapaAtual === 1")
         .input-group
           input(
-            type="text",
-            v-model="form.nome",
-            :class="{ 'input-erro': erros.nome }",
-            placeholder=" ",
+            type="text"
+            v-model="form.nome"
+            :class="{ 'input-erro': erros.nome }"
+            placeholder=" "
             id="nome"
           )
           label(for="nome") Nome próprio
-
         span.mensagem-erro(v-if="erros.nome") Introduza o nome próprio.
 
         .input-group
@@ -38,7 +36,6 @@ section.registro-multi
             id="sobrenome"
           )
           label(for="sobrenome") Sobrenome
-
         span.mensagem-erro(v-if="erros.sobrenome") Introduza o sobrenome.
 
         .input-group
@@ -54,8 +51,75 @@ section.registro-multi
         section.botoes
           button(type="submit") Seguinte
 
-      // Etapa 2
+      // Etapa 2 - Tipo de Pessoa
       template(v-if="etapaAtual === 2")
+        .etapa-tipo-pessoa
+          p.titulo-etapa2 Selecione o tipo de pessoa e preencha o campo correspondente:
+
+          .grupo-radio
+            label.radio-item
+              input(
+                type="radio"
+                value="pf"
+                v-model="form.tipoPessoa"
+              )
+              span Pessoa Física
+
+            label.radio-item
+              input(
+                type="radio"
+                value="pj"
+                v-model="form.tipoPessoa"
+              )
+              span Pessoa Jurídica
+
+          span.erro-tipo(v-if="erros.tipoPessoa")
+            span.icone-erro !
+            |  Selecione o tipo de pessoa.
+
+          // Mensagem dinâmica antes do campo CPF
+          p.msg-digite-cpf.text-branco(v-if="form.tipoPessoa === 'pf'") Digite o CPF
+
+          .grupo-input-cpf(v-if="form.tipoPessoa === 'pf'")
+            input(
+              type="text"
+              v-model="form.cpf"
+              inputmode="numeric"
+              maxlength="14"
+              placeholder=" "
+              id="cpf"
+              @input="formatarCPF"
+              :class="{ 'input-erro2': erros.cpfInvalido }"
+            )
+            label(for="cpf") CPF
+            span.erro-campo(v-if="erros.cpfInvalido")
+              span.icone-erro !
+              | CPF inválido.
+
+          // Mensagem dinâmica antes do campo CNPJ
+          p.msg-digite-cnpj.text-branco(v-if="form.tipoPessoa === 'pj'") Digite o CNPJ
+
+          .grupo-input-cnpj(v-if="form.tipoPessoa === 'pj'")
+            input(
+              type="text"
+              v-model="form.cnpj"
+              inputmode="numeric"
+              maxlength="18"
+              placeholder=" "
+              id="cnpj"
+              @input="formatarCNPJ"
+              :class="{ 'input-erro2': erros.cnpjInvalido }"
+            )
+            label(for="cnpj") CNPJ
+            span.erro-campo(v-if="erros.cnpjInvalido")
+              span.icone-erro !
+              | CNPJ inválido.
+
+          section.botoes
+            button(type="submit") Seguinte
+
+      // Etapa 3 - Data de nascimento e gênero (nova etapa)
+      template(v-if="etapaAtual === 3")
         section.data-nascimento
           section.data-nascimento-selects
             section.input-group
@@ -105,8 +169,8 @@ section.registro-multi
           section.botoes
             button(type="submit") Seguinte
 
-      // Etapa 3
-      template(v-if="etapaAtual === 3")
+      // Etapa 4 - Endereço
+      template(v-if="etapaAtual === 4")
         section.endereco
           .input-group
             input(
@@ -176,8 +240,8 @@ section.registro-multi
           section.botoes
             button(type="submit") Seguinte
 
-      // Etapa 4
-      template(v-if="etapaAtual === 4")
+      // Etapa 5 - Credenciais
+      template(v-if="etapaAtual === 5")
         section.credenciais
           .input-group
             input(
@@ -188,7 +252,6 @@ section.registro-multi
               placeholder=" "
             )
             label(for="email") Email
-
           span.mensagem-erro-etapa4(v-if="erros.emailVazio") O email é obrigatório.
           span.mensagem-erro-etapa4(v-if="erros.emailInvalido") Por favor, insira um email válido.
 
@@ -201,7 +264,6 @@ section.registro-multi
               placeholder=" "
             )
             label(for="senha") Senha
-
           span.mensagem-erro-etapa4(v-if="erros.senhaVazia") A senha é obrigatória.
           span.mensagem-erro-etapa4(v-if="erros.senhaInvalida") A senha deve conter pelo menos uma letra maiúscula e um número.
 
@@ -214,7 +276,6 @@ section.registro-multi
               placeholder=" "
             )
             label(for="confirmaSenha") Confirmar Senha
-
           span.mensagem-erro-etapa4(v-if="erros.confirmaSenhaVazia") Por favor, confirme a senha.
           span.mensagem-erro-etapa4(v-if="erros.senhasDiferentes") As senhas não coincidem.
 
@@ -230,66 +291,13 @@ section.registro-multi
             button(type="submit") Finalizar
 </template>
 
-<script setup>
 
+<script setup>
 import { reactive, ref } from 'vue'
 import { register } from '@/services/authServices'
 import router from '@/router'
 
-const enviarCadastro = async () => {
-  try {
-    const dadosParaEnviar = {
-      nome: form.nome.trim(),
-      sobrenome: form.sobrenome.trim(),
-      apelido:form.apelido.trim(),
-      diaNascimento: Number(form.dia),
-      mesNascimento: Number(form.mes),
-      anoNascimento: Number(form.ano),
-      genero: form.genero,
-      cep: form.cep.replace(/\D/g, ''),
-      numeroResidencia: form.numero,
-      email: form.email.trim(),
-      senha: form.senha
-    };
-
-  const response = await fetch('http://localhost:8080/api/auth/register', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify(dadosParaEnviar),
-});
-
-
-    const contentType = response.headers.get('content-type');
-
-    let data;
-    if (contentType && contentType.includes('application/json')) {
-      try {
-        data = await response.json();
-      } catch {
-        data = { message: 'Resposta JSON inválida' };
-      }
-    } else {
-      const text = await response.text();
-      if (text.trim().length === 0) {
-        data = { message: 'Resposta vazia do servidor' };
-      } else {
-        data = { message: text };
-      }
-    }
-
-    if (!response.ok) {
-      alert('Erro ao cadastrar: ' + (data.message || 'Erro desconhecido'));
-      return;
-    }
-
-    router.push('/login');
-
-  } catch (error) {
-    alert('Erro inesperado: ' + error.message);
-  }
-};
-
-// Estado da etapa atual do formulário
+// Etapa atual do formulário
 const etapaAtual = ref(1)
 
 // Dados para selects de data de nascimento
@@ -307,6 +315,9 @@ const form = reactive({
   nome: '',
   sobrenome: '',
   apelido: '',
+  tipoPessoa: '',
+  cpf: '',
+  cnpj: '',
   dia: '',
   mes: '',
   ano: '',
@@ -322,10 +333,14 @@ const form = reactive({
   confirmaSenha: ''
 })
 
-// Estado reativo dos erros de validação
+// Erros reativos
 const erros = reactive({
   nome: false,
   sobrenome: false,
+  apelido: false,
+  tipoPessoa: false,
+  cpfInvalido: false,
+  cnpjInvalido: false,
   diaInvalido: false,
   mesInvalido: false,
   anoInvalido: false,
@@ -347,10 +362,7 @@ const erros = reactive({
   senhasDiferentes: false
 })
 
-// Mostrar ou ocultar senha
 const mostrarSenha = ref(false)
-
-// ===== VALIDAÇÃO DAS ETAPAS =====
 
 const validarEtapa1 = () => {
   erros.nome = form.nome.trim() === ''
@@ -359,6 +371,20 @@ const validarEtapa1 = () => {
 }
 
 const validarEtapa2 = () => {
+  erros.tipoPessoa = !form.tipoPessoa
+  erros.cpfInvalido = false
+  erros.cnpjInvalido = false
+
+  if (form.tipoPessoa === 'pf') {
+    erros.cpfInvalido = !/^\d{11}$/.test(form.cpf.replace(/\D/g, ''))
+  } else if (form.tipoPessoa === 'pj') {
+    erros.cnpjInvalido = !/^\d{14}$/.test(form.cnpj.replace(/\D/g, ''))
+  }
+
+  return !erros.tipoPessoa && !erros.cpfInvalido && !erros.cnpjInvalido
+}
+
+const validarEtapa3 = () => {
   const dia = +form.dia
   const mes = +form.mes
   const ano = +form.ano
@@ -394,7 +420,7 @@ function temMaisDe18Anos(dia, mes, ano) {
   return idade >= 18
 }
 
-const validarEtapa3 = () => {
+const validarEtapa4 = () => {
   erros.cepInvalido = !form.cep.match(/^\d{5}-?\d{3}$/)
   erros.ruaInvalida = form.rua.trim() === ''
   erros.numeroInvalido = form.numero.trim() === ''
@@ -413,7 +439,7 @@ const validarEtapa3 = () => {
   return !erros.enderecoIncompleto
 }
 
-const validarEtapa4 = () => {
+const validarEtapa5 = () => {
   erros.emailVazio = form.email.trim() === ''
   erros.emailInvalido = !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)
 
@@ -433,10 +459,8 @@ const validarEtapa4 = () => {
   )
 }
 
-// ===== FUNÇÃO CORRIGIDA PARA BUSCAR ENDEREÇO PELO CEP =====
-
 const buscarEndereco = async () => {
-  const cepLimpo = form.cep.replace(/\D/g, '') // remove tudo que não for número
+  const cepLimpo = form.cep.replace(/\D/g, '')
   const cepValido = /^\d{8}$/.test(cepLimpo)
   erros.cepInvalido = !cepValido
 
@@ -474,28 +498,237 @@ const buscarEndereco = async () => {
     console.error('Erro ao buscar CEP:', error)
   }
 }
-// ===== FUNÇÃO PARA AVANÇAR ETAPAS =====
 
 const proximaEtapa = () => {
   if (etapaAtual.value === 1) {
-    if (validarEtapa1()) etapaAtual.value++
+    if (validarEtapa1()) {
+      etapaAtual.value++
+    }
   } else if (etapaAtual.value === 2) {
-    if (validarEtapa2()) etapaAtual.value++
+    if (validarEtapa2()) {
+      etapaAtual.value++
+    }
   } else if (etapaAtual.value === 3) {
-    if (validarEtapa3()) etapaAtual.value++
+    if (validarEtapa3()) {  // Aqui é validarEtapa3, não validarEtapa4
+      etapaAtual.value++
+    }
   } else if (etapaAtual.value === 4) {
     if (validarEtapa4()) {
+      etapaAtual.value++
+    }
+  } else if (etapaAtual.value === 5) {
+    if (validarEtapa5()) {
       enviarCadastro()
       alert('Cadastro concluído com sucesso!')
-      // Aqui você pode adicionar envio real dos dados
     }
   }
+}
+
+
+const enviarCadastro = async () => {
+  try {
+   const dadosParaEnviar = {
+    nome: form.nome.trim(),
+    sobrenome: form.sobrenome.trim(),
+    apelido: form.apelido.trim(),
+    pj: form.tipoPessoa === 'pj',
+    cpf: form.tipoPessoa === 'pf' ? form.cpf : null,
+    cnpj: form.tipoPessoa === 'pj' ? form.cnpj : null,
+    diaNascimento: Number(form.dia),
+    mesNascimento: Number(form.mes),
+    anoNascimento: Number(form.ano),
+    genero: form.genero,
+    cep: form.cep.replace(/\D/g, ''),
+    numeroResidencia: form.numero,
+    email: form.email.trim(),
+    senha: form.senha
+  }
+
+    const response = await fetch('http://localhost:8080/api/auth/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(dadosParaEnviar)
+    })
+
+    const contentType = response.headers.get('content-type')
+    let data
+
+    if (contentType && contentType.includes('application/json')) {
+      try {
+        data = await response.json()
+      } catch {
+        data = { message: 'Resposta JSON inválida' }
+      }
+    } else {
+      const text = await response.text()
+      data = text.trim().length === 0
+        ? { message: 'Resposta vazia do servidor' }
+        : { message: text }
+    }
+
+    if (!response.ok) {
+      alert('Erro ao cadastrar: ' + (data.message || 'Erro desconhecido'))
+      return
+    }
+
+    router.push('/login')
+  } catch (error) {
+    alert('Erro inesperado: ' + error.message)
+  }
+}
+
+const formatarSomenteNumeros = (campo, maxLength) => {
+  let valor = form[campo]
+  valor = valor.replace(/\D/g, '')
+  if (valor.length > maxLength) {
+    valor = valor.slice(0, maxLength)
+  }
+  form[campo] = valor
+}
+
+const formatarCPF = () => {
+  let valor = form.cpf || ''
+  valor = valor.replace(/\D/g, '')
+
+  if (valor.length > 3) valor = valor.replace(/^(\d{3})(\d)/, '$1.$2')
+  if (valor.length > 6) valor = valor.replace(/^(\d{3})\.(\d{3})(\d)/, '$1.$2.$3')
+  if (valor.length > 9) valor = valor.replace(/^(\d{3})\.(\d{3})\.(\d{3})(\d)/, '$1.$2.$3-$4')
+
+  valor = valor.slice(0, 14)
+  form.cpf = valor
+}
+
+const formatarCNPJ = () => {
+  let valor = form.cnpj || ''
+  valor = valor.replace(/\D/g, '')
+
+  if (valor.length > 2) valor = valor.replace(/^(\d{2})(\d)/, '$1.$2')
+  if (valor.length > 5) valor = valor.replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3')
+  if (valor.length > 8) valor = valor.replace(/^(\d{2})\.(\d{3})\.(\d{3})(\d)/, '$1.$2.$3/$4')
+  if (valor.length > 12) valor = valor.replace(/^(\d{2})\.(\d{3})\.(\d{3})\/(\d{4})(\d)/, '$1.$2.$3/$4-$5')
+
+  valor = valor.slice(0, 18)
+  form.cnpj = valor
 }
 </script>
 
 <style scoped>
-body, * {
-  font-family: 'SuaFonteEscolhida', sans-serif !important;
+
+.erro-campo {
+  display: flex;
+  align-items: center;
+  color: #ff0000;
+  font-weight: 500;
+  font-size: 0.7rem;
+  text-align: left;
+  margin-top: 0.5rem;
+  gap: 0.5rem;
+  width: 100%;
+  justify-content: flex-start;
+}
+
+.icone-erro {
+  background-color: #ff0000;
+  color: white;
+  font-weight: bold;
+  border-radius: 50%;
+  width: 15px;
+  height: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  line-height: 1;
+  margin-top: -2px;
+}
+
+.text-branco {
+  color: white !important;
+  margin-bottom: 0rem;
+  margin-top: 2rem;
+  text-align: right;  /* aqui o alinhamento */
+}
+
+.etapa-tipo-pessoa input {
+  background-color: transparent !important;
+  box-shadow: none !important;
+  color: #ffffff;
+}
+
+.etapa-tipo-pessoa {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.titulo-etapa2 {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #fff;
+  text-align: center;
+}
+
+.grupo-radio {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+}
+
+.radio-item {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: #fff;
+  font-weight: 500;
+}
+
+
+.erro-tipo {
+  display: flex;
+  align-items: center;
+  color: #ff0000;
+  font-weight: 500;
+  font-size: 0.8rem;
+  text-align: left;
+  margin-top: 0.5rem;
+  gap: 0.5rem;
+}
+
+.icone-erro {
+  background-color: #ff0000;
+  color: white;
+  font-weight: bold;
+  border-radius: 50%;
+  width: 15px;
+  height: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  line-height: 1; /* garante centralização vertical da exclamação */
+  margin-top: -2px;
+}
+
+.grupo-input-cpf,
+.grupo-input-cnpj {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.grupo-input-cpf input,
+.grupo-input-cnpj input {
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 280px;
+}
+
+.input-erro2 {
+  border-color: red;
 }
 
 /* Espaçamento extra somente nas mensagens de erro da Etapa 2 */
