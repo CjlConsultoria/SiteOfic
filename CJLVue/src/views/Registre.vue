@@ -9,7 +9,11 @@ section.registro-multi
 
   .form-container
     small.etapa-titulo(v-if="etapaAtual === 1") Insira seu nome
+<<<<<<< HEAD
     small.etapa-titulo(v-else-if="etapaAtual === 2") 
+=======
+    small.etapa-titulo(v-else-if="etapaAtual === 2")
+>>>>>>> 3923b27c7617474a6872df9663c0415418d45a9e
     small.etapa-titulo(v-else-if="etapaAtual === 3") Data de nascimento e gênero
 
     form(@submit.prevent="proximaEtapa")
@@ -75,7 +79,11 @@ section.registro-multi
               span Pessoa Jurídica
 
           span.erro-tipo(v-if="erros.tipoPessoa")
+<<<<<<< HEAD
             span.icone-erro !  
+=======
+            span.icone-erro !
+>>>>>>> 3923b27c7617474a6872df9663c0415418d45a9e
             |  Selecione o tipo de pessoa.
 
           // Mensagem dinâmica antes do campo CPF
@@ -94,7 +102,11 @@ section.registro-multi
             )
             label(for="cpf") CPF
             span.erro-campo(v-if="erros.cpfInvalido")
+<<<<<<< HEAD
               span.icone-erro !  
+=======
+              span.icone-erro !
+>>>>>>> 3923b27c7617474a6872df9663c0415418d45a9e
               | CPF inválido.
 
           // Mensagem dinâmica antes do campo CNPJ
@@ -113,12 +125,20 @@ section.registro-multi
             )
             label(for="cnpj") CNPJ
             span.erro-campo(v-if="erros.cnpjInvalido")
+<<<<<<< HEAD
               span.icone-erro !  
               | CNPJ inválido.
 
         section.botoes
           button(type="button", @click="etapaAtual--") Voltar
           button(type="submit") Seguinte
+=======
+              span.icone-erro !
+              | CNPJ inválido.
+
+          section.botoes
+            button(type="submit") Seguinte
+>>>>>>> 3923b27c7617474a6872df9663c0415418d45a9e
 
       // Etapa 3 - Data de nascimento e gênero (nova etapa)
       template(v-if="etapaAtual === 3")
@@ -549,6 +569,21 @@ const enviarCadastro = async () => {
       email: form.email.trim(),
       senha: form.senha
     }
+    nome: form.nome.trim(),
+    sobrenome: form.sobrenome.trim(),
+    apelido: form.apelido.trim(),
+    pj: form.tipoPessoa === 'pj',
+    cpf: form.tipoPessoa === 'pf' ? form.cpf : null,
+    cnpj: form.tipoPessoa === 'pj' ? form.cnpj : null,
+    diaNascimento: Number(form.dia),
+    mesNascimento: Number(form.mes),
+    anoNascimento: Number(form.ano),
+    genero: form.genero,
+    cep: form.cep.replace(/\D/g, ''),
+    numeroResidencia: form.numero,
+    email: form.email.trim(),
+    senha: form.senha
+  }
 
     const response = await fetch('http://localhost:8080/api/auth/register', {
       method: 'POST',
@@ -583,7 +618,10 @@ const enviarCadastro = async () => {
   }
 }
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 3923b27c7617474a6872df9663c0415418d45a9e
 const formatarSomenteNumeros = (campo, maxLength) => {
   let valor = form[campo]
   valor = valor.replace(/\D/g, '')
@@ -620,6 +658,7 @@ const formatarCNPJ = () => {
 </script>
 
 <style scoped>
+<<<<<<< HEAD
 /* ---------- BOTÃO SUBMIT E VOLTAR ---------- */
 section.botoes {
   display: flex;
@@ -652,6 +691,8 @@ section.botoes button[type="button"] {
   min-width: 110px; /* Aumenta a largura mínima */
 }
 
+=======
+>>>>>>> 3923b27c7617474a6872df9663c0415418d45a9e
 
 .erro-campo {
   display: flex;

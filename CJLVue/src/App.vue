@@ -148,10 +148,16 @@ div.layout-wrapper(:class="{ 'layout-plataforma': ehPlataforma }")
             img.foto-perfil-google(:src="usuario.fotoUrl", alt="Foto do perfil")
             h3.ola-msg Olá, {{ usuario.nomeCompleto.split(' ')[0] }}!
             p.nome-completo {{ usuario.nomeCompleto }}
+<<<<<<< HEAD
             p.email-text {{ usuario.email }}
             p(v-if="usuario.cpf && usuario.cpf !== ''") CPF: {{ usuario.cpf }}
             p.cnpj-text(v-else-if="usuario.cnpj && usuario.cnpj !== ''") CNPJ: {{ usuario.cnpj }}
 
+=======
+            p {{ usuario.email }}
+            p(v-if="usuario.cpf && usuario.cpf !== ''") CPF: {{ usuario.cpf }}
+            p(v-else-if="usuario.cnpj && usuario.cnpj !== ''") CNPJ: {{ usuario.cnpj }}
+>>>>>>> 3923b27c7617474a6872df9663c0415418d45a9e
             //-Informações adicionais, se quiser ativar
             //-p {{ usuario.genero }}
             //-p {{ usuario.cidade }} - {{ usuario.estado }}

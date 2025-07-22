@@ -72,10 +72,21 @@ public class AuthController {
             return ResponseEntity.badRequest().body(errorResponse);
         }
 
+        if (dto.isPj()) {
+            if (dto.getCnpj() != null && userRepository.existsByCnpj(dto.getCnpj())) {
+                return ResponseEntity.badRequest().body(Map.of("message", "CNPJ já utilizado"));
+            }
+        } else {
+            if (dto.getCpf() != null && userRepository.existsByCpf(dto.getCpf())) {
+                return ResponseEntity.badRequest().body(Map.of("message", "CPF já utilizado"));
+            }
+        }
+
         User user = new User();
         user.setNome(dto.getNome());
         user.setSobrenome(dto.getSobrenome());
         user.setApelido(dto.getApelido());
+
         user.setPj(dto.isPj());
 
         if (dto.isPj()){
