@@ -20,7 +20,8 @@ section.registro-multi
           id="email"
         )
         label(for="email") Email
-        span.mensagem-erro(v-if="erroEmail") O email é obrigatório.
+
+      span.mensagem-erro(v-if="erroEmail") O email é obrigatório.
 
       .input-group
         input(
@@ -31,21 +32,16 @@ section.registro-multi
           id="senha"
         )
         label(for="senha") Senha
-        span.mensagem-erro(v-if="erroSenha") A senha é obrigatória.
-        span.mensagem-erro(v-if="mensagemErro") {{ mensagemErro }}
 
+      span.mensagem-erro(v-if="erroSenha") A senha é obrigatória.
 
       .input-group
         input(type="checkbox", id="mostrarSenha", v-model="mostrarSenha")
-        
         label(for="mostrarSenha") Mostrar senha
-
 
       section.botoes
         button(type="submit") Entrar
-        span.erro-geral(v-if="mensagemErro")= mensagemErro
-
-
+        span.mensagem-erro(v-if="mensagemErro")= mensagemErro
 </template>
 
 <script setup>
@@ -105,19 +101,11 @@ input:-webkit-autofill:active {
   box-shadow: 0 0 0px 1000px #222222 inset !important;
   -webkit-text-fill-color: white !important;
   caret-color: white !important;
+  transition: background-color 9999s ease-in-out 0s;
 }
-
 </style>
 
 <style scoped>
-.erro-geral {
-  font-size: 13px;
-  color: #d93025;
-  margin-top: 12px;
-  font-family: Roboto, Arial, sans-serif;
-  display: block;
-}
-
 /* IDÊNTICO AO REGISTRO */
 body, * {
   font-family: 'SuaFonteEscolhida', sans-serif !important;
@@ -179,13 +167,12 @@ form {
 }
 
 .input-group {
-  display: flex;
-  flex-direction: column; /* empilha o input, label e spans */
-  align-items: flex-start;
-  margin-bottom: 16px;
   position: relative;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
-
 
 .input-group input[type="checkbox"] {
   width: 12px;
@@ -233,7 +220,6 @@ form {
 }
 
 .input-group input {
-  background-color: #222222 !important; /* força o fundo escuro */
   width: 100%;
   padding: 24px 12px 8px;
   font-size: 16px;
@@ -274,12 +260,13 @@ form {
 .mensagem-erro {
   font-size: 12px;
   color: #d93025;
-  margin-top: 6px;
   display: flex;
   align-items: center;
   gap: 6px;
+  font-family: Roboto, Arial, sans-serif;
+  user-select: text;
+  margin-top: -30px;
 }
-
 
 .mensagem-erro::before {
   content: '!';

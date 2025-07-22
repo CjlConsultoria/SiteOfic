@@ -15,10 +15,12 @@ public class User {
     private Long id;
     private String nome;
     private String sobrenome;
-    private boolean pj;
-    private String cnpj;
-    private String cpf;
     private String apelido;
+    @Column(unique = true)
+    private String cpf;
+    @Column(unique = true)
+    private String cnpj;
+    private boolean pj;
     @Column(unique = true)
     private String email;
     private String senha;
@@ -26,7 +28,6 @@ public class User {
     private int mesNascimento;
     private int anoNascimento;
     private String genero;
-
     private String cep;
     private String logradouro;
     private String numeroResidencia;

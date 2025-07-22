@@ -18,11 +18,8 @@ const usuario = reactive({
   cep: '-',
   cidade: '-',
   estado: '-',
-  genero: '-',
-  cpf: '-',
-  cnpj: '-'
+  genero: '-'
 })
-
 
 function irParaLogin() {
   router.push('/login')
@@ -57,7 +54,7 @@ function logoff() {
   usuario.cep = '-'
   usuario.cidade = '-'
   usuario.estado = '-'
-  usuario.genero = '-'
+  usuario.genero = '-'// Remove o token ao fazer logout
   router.push('/login')
 }
 
@@ -106,8 +103,6 @@ async function buscarUsuarioLogado() {
     usuario.estado = dados.estado || '-'
     usuario.genero = dados.genero || '-'
     usuario.fotoUrl = dados.fotoUrl || 'https://thumbs.dreamstime.com/b/vetor-de-%C3%ADcone-perfil-do-avatar-padr%C3%A3o-foto-usu%C3%A1rio-m%C3%ADdia-social-183042379.jpg'
-    usuario.cpf = dados.cpf || ''
-    usuario.cnpj = dados.cnpj || ''
 
   } catch (erro: any) {
     console.error('Erro ao buscar usuário logado:', erro)
@@ -116,7 +111,6 @@ async function buscarUsuarioLogado() {
     }
   }
 }
-
 </script>
 
 
@@ -148,16 +142,8 @@ div.layout-wrapper(:class="{ 'layout-plataforma': ehPlataforma }")
             img.foto-perfil-google(:src="usuario.fotoUrl", alt="Foto do perfil")
             h3.ola-msg Olá, {{ usuario.nomeCompleto.split(' ')[0] }}!
             p.nome-completo {{ usuario.nomeCompleto }}
-<<<<<<< HEAD
-            p.email-text {{ usuario.email }}
-            p(v-if="usuario.cpf && usuario.cpf !== ''") CPF: {{ usuario.cpf }}
-            p.cnpj-text(v-else-if="usuario.cnpj && usuario.cnpj !== ''") CNPJ: {{ usuario.cnpj }}
-
-=======
             p {{ usuario.email }}
-            p(v-if="usuario.cpf && usuario.cpf !== ''") CPF: {{ usuario.cpf }}
-            p(v-else-if="usuario.cnpj && usuario.cnpj !== ''") CNPJ: {{ usuario.cnpj }}
->>>>>>> 3923b27c7617474a6872df9663c0415418d45a9e
+
             //-Informações adicionais, se quiser ativar
             //-p {{ usuario.genero }}
             //-p {{ usuario.cidade }} - {{ usuario.estado }}
@@ -213,20 +199,10 @@ div.layout-wrapper(:class="{ 'layout-plataforma': ehPlataforma }")
 
 
 <style scoped>
-.email-text {
-  color: #444;
-}
-
-.cnpj-text {
-  font-size: 0.8rem; /* ou o tamanho que quiser */
-  color: #444;
-  margin-top: 1rem;
-}
-
 .nome-completo {
   font-size: 0.9rem;
   color: #444;
-  margin-bottom: -2px;
+  margin-bottom: 2px;
 }
 
 .fixed-footer {
