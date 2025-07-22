@@ -51,6 +51,7 @@ section.registro-multi
         section.botoes
           button(type="submit") Seguinte
 
+
       // Etapa 2 - Tipo de Pessoa
       template(v-if="etapaAtual === 2")
         .etapa-tipo-pessoa
@@ -115,8 +116,9 @@ section.registro-multi
               span.icone-erro !
               | CNPJ inválido.
 
-          section.botoes
-            button(type="submit") Seguinte
+        section.botoes
+          button(type="button", @click="etapaAtual--") Voltar
+          button(type="submit") Seguinte
 
       // Etapa 3 - Data de nascimento e gênero (nova etapa)
       template(v-if="etapaAtual === 3")
@@ -166,8 +168,9 @@ section.registro-multi
             span.mensagem-erro-etapa2(v-if="erros.generoInvalido") Selecione o seu gênero.
             span.mensagem-erro-etapa2(v-if="erros.idadeInvalida") É necessário ter pelo menos 18 anos para se registrar.
 
-          section.botoes
-            button(type="submit") Seguinte
+        section.botoes
+          button(type="button", @click="etapaAtual--") Voltar
+          button(type="submit") Seguinte
 
       // Etapa 4 - Endereço
       template(v-if="etapaAtual === 4")
@@ -203,7 +206,14 @@ section.registro-multi
               placeholder=" "
             )
             label(for="numero") Número
-
+          .input-group
+            input(
+            type="text"
+            v-model="form.complemento"
+            id="complemento"
+            placeholder=" "
+            )
+            label(for="complemento") Complemento (opcional)
           .input-group
             input(
               type="text"
@@ -237,8 +247,9 @@ section.registro-multi
 
           span.mensagem-erro-etapa3(v-if="erros.enderecoIncompleto") Preencha todos os campos do endereço corretamente.
 
-          section.botoes
-            button(type="submit") Seguinte
+        section.botoes
+          button(type="button", @click="etapaAtual--") Voltar
+          button(type="submit") Seguinte
 
       // Etapa 5 - Credenciais
       template(v-if="etapaAtual === 5")
@@ -286,8 +297,9 @@ section.registro-multi
               v-model="mostrarSenha"
             )
             label(for="mostrarSenha") Mostrar senha
-
+          
           section.botoes
+            button(type="button", @click="etapaAtual--") Voltar
             button(type="submit") Finalizar
 </template>
 
@@ -613,6 +625,52 @@ const formatarCNPJ = () => {
 </script>
 
 <style scoped>
+/* ---------- BOTÃO SUBMIT E VOLTAR ---------- */
+section.botoes {
+  display: flex;
+  justify-content: flex-end; /* Alinha à direita */
+  margin-top: 16px;
+  gap: 12px; /* Espaço entre os botões */
+}
+
+section.botoes button[type="submit"],
+section.botoes button[type="button"] {
+  background-color: #fffda2;
+  border-radius: 14px;
+  color: rgb(0, 0, 0);
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 16px;
+  padding: 10px 24px;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 1px 1px rgb(0 0 0 / 0.1);
+  transition: background-color 0.15s ease-in-out;
+  user-select: none;
+}
+
+section.botoes button[type="submit"]:hover,
+section.botoes button[type="button"]:hover {
+  background-color: #ffffff;
+}
+
+button[type="button"] {
+  margin-right: 1rem;
+  background-color: #f0f0f0;
+  color: #333;
+  border: 1px solid #ccc;
+  padding: 0.5rem 1.2rem;
+  border-radius: 6px;
+  cursor: pointer;
+}
+button[type="button"]:hover {
+  background-color: #e0e0e0;
+}
+section.botoes button[type="submit"],
+section.botoes button[type="button"] {
+  padding: 0px 35px; /* Aumenta a largura do botão */
+  /* restante do código */
+}
 
 .erro-campo {
   display: flex;

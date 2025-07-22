@@ -1,29 +1,38 @@
 <script setup>
-import { ref } from 'vue'
-import LogoNexdom from '@/assets/cjl.jpg' // <-- Caminho da imagem correto!
+import { ref, reactive, onMounted } from 'vue'
+import axios from 'axios'
+import LogoNexdom from '@/assets/cjl.jpg' // ajuste o caminho se necessário
 
-
+// Controle do menu e página
 const menuAberto = ref(false)
+const paginaAtual = ref('home')
 
 const toggleMenu = () => {
   menuAberto.value = !menuAberto.value
 }
 
-const menuPrincipal = [
-  { label: 'Dashboard', url: '#', icon: '📊' },           // estatísticas
-  { label: 'Condomínios', url: '#', icon: '🏢' },         // prédios
-  { label: 'Financeiro', url: '#', icon: '💰' },          // dinheiro
-  { label: 'Usuários', url: '#', icon: '👥' },            // pessoas
-  { label: 'Serviços', url: '#', icon: '🛠️' },           // ferramenta
-  { label: 'Relatórios', url: '#', icon: '📑' },          // relatório
+// Função para mudar para página perfil e carregar dados do usuário
+async function irParaPerfil() {
+  paginaAtual.value = 'perfil'
+  await buscarUsuario()
+}
 
+// Menus fixos
+const menuPrincipal = [
+  { label: 'Dashboard', url: '#', icon: '📊' },
+  { label: 'Condomínios', url: '#', icon: '🏢' },
+  { label: 'Financeiro', url: '#', icon: '💰' },
+  { label: 'Usuários', url: '#', icon: '👥' },
+  { label: 'Serviços', url: '#', icon: '🛠️' },
+  { label: 'Relatórios', url: '#', icon: '📑' },
 ]
 
 const menuSecundaria = [
-  { label: 'Perfil', url: '#', icon: '🙍‍♂️' },           // usuário
-  { label: 'Ajuda', url: '#', icon: '❓' },               // ajuda
-  { label: 'Sobre', url: '#', icon: 'ℹ️' },              // info
-    { label: 'Configurações', url: '#', icon: '⚙️' }       // engrenagem
+  { label: 'Perfil', url: '#', icon: '🙍‍♂️' },
+  { label: 'Ajuda', url: '#', icon: '❓' },
+  { label: 'Sobre', url: '#', icon: 'ℹ️' },
+  { label: 'Configurações', url: '#', icon: '⚙️' },
+  { label: 'Sair', url: '#', icon: '🚪' }
 ]
 
 const cards = [
@@ -32,45 +41,119 @@ const cards = [
     logo: LogoNexdom,
     title: 'Sistema de Gestão de Condomínios',
     author: 'Consultoria CJL',
-    description: 'Sistema completo para gestão de condomínios, integrando controle financeiro, comunicação eficiente entre moradores e administração de reservas, simplificando a rotina do síndico.',
+    description:
+      'Sistema completo para gestão de condomínios, integrando controle financeiro, comunicação eficiente entre moradores e administração de reservas, simplificando a rotina do síndico.',
     rating: '5.0/5.0',
-    reviews: 2
+    reviews: 2,
   },
   {
     id: 2,
     logo: LogoNexdom,
     title: 'Gestao de Estoque',
     author: 'Consultoria CJL',
-    description: 'Sistema eficiente para controle de estoque, facilitando o monitoramento de produtos, entradas, saídas e reposições em tempo real, otimizando a gestão e reduzindo perdas.',
+    description:
+      'Sistema eficiente para controle de estoque, facilitando o monitoramento de produtos, entradas, saídas e reposições em tempo real, otimizando a gestão e reduzindo perdas.',
     rating: '4.8/5.0',
-    reviews: 5
-  }
+    reviews: 5,
+  },
 ]
+
+// Dados do usuário (reativo para atualizar na tela perfil)
+const usuario = reactive({
+  nome: '',
+  sobrenome: '',
+  cpf: '',
+  email: '',
+  cep: '',
+  logradouro: '',
+  numero: '',
+  complemento: '',
+  bairro: '',
+  cidade: '',
+  estado: '',
+})
+
+// Função para buscar dados do usuário na API com token
+async function buscarUsuario() {
+  const token = localStorage.getItem('token')
+  if (!token) {
+    console.warn('Token não encontrado. Usuário não está logado.')
+    return
+  }
+
+  try {
+    const resposta = await axios.get('http://localhost:8080/api/usuarios', {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+
+    const dados = resposta.data
+    // Se API retornar lista, pega primeiro, ajuste conforme sua API
+    const u = Array.isArray(dados) ? dados[0] : dados
+
+    usuario.nome = u.nome || ''
+    usuario.sobrenome = u.sobrenome || ''
+    usuario.cpf = u.cpf || ''
+    usuario.email = u.email || ''
+    usuario.cep = u.cep || ''
+    usuario.logradouro = u.logradouro || ''
+    usuario.numero = u.numero || ''
+    usuario.complemento = u.complemento || ''
+    usuario.bairro = u.bairro || ''
+    usuario.cidade = u.cidade || ''
+    usuario.estado = u.estado || ''
+
+    console.log('Dados do usuário carregados:', usuario)
+  } catch (erro) {
+    console.error('Erro ao buscar usuário:', erro)
+    if (erro.response?.status === 401) {
+      localStorage.removeItem('token')
+      alert('Sua sessão expirou. Faça login novamente.')
+      // Se desejar, redirecione para login:
+      // router.push('/login')
+    }
+  }
+}
+
+// Opcional: carregar dados caso já esteja na página perfil ao montar
+onMounted(() => {
+  if (paginaAtual.value === 'perfil') buscarUsuario()
+})
 </script>
+
 
 <template lang="pug">
 .app
+  // Sidebar lateral
   aside.sidebar(:class="{ open: menuAberto }")
-    .logo
+    .logo Logo
     nav.menu
       ul.menu-principal
         li(v-for="item in menuPrincipal" :key="item.label")
           a(:href="item.url")
             span.icon {{ item.icon }}&nbsp;
             | {{ item.label }}
-
       ul.menu-secundaria
-        li(v-for="item in menuSecundaria" :key="item.label" :class="{ 'btn-sair': item.label === 'Sair' }")
-          a(:href="item.url")
+        li(
+          v-for="item in menuSecundaria"
+          :key="item.label"
+          :class="{ 'btn-sair': item.label === 'Sair' }"
+        )
+          a(
+            href="#"
+            @click.prevent="item.label === 'Perfil' ? irParaPerfil() : null"
+          )
             span.icon {{ item.icon }}&nbsp;
             | {{ item.label }}
 
+  // Botão para abrir/fechar menu
   button.btn-menu(@click="toggleMenu") ☰
 
-  section.software-list-container
+  // HOME
+  section.software-list-container(v-if="paginaAtual === 'home'")
     h1.software-main-title Sistemas para Testes
-    h2.software-title
-
+    h2.software-title Lista de Softwares Disponíveis
     .software-cards-wrapper
       .software-card(v-for="card in cards" :key="card.id")
         .software-card-logo
@@ -88,9 +171,244 @@ const cards = [
         label.software-card-checkbox
           input(type="checkbox")
           | Comparar
+
+  // PERFIL
+  section.perfil-usuario(v-if="paginaAtual === 'perfil'")
+    h1.perfil-titulo Meus Dados
+
+    // Informações Pessoais
+    .card
+      h2 Informações Pessoais
+      .form-row
+        .field
+          label Nome
+          input(type="text", :value="usuario.nome", disabled)
+        .field
+          label Sobrenome
+          input(type="text", :value="usuario.sobrenome", disabled)
+      .form-row
+        .field
+          label CPF
+          input(type="text", :value="usuario.cpf", disabled)
+        .field
+          label E-mail
+          input(type="email", :value="usuario.email", disabled)
+
+    // Endereço
+    .card
+      h2 Endereço
+      .form-row
+        .field
+          label CEP
+          input(type="text", :value="usuario.cep", disabled)
+        .field
+          label Logradouro
+          input(type="text", :value="usuario.logradouro", disabled)
+      .form-row
+        .field
+          label Número
+          input(type="text", :value="usuario.numero", disabled)
+        .field
+          label Complemento
+          input(type="text", :value="usuario.complemento", disabled)
+      .form-row
+        .field
+          label Bairro
+          input(type="text", :value="usuario.bairro", disabled)
+        .field
+          label Cidade
+          input(type="text", :value="usuario.cidade", disabled)
+      .form-row
+        .field
+          label Estado
+          input(type="text", :value="usuario.estado", disabled)
 </template>
 
+
 <style scoped>
+.field label,
+.campo label,
+.form-group label {
+  margin-bottom: 5rem; /* ajuste conforme desejado */
+}
+
+input[type="text"],
+input[type="email"] {
+  height: 32px !important;
+  max-height: 32px !important;
+  padding: 6px 10px !important;
+  box-sizing: border-box !important;
+  font-size: 14px !important;
+}
+
+
+.form-row > * {
+  flex: 0 0 400px;
+  /* NÃO coloque margem aqui! Senão acumula com gap e vira confusão */
+}
+
+
+
+.field {
+  flex: 1;                  /* ocupa metade do espaço (2 colunas) */
+  display: flex;
+  flex-direction: column;   /* label em cima, input embaixo */
+}
+
+.field label {
+  margin-bottom: 12px;
+  font-weight: 600;
+  color: #333;
+  line-height: 1; /* evita espaçamento extra da linha */
+}
+
+.field input {
+  margin-top: 0 !important;      /* elimina margem superior */
+  padding: 6px 10px !important;  /* mantém padding confortável */
+  height: 32px !important;       /* altura fixa */
+  font-size: 14px !important;
+  border: 1px solid #6d2800 !important;
+  border-radius: 6px !important;
+  box-sizing: border-box !important;
+  line-height: 1 !important;     /* evita espaçamento extra */
+  vertical-align: top !important; /* força alinhamento no topo */
+  display: block !important;     /* remove inline gap */
+}
+
+
+
+.card {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 10px;
+  width: 140%;       /* força a largura a 90% do container pai */
+  max-width: none;  /* remove o limite máximo */
+  margin: 0 auto;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+
+.coluna {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.campo {
+  display: flex;
+  flex-direction: column;
+}
+
+.campo label {
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+  color: #333;
+}
+
+.campo input {
+  height: 90px;         /* aumenta a altura */
+  min-width: 250px;     /* largura mínima maior */
+  padding: 8px 12px;    /* deixa o padding proporcional */
+  font-size: 16px;      /* fonte maior para combinar */
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  box-sizing: border-box;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  color: #555;
+}
+
+.form-group input {
+  background-color: #f5e9a7;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 0.5rem;
+}
+
+/* Estilo da seção de perfil */
+.perfil-usuario {
+  padding: 2rem;
+  margin-left: 250px;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.perfil-titulo {
+  font-size: 2rem;
+  font-weight: 500; /* ou bold */
+  margin-bottom: 2rem;
+  text-align: center;
+  margin-left: 230px;
+  color: #ffffff;
+}
+
+
+.card {
+  background: white;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  border-radius: 10px;
+  border-left: 4px solid #bb6400; /* borda esquerda mais grossa */
+  margin-left: 90px;
+   max-width: 770px; /* ou o tamanho que desejar */
+}
+
+
+.card h2 {
+  font-size: 1.5rem;
+  margin-bottom: 2rem;
+  color: #222222;
+  font-weight: bold;
+  
+}
+
+.form-row {
+  display: flex;
+  flex-wrap: wrap;
+  row-gap: 1rem;      /* espaçamento vertical */
+  column-gap: 4rem;   /* espaçamento lateral maior */
+  margin-bottom: 1rem;
+}
+
+.form-row input {
+  flex: 1 1 auto;
+  background-color: #fff4b5;
+  border-radius: 6px;
+  padding: 0.5rem;
+  min-width: 250px;
+  height: 120px; /* altura maior */
+  font-size: 16px;
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+}
+.form-row input {
+  padding-top: 20px !important;
+  padding-bottom: 20px !important;
+  line-height: 1.5 !important;
+  font-size: 16px !important;
+  height: auto !important; /* deixa o height automático */
+  min-height: 40px !important; /* define um mínimo maior */
+  box-sizing: border-box !important;
+  background-color: #fff6c6 !important;
+  border-radius: 6px !important;
+  border: 1px solid #923a00 !important;
+  flex: 1 1 auto !important;
+}
+
 .software-main-title,
 .software-title {
   text-align: center;
@@ -174,7 +492,7 @@ const cards = [
   top: 1.5rem;
   right: 1.5rem;
   font-size: 0.9rem;
-  color: #f57c00;
+  color: #b65b00;
   display: flex;
   flex-direction: column;
   align-items: flex-end;
@@ -369,4 +687,5 @@ nav.menu ul {
     width: 200px !important;
   }
 }
+
 </style>
