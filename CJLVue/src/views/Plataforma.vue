@@ -1,7 +1,7 @@
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
 import axios from 'axios'
-import LogoNexdom from '@/assets/cjl.jpg' // ajuste o caminho se necessário
+import LogoNexdom from '@/assets/cjl.jpg'
 
 // Controle do menu lateral e página atual
 const menuAberto = ref(false)
@@ -62,9 +62,9 @@ const cards = [
   },
 ]
 
-// Dados do usuário
+// Dados do usuário (formulário)
 const usuario = reactive({
-  tipoPessoa: 'JURIDICA', // ou 'FISICA' — valor padrão
+  tipoPessoa: '',
   nome: '',
   sobrenome: '',
   cpf: '',
@@ -99,15 +99,17 @@ async function buscarUsuario() {
       },
     })
 
-    console.log('Resposta da API:', resposta.data)
-
     const dados = resposta.data
+    console.log('Resposta da API:', dados)
+
     const u = Array.isArray(dados) ? dados[0] : dados
 
-    // Verifica se é pessoa física ou jurídica
-    usuario.tipoPessoa = u.tipoPessoa || (u.cnpj ? 'JURIDICA' : 'FISICA')
+    if (!u || Object.keys(u).length === 0) {
+      console.warn('Nenhum dado de usuário recebido.')
+      return
+    }
 
-    // Preenche os campos do usuário
+    usuario.tipoPessoa = u.tipoPessoa || (u.cnpj ? 'JURIDICA' : 'FISICA')
     usuario.nome = u.nome || ''
     usuario.sobrenome = u.sobrenome || ''
     usuario.cpf = u.cpf || ''
@@ -123,26 +125,28 @@ async function buscarUsuario() {
     usuario.cnpj = u.cnpj || ''
     usuario.codigoPublico = u.codigoPublico || ''
 
-    console.log('Dados do usuário carregados no reactive:', usuario)
+    console.log('Dados do usuário carregados no formulário:', usuario)
   } catch (erro) {
     console.error('Erro ao buscar usuário:', erro)
     if (erro.response?.status === 401) {
       localStorage.removeItem('token')
       alert('Sua sessão expirou. Faça login novamente.')
-      // redirecionar se necessário:
       // router.push('/login')
+    } else {
+      alert('Erro ao buscar informações do usuário.')
     }
   }
 }
 
-// Se estiver na página de perfil, carrega dados ao montar
+// Carregar dados automaticamente se já estiver na página de perfil
 onMounted(() => {
-  console.log('Componente montado, página atual:', paginaAtual.value)
+  console.log('Componente montado. Página atual:', paginaAtual.value)
   if (paginaAtual.value === 'perfil') {
     buscarUsuario()
   }
 })
 </script>
+
 
 
 <template lang="pug">
@@ -260,7 +264,6 @@ onMounted(() => {
           label Código Público
           input(type="text", :value="usuario.codigoPublico", disabled)
 </template>
-
 
 
 <style scoped>
