@@ -16,6 +16,8 @@ public class User {
     private String nome;
     private String sobrenome;
     private String apelido;
+    private String cargo;
+    private String telefone;
     @Column(unique = true)
     private String cpf;
     @Column(unique = true)
@@ -31,6 +33,7 @@ public class User {
     private String cep;
     private String logradouro;
     private String numeroResidencia;
+    private String complemento;
     private String bairro;
     private String cidade;
     private String estado;

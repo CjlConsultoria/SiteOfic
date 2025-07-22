@@ -17,7 +17,7 @@ const toggleMenu = () => {
 async function irParaPerfil() {
   console.log('irParaPerfil chamado')
   paginaAtual.value = 'perfil'
-  await buscarUsuario()
+  await buscarUsuarioLogado()
 }
 
 // Menus principais e secundários
@@ -82,67 +82,54 @@ const usuario = reactive({
 })
 
 // Buscar dados do usuário na API
-async function buscarUsuario() {
-  console.log('buscarUsuario chamada')
+async function buscarUsuarioLogado() {
   const token = localStorage.getItem('token')
-  console.log('Token do localStorage:', token)
-
   if (!token) {
-    console.warn('Token não encontrado. Usuário não está logado.')
+    logoff()
     return
   }
 
   try {
-    const resposta = await axios.get('http://localhost:8080/api/usuarios', {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+    const resposta = await axios.get('http://localhost:8080/api/auth/dados', {
+      headers: { Authorization: `Bearer ${token}` }
     })
 
     const dados = resposta.data
-    console.log('Resposta da API:', dados)
 
-    const u = Array.isArray(dados) ? dados[0] : dados
+    // Preenche os campos conforme o objeto esperado no template
+    usuario.nome = dados.nome || ''
+    usuario.sobrenome = dados.sobrenome || ''
+    usuario.email = dados.email || ''
+    usuario.cep = dados.cep || ''
+    usuario.cidade = dados.cidade || ''
+    usuario.estado = dados.estado || ''
+    usuario.cpf = dados.cpf || ''
+    usuario.cnpj = dados.cnpj || ''
+    usuario.genero = dados.genero || ''
 
-    if (!u || Object.keys(u).length === 0) {
-      console.warn('Nenhum dado de usuário recebido.')
-      return
-    }
+    // Você pode mapear "tipoPessoa" com base na presença de cnpj
+    usuario.tipoPessoa = dados.cnpj ? 'JURIDICA' : 'FISICA'
 
-    usuario.tipoPessoa = u.tipoPessoa || (u.cnpj ? 'JURIDICA' : 'FISICA')
-    usuario.nome = u.nome || ''
-    usuario.sobrenome = u.sobrenome || ''
-    usuario.cpf = u.cpf || ''
-    usuario.email = u.email || ''
-    usuario.cep = u.cep || ''
-    usuario.logradouro = u.logradouro || ''
-    usuario.numero = u.numero || ''
-    usuario.complemento = u.complemento || ''
-    usuario.bairro = u.bairro || ''
-    usuario.cidade = u.cidade || ''
-    usuario.estado = u.estado || ''
-    usuario.nomeEmpresa = u.nomeEmpresa || ''
-    usuario.cnpj = u.cnpj || ''
-    usuario.codigoPublico = u.codigoPublico || ''
+    // Estes campos você pode adaptar se estiverem no backend
+    usuario.logradouro = dados.logradouro || ''
+    usuario.numero = dados.numero || ''
+    usuario.complemento = dados.complemento || ''
+    usuario.bairro = dados.bairro || ''
+    usuario.nomeEmpresa = dados.nomeEmpresa || ''
+    usuario.codigoPublico = dados.codigoPublico || ''
 
-    console.log('Dados do usuário carregados no formulário:', usuario)
   } catch (erro) {
-    console.error('Erro ao buscar usuário:', erro)
+    console.error('Erro ao buscar usuário logado:', erro)
     if (erro.response?.status === 401) {
-      localStorage.removeItem('token')
-      alert('Sua sessão expirou. Faça login novamente.')
-      // router.push('/login')
-    } else {
-      alert('Erro ao buscar informações do usuário.')
+      logoff()
     }
   }
 }
 
 // Carregar dados automaticamente se já estiver na página de perfil
 onMounted(() => {
-  console.log('Componente montado. Página atual:', paginaAtual.value)
   if (paginaAtual.value === 'perfil') {
-    buscarUsuario()
+    buscarUsuarioLogado()
   }
 })
 </script>
@@ -426,7 +413,7 @@ input[type="email"] {
   margin-bottom: 2rem;
   color: #222222;
   font-weight: bold;
-  
+
 }
 
 .form-row {

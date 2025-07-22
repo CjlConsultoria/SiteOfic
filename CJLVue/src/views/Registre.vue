@@ -298,7 +298,7 @@ section.registro-multi
               v-model="mostrarSenha"
             )
             label(for="mostrarSenha") Mostrar senha
-          
+
           section.botoes
             button(type="button", @click="etapaAtual--") Voltar
             button(type="submit") Finalizar
@@ -337,6 +337,7 @@ const form = reactive({
   genero: '',
   cep: '',
   rua: '',
+  complemento: '',
   numero: '',
   bairro: '',
   cidade: '',
@@ -362,6 +363,7 @@ const erros = reactive({
   idadeInvalida: false,
   cepInvalido: false,
   ruaInvalida: false,
+  complemento: false,
   numeroInvalido: false,
   bairroInvalido: false,
   cidadeInvalida: false,
@@ -553,6 +555,7 @@ const enviarCadastro = async () => {
     genero: form.genero,
     cep: form.cep.replace(/\D/g, ''),
     numeroResidencia: form.numero,
+    complemento:form.complemento,
     email: form.email.trim(),
     senha: form.senha
   }
