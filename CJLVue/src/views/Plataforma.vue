@@ -3,21 +3,24 @@ import { ref, reactive, onMounted } from 'vue'
 import axios from 'axios'
 import LogoNexdom from '@/assets/cjl.jpg' // ajuste o caminho se necessário
 
-// Controle do menu e página
+// Controle do menu lateral e página atual
 const menuAberto = ref(false)
 const paginaAtual = ref('home')
 
+// Alternar menu lateral
 const toggleMenu = () => {
   menuAberto.value = !menuAberto.value
+  console.log('toggleMenu chamado, menuAberto:', menuAberto.value)
 }
 
-// Função para mudar para página perfil e carregar dados do usuário
+// Ir para página de perfil e carregar dados do usuário
 async function irParaPerfil() {
+  console.log('irParaPerfil chamado')
   paginaAtual.value = 'perfil'
   await buscarUsuario()
 }
 
-// Menus fixos
+// Menus principais e secundários
 const menuPrincipal = [
   { label: 'Dashboard', url: '#', icon: '📊' },
   { label: 'Condomínios', url: '#', icon: '🏢' },
@@ -32,9 +35,10 @@ const menuSecundaria = [
   { label: 'Ajuda', url: '#', icon: '❓' },
   { label: 'Sobre', url: '#', icon: 'ℹ️' },
   { label: 'Configurações', url: '#', icon: '⚙️' },
-  { label: 'Sair', url: '#', icon: '🚪' }
+  { label: 'Sair', url: '#', icon: '🚪' },
 ]
 
+// Cards para a home
 const cards = [
   {
     id: 1,
@@ -49,7 +53,7 @@ const cards = [
   {
     id: 2,
     logo: LogoNexdom,
-    title: 'Gestao de Estoque',
+    title: 'Gestão de Estoque',
     author: 'Consultoria CJL',
     description:
       'Sistema eficiente para controle de estoque, facilitando o monitoramento de produtos, entradas, saídas e reposições em tempo real, otimizando a gestão e reduzindo perdas.',
@@ -58,8 +62,9 @@ const cards = [
   },
 ]
 
-// Dados do usuário (reativo para atualizar na tela perfil)
+// Dados do usuário
 const usuario = reactive({
+  tipoPessoa: 'JURIDICA', // ou 'FISICA' — valor padrão
   nome: '',
   sobrenome: '',
   cpf: '',
@@ -71,11 +76,17 @@ const usuario = reactive({
   bairro: '',
   cidade: '',
   estado: '',
+  nomeEmpresa: '',
+  cnpj: '',
+  codigoPublico: '',
 })
 
-// Função para buscar dados do usuário na API com token
+// Buscar dados do usuário na API
 async function buscarUsuario() {
+  console.log('buscarUsuario chamada')
   const token = localStorage.getItem('token')
+  console.log('Token do localStorage:', token)
+
   if (!token) {
     console.warn('Token não encontrado. Usuário não está logado.')
     return
@@ -88,10 +99,15 @@ async function buscarUsuario() {
       },
     })
 
+    console.log('Resposta da API:', resposta.data)
+
     const dados = resposta.data
-    // Se API retornar lista, pega primeiro, ajuste conforme sua API
     const u = Array.isArray(dados) ? dados[0] : dados
 
+    // Verifica se é pessoa física ou jurídica
+    usuario.tipoPessoa = u.tipoPessoa || (u.cnpj ? 'JURIDICA' : 'FISICA')
+
+    // Preenche os campos do usuário
     usuario.nome = u.nome || ''
     usuario.sobrenome = u.sobrenome || ''
     usuario.cpf = u.cpf || ''
@@ -103,22 +119,28 @@ async function buscarUsuario() {
     usuario.bairro = u.bairro || ''
     usuario.cidade = u.cidade || ''
     usuario.estado = u.estado || ''
+    usuario.nomeEmpresa = u.nomeEmpresa || ''
+    usuario.cnpj = u.cnpj || ''
+    usuario.codigoPublico = u.codigoPublico || ''
 
-    console.log('Dados do usuário carregados:', usuario)
+    console.log('Dados do usuário carregados no reactive:', usuario)
   } catch (erro) {
     console.error('Erro ao buscar usuário:', erro)
     if (erro.response?.status === 401) {
       localStorage.removeItem('token')
       alert('Sua sessão expirou. Faça login novamente.')
-      // Se desejar, redirecione para login:
+      // redirecionar se necessário:
       // router.push('/login')
     }
   }
 }
 
-// Opcional: carregar dados caso já esteja na página perfil ao montar
+// Se estiver na página de perfil, carrega dados ao montar
 onMounted(() => {
-  if (paginaAtual.value === 'perfil') buscarUsuario()
+  console.log('Componente montado, página atual:', paginaAtual.value)
+  if (paginaAtual.value === 'perfil') {
+    buscarUsuario()
+  }
 })
 </script>
 
@@ -150,7 +172,7 @@ onMounted(() => {
   // Botão para abrir/fechar menu
   button.btn-menu(@click="toggleMenu") ☰
 
-  // HOME
+  // Seção HOME
   section.software-list-container(v-if="paginaAtual === 'home'")
     h1.software-main-title Sistemas para Testes
     h2.software-title Lista de Softwares Disponíveis
@@ -172,7 +194,7 @@ onMounted(() => {
           input(type="checkbox")
           | Comparar
 
-  // PERFIL
+  // Seção PERFIL
   section.perfil-usuario(v-if="paginaAtual === 'perfil'")
     h1.perfil-titulo Meus Dados
 
@@ -222,14 +244,42 @@ onMounted(() => {
         .field
           label Estado
           input(type="text", :value="usuario.estado", disabled)
+
+    // Empresa (somente se for pessoa jurídica)
+    .card(v-if="usuario.tipoPessoa === 'JURIDICA'")
+      h2 Empresa
+      .form-row
+        .field
+          label Nome da Empresa
+          input(type="text", :value="usuario.nomeEmpresa", disabled)
+        .field
+          label CNPJ
+          input(type="text", :value="usuario.cnpj", disabled)
+      .form-row
+        .field
+          label Código Público
+          input(type="text", :value="usuario.codigoPublico", disabled)
 </template>
 
 
+
 <style scoped>
+input[disabled] {
+  color: #222 !important; /* ou qualquer tom escuro que desejar */
+}
+.card input[disabled] {
+  color: #222;
+}
+
 .field label,
 .campo label,
 .form-group label {
   margin-bottom: 5rem; /* ajuste conforme desejado */
+}
+.field input,
+.field select,
+.field textarea {
+  margin-bottom: 0.6rem; /* ou ajuste conforme o espaçamento desejado */
 }
 
 input[type="text"],
@@ -256,9 +306,9 @@ input[type="email"] {
 }
 
 .field label {
-  margin-bottom: 12px;
+  margin-bottom: 3px;
   font-weight: 600;
-  color: #333;
+  color: #854000;
   line-height: 1; /* evita espaçamento extra da linha */
 }
 
@@ -334,7 +384,7 @@ input[type="email"] {
 }
 
 .form-group input {
-  background-color: #f5e9a7;
+  background-color: #e6e6e6;
   border: 1px solid #ccc;
   border-radius: 6px;
   padding: 0.5rem;
@@ -403,9 +453,9 @@ input[type="email"] {
   height: auto !important; /* deixa o height automático */
   min-height: 40px !important; /* define um mínimo maior */
   box-sizing: border-box !important;
-  background-color: #fff6c6 !important;
+  background-color: #fffef1 !important;
   border-radius: 6px !important;
-  border: 1px solid #923a00 !important;
+  border: 1px solid #795200 !important;
   flex: 1 1 auto !important;
 }
 

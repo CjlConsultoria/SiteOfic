@@ -195,7 +195,8 @@ section.registro-multi
               id="rua"
               placeholder=" "
             )
-            label(for="rua") Rua
+            label(for="rua") Logradouro
+
 
           .input-group
             input(
