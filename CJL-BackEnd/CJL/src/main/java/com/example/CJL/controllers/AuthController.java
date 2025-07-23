@@ -9,7 +9,9 @@ import com.example.CJL.repositories.EmpresaRepository;
 import com.example.CJL.repositories.RoleRepository;
 import com.example.CJL.repositories.UserRepository;
 import com.example.CJL.security.JwtUtil;
+import com.example.CJL.services.DadosUserService;
 import com.example.CJL.services.LoginService;
+import com.example.CJL.services.RegistroService;
 import com.example.CJL.services.ViaCepService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -60,6 +62,12 @@ public class AuthController {
     @Autowired
     private LoginService loginService;
 
+    @Autowired
+    private DadosUserService dadosUserService;
+
+    @Autowired
+    private RegistroService registroService;
+
 
     @Operation(summary = "Registrar novo usuário", description = "Cria um novo usuário com os dados fornecidos, incluindo endereço via CEP.")
     @ApiResponses(value = {
@@ -69,60 +77,14 @@ public class AuthController {
     })
 
     @PostMapping("/register")
-    public ResponseEntity<Map<String, String>> register(@RequestBody RegistroCompletoDTO registro){
-        UserRequestDTO dto = registro.getUser();
-        EmpresaRequestDTO empresaDto = registro.getEmpresa();
-        if (userRepository.existsByEmail(dto.getEmail())){
-            Map<String, String> errorResponse = Map.of("message", "Email já utilizado");
-            return ResponseEntity.badRequest().body(errorResponse);
+    public ResponseEntity<Map<String, String>> register(@RequestBody RegistroCompletoDTO registro) {
+        Map<String, String> result = registroService.registrarUsuario(registro);
+
+        if ("Email já utilizado".equals(result.get("message"))) {
+            return ResponseEntity.badRequest().body(result);
         }
 
-        User user = new User();
-        user.setNome(dto.getNome());
-        user.setSobrenome(dto.getSobrenome());
-        user.setApelido(dto.getApelido());
-        user.setCargo(dto.getCargo());
-        user.setTelefone(dto.getTelefone());
-        user.setPj(dto.isPj());
-
-        if (dto.isPj()){
-            Empresa empresa = empresaRepository.findByCnpj(empresaDto.getCnpj())
-                            .orElseGet(() -> {
-                                Empresa nova = new Empresa();
-                                nova.setCnpj(empresaDto.getCnpj());
-                                nova.setNome(empresaDto.getNome());
-                                return empresaRepository.save(nova);
-                            });
-            user.setEmpresa(empresa);
-        } else {
-            user.setEmpresa(null);
-        }
-        user.setCpf(dto.getCpf());
-        user.setDiaNascimento(dto.getDiaNascimento());
-        user.setMesNascimento(dto.getMesNascimento());
-        user.setAnoNascimento(dto.getAnoNascimento());
-        user.setGenero(dto.getGenero());
-        user.setCep(dto.getCep());
-        user.setNumeroResidencia(dto.getNumeroResidencia());
-        user.setComplemento(dto.getComplemento());
-        user.setEmail(dto.getEmail());
-        user.setSenha(passwordEncoder.encode(dto.getSenha()));
-
-        var endereco = viaCepService.buscarEnderecoPorCep(dto.getCep());
-        user.setLogradouro(endereco.getLogradouro());
-        user.setBairro(endereco.getBairro());
-        user.setCidade(endereco.getLocalidade());
-        user.setEstado(endereco.getUf());
-
-        Role defaultRole = roleRepository.findByNome(RoleName.ROLE_USER)
-                .orElseThrow(() -> new RuntimeException("Role não encontrada"));
-
-        user.getRoles().add(defaultRole);
-
-        userRepository.save(user);
-
-        Map<String, String> response = Map.of("message", "Usuário registrado com sucesso");
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(result);
     }
 
     @Operation(
@@ -174,46 +136,8 @@ public class AuthController {
     })
 
     @GetMapping("/dados")
-    public ResponseEntity<?> getLoggerUser(@AuthenticationPrincipal UserDetails userDetails){
-        String email = userDetails.getUsername();
-        var user = userRepository.findByEmail(email);
-
-        if (user.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuário não encontrado");
-        }
-
-        var dadosUser = user.get();
-        Map<String, Object> response = new HashMap<>();
-        response.put("nome", dadosUser.getNome());
-        response.put("sobrenome", dadosUser.getSobrenome());
-
-        if (dadosUser.getApelido() != null && !dadosUser.getApelido().isBlank()) {
-            response.put("apelido", dadosUser.getApelido());
-        }
-
-        response.put("email", dadosUser.getEmail());
-        response.put("genero", dadosUser.getGenero());
-        response.put("cidade", dadosUser.getCidade());
-        response.put("estado", dadosUser.getEstado());
-        response.put("cep", dadosUser.getCep());
-        response.put("logradouro", dadosUser.getLogradouro());
-        response.put("numero", dadosUser.getNumeroResidencia());
-        response.put("bairro", dadosUser.getBairro());
-        if (dadosUser.isPj()) {
-            response.put("cnpj", dadosUser.getEmpresa().getCnpj());
-            Empresa empresa = dadosUser.getEmpresa();
-            if (empresa != null) {
-                response.put("empresa_nome", empresa.getNome());
-                response.put("empresa_id", empresa.getId());
-            }
-        } else {
-            response.put("cpf", dadosUser.getCpf());
-        }
-
-        response.put("roles", dadosUser.getRoles().stream()
-                .map(Role::getNome)
-                .toList());
-
-        return ResponseEntity.ok(response);
+    public ResponseEntity<DadosUserResponseDTO> getLoggerUser(@AuthenticationPrincipal UserDetails userDetails) {
+        var dto = dadosUserService.getDadosUsuario(userDetails);
+        return ResponseEntity.ok(dto);
     }
 }
