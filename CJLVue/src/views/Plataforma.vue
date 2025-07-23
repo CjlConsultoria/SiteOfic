@@ -23,9 +23,6 @@ async function irParaPerfil() {
 // Menus principais e secundários
 const menuPrincipal = [
   { label: 'Dashboard', url: '#', icon: '📊' },
-  { label: 'Condomínios', url: '#', icon: '🏢' },
-  { label: 'Financeiro', url: '#', icon: '💰' },
-  { label: 'Usuários', url: '#', icon: '👥' },
   { label: 'Serviços', url: '#', icon: '🛠️' },
   { label: 'Relatórios', url: '#', icon: '📑' },
 ]
@@ -34,8 +31,7 @@ const menuSecundaria = [
   { label: 'Perfil', url: '#', icon: '🙍‍♂️' },
   { label: 'Ajuda', url: '#', icon: '❓' },
   { label: 'Sobre', url: '#', icon: 'ℹ️' },
-  { label: 'Configurações', url: '#', icon: '⚙️' },
-  { label: 'Sair', url: '#', icon: '🚪' },
+
 ]
 
 // Cards para a home
@@ -140,7 +136,7 @@ onMounted(() => {
 .app
   // Sidebar lateral
   aside.sidebar(:class="{ open: menuAberto }")
-    .logo Logo
+    .logo 
     nav.menu
       ul.menu-principal
         li(v-for="item in menuPrincipal" :key="item.label")
@@ -254,6 +250,21 @@ onMounted(() => {
 
 
 <style scoped>
+:global(html), :global(body), :global(#app) {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background-color: #f3f3f3;
+  overflow-x: hidden; 
+}
+ 
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f3f3f3;
+}
 input[disabled] {
   color: #222 !important; /* ou qualquer tom escuro que desejar */
 }
@@ -466,9 +477,11 @@ input[type="email"] {
 }
 
 .software-title {
-  font-size: 20px;
+  font-size: 17px;
   font-weight: 600;
   margin-bottom: 1rem;
+  margin-top: 5px;
+  color: #999999;
 }
 
 .software-filters {
@@ -615,7 +628,8 @@ nav.menu ul {
 }
 
 .menu-principal {
-  margin-bottom:12rem !important;
+  margin-bottom:22rem !important;
+  margin-top: 2rem;
 }
 
 .menu-secundaria {
@@ -636,7 +650,7 @@ nav.menu ul {
   top: 0;
   bottom: 0;
   width: 250px;
-  background-color: #ffffff;
+  background-color: #2b2b2b;
   color: #fff;
   transition: width 0.3s ease;
   overflow: hidden;
@@ -660,7 +674,7 @@ nav.menu ul {
 }
 
 .menu a {
-  color: #000000;
+  color: #ffffff;
   text-decoration: none;
   font-size: 1.1rem;
   display: block;
@@ -670,7 +684,7 @@ nav.menu ul {
 }
 
 .menu a:hover {
-  background-color: #1f1f1f;
+  background-color: #525252;
   color: white;
 }
 
