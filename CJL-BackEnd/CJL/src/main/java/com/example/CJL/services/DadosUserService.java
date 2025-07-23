@@ -34,6 +34,7 @@ public class DadosUserService {
                 .estado(dadosUser.getEstado())
                 .cep(dadosUser.getCep())
                 .logradouro(dadosUser.getLogradouro())
+                .complemento(dadosUser.getComplemento())
                 .numero(dadosUser.getNumeroResidencia())
                 .bairro(dadosUser.getBairro())
                 .roles(dadosUser.getRoles().stream()

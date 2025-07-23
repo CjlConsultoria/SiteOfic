@@ -19,6 +19,7 @@ public class DadosUserResponseDTO {
     private String estado;
     private String cep;
     private String logradouro;
+    private String complemento;
     private String numero;
     private String bairro;
     private String cpf;
