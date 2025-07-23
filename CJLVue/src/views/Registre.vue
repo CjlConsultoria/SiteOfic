@@ -11,6 +11,9 @@ section.registro-multi
     small.etapa-titulo(v-if="etapaAtual === 1") Insira seu nome
     small.etapa-titulo(v-else-if="etapaAtual === 2")
     small.etapa-titulo(v-else-if="etapaAtual === 3") Data de nascimento e gênero
+    small.etapa-titulo(v-else-if="etapaAtual === 4") Endereço
+    small.etapa-titulo(v-else-if="etapaAtual === 5") Credenciais de acesso
+
 
     form(@submit.prevent="proximaEtapa")
 
@@ -62,6 +65,8 @@ section.registro-multi
                 type="radio"
                 value="pf"
                 v-model="form.tipoPessoa"
+                @change="erros.tipoPessoa = false"
+
               )
               span Pessoa Física
 
@@ -70,17 +75,21 @@ section.registro-multi
                 type="radio"
                 value="pj"
                 v-model="form.tipoPessoa"
+                @change="erros.tipoPessoa = false"
+
               )
               span Pessoa Jurídica
 
           span.erro-tipo(v-if="erros.tipoPessoa")
             span.icone-erro !
-            |  Selecione o tipo de pessoa.
 
-          // Mensagem dinâmica antes do campo CPF
+            | Selecione o tipo de pessoa.
+
+          // Mensagem dinâmica para CPF
           p.msg-digite-cpf.text-branco(v-if="form.tipoPessoa === 'pf'") Digite o CPF
 
-          .grupo-input-cpf(v-if="form.tipoPessoa === 'pf'")
+          .input-group(v-if="form.tipoPessoa === 'pf'")
+
             input(
               type="text"
               v-model="form.cpf"
@@ -89,17 +98,18 @@ section.registro-multi
               placeholder=" "
               id="cpf"
               @input="formatarCPF"
-              :class="{ 'input-erro2': erros.cpfInvalido }"
+              :class="{ 'input-erro': erros.cpfInvalido }"
             )
             label(for="cpf") CPF
-            span.erro-campo(v-if="erros.cpfInvalido")
+            span.mensagem-erro(v-if="erros.cpfInvalido")
               span.icone-erro !
               | CPF inválido.
 
-          // Mensagem dinâmica antes do campo CNPJ
+          // Mensagem dinâmica para CNPJ
           p.msg-digite-cnpj.text-branco(v-if="form.tipoPessoa === 'pj'") Digite o CNPJ
 
-          .grupo-input-cnpj(v-if="form.tipoPessoa === 'pj'")
+          .input-group(v-if="form.tipoPessoa === 'pj'")
+
             input(
               type="text"
               v-model="form.cnpj"
@@ -108,17 +118,44 @@ section.registro-multi
               placeholder=" "
               id="cnpj"
               @input="formatarCNPJ"
-              :class="{ 'input-erro2': erros.cnpjInvalido }"
+
+              :class="{ 'input-erro': erros.cnpjInvalido }"
             )
             label(for="cnpj") CNPJ
-            span.erro-campo(v-if="erros.cnpjInvalido")
-              span.icone-erro !
+            span.mensagem-erro(v-if="erros.cnpjInvalido")
               | CNPJ inválido.
 
-          section.botoes
-            button(type="submit") Seguinte
+          // Campo Nome da Empresa (estilizado igual)
+          .input-group(v-if="form.tipoPessoa === 'pj'")
+            input(
+              type="text"
+              v-model="form.nomeEmpresa"
+              id="nomeEmpresa"
+              placeholder=" "
+              :class="{ 'input-erro': erros.nomeEmpresaInvalido }"
+            )
+            label(for="nomeEmpresa") Nome da empresa
+            span.mensagem-erro(v-if="erros.nomeEmpresaInvalido")
+              | Nome da empresa é obrigatório.
 
-      // Etapa 3 - Data de nascimento e gênero (nova etapa)
+          // Campo Código Público (estilizado igual)
+          .input-group(v-if="form.tipoPessoa === 'pj'")
+            input(
+              type="text"
+              v-model="form.codigoPublico"
+              id="codigoPublico"
+              placeholder=" "
+              :class="{ 'input-erro': erros.codigoPublicoInvalido }"
+            )
+            label(for="codigoPublico") Código público
+            span.mensagem-erro(v-if="erros.codigoPublicoInvalido")
+              | Código público é obrigatório.
+
+        section.botoes
+          button(type="button", @click="etapaAtual--") Voltar
+          button(type="submit") Seguinte
+
+
       template(v-if="etapaAtual === 3")
         section.data-nascimento
           section.data-nascimento-selects
@@ -166,8 +203,9 @@ section.registro-multi
             span.mensagem-erro-etapa2(v-if="erros.generoInvalido") Selecione o seu gênero.
             span.mensagem-erro-etapa2(v-if="erros.idadeInvalida") É necessário ter pelo menos 18 anos para se registrar.
 
-          section.botoes
-            button(type="submit") Seguinte
+        section.botoes
+          button(type="button", @click="etapaAtual--") Voltar
+          button(type="submit") Seguinte
 
       // Etapa 4 - Endereço
       template(v-if="etapaAtual === 4")
@@ -192,7 +230,7 @@ section.registro-multi
               id="rua"
               placeholder=" "
             )
-            label(for="rua") Rua
+            label(for="rua") Logradouro
 
           .input-group
             input(
@@ -203,6 +241,15 @@ section.registro-multi
               placeholder=" "
             )
             label(for="numero") Número
+
+          .input-group
+            input(
+              type="text"
+              v-model="form.complemento"
+              id="complemento"
+              placeholder=" "
+            )
+            label(for="complemento") Complemento (opcional)
 
           .input-group
             input(
@@ -237,8 +284,9 @@ section.registro-multi
 
           span.mensagem-erro-etapa3(v-if="erros.enderecoIncompleto") Preencha todos os campos do endereço corretamente.
 
-          section.botoes
-            button(type="submit") Seguinte
+        section.botoes
+          button(type="button", @click="etapaAtual--") Voltar
+          button(type="submit") Seguinte
 
       // Etapa 5 - Credenciais
       template(v-if="etapaAtual === 5")
@@ -288,6 +336,7 @@ section.registro-multi
             label(for="mostrarSenha") Mostrar senha
 
           section.botoes
+            button(type="button", @click="etapaAtual--") Voltar
             button(type="submit") Finalizar
 </template>
 
@@ -297,10 +346,9 @@ import { reactive, ref } from 'vue'
 import { register } from '@/services/authServices'
 import router from '@/router'
 
-// Etapa atual do formulário
+
 const etapaAtual = ref(1)
 
-// Dados para selects de data de nascimento
 const dias = Array.from({ length: 31 }, (_, i) => i + 1)
 const meses = [
   'Janeiro', 'Fevereiro', 'Março', 'Abril',
@@ -310,7 +358,6 @@ const meses = [
 const anos = []
 for (let a = 2025; a >= 1900; a--) anos.push(a)
 
-// Formulário reativo
 const form = reactive({
   nome: '',
   sobrenome: '',
@@ -318,12 +365,15 @@ const form = reactive({
   tipoPessoa: '',
   cpf: '',
   cnpj: '',
+  nomeEmpresa: '',
+  codigoPublico: '',
   dia: '',
   mes: '',
   ano: '',
   genero: '',
   cep: '',
   rua: '',
+  complemento: '',
   numero: '',
   bairro: '',
   cidade: '',
@@ -333,7 +383,6 @@ const form = reactive({
   confirmaSenha: ''
 })
 
-// Erros reativos
 const erros = reactive({
   nome: false,
   sobrenome: false,
@@ -341,6 +390,9 @@ const erros = reactive({
   tipoPessoa: false,
   cpfInvalido: false,
   cnpjInvalido: false,
+  nomeEmpresaInvalido: false,
+  codigoPublicoInvalido: false,
+
   diaInvalido: false,
   mesInvalido: false,
   anoInvalido: false,
@@ -349,6 +401,7 @@ const erros = reactive({
   idadeInvalida: false,
   cepInvalido: false,
   ruaInvalida: false,
+  complementoInvalido: false,
   numeroInvalido: false,
   bairroInvalido: false,
   cidadeInvalida: false,
@@ -375,13 +428,22 @@ const validarEtapa2 = () => {
   erros.cpfInvalido = false
   erros.cnpjInvalido = false
 
+  erros.nomeEmpresaInvalido = false
+  erros.codigoPublicoInvalido = false
+
+
   if (form.tipoPessoa === 'pf') {
     erros.cpfInvalido = !/^\d{11}$/.test(form.cpf.replace(/\D/g, ''))
   } else if (form.tipoPessoa === 'pj') {
     erros.cnpjInvalido = !/^\d{14}$/.test(form.cnpj.replace(/\D/g, ''))
+    erros.nomeEmpresaInvalido = form.nomeEmpresa.trim() === ''
+    erros.codigoPublicoInvalido = form.codigoPublico.trim() === ''
   }
 
-  return !erros.tipoPessoa && !erros.cpfInvalido && !erros.cnpjInvalido
+  return !erros.tipoPessoa &&
+    !(form.tipoPessoa === 'pf' && erros.cpfInvalido) &&
+    !(form.tipoPessoa === 'pj' &&
+      (erros.cnpjInvalido || erros.nomeEmpresaInvalido || erros.codigoPublicoInvalido))
 }
 
 const validarEtapa3 = () => {
@@ -509,7 +571,7 @@ const proximaEtapa = () => {
       etapaAtual.value++
     }
   } else if (etapaAtual.value === 3) {
-    if (validarEtapa3()) {  // Aqui é validarEtapa3, não validarEtapa4
+    if (validarEtapa3()) {
       etapaAtual.value++
     }
   } else if (etapaAtual.value === 4) {
@@ -524,25 +586,27 @@ const proximaEtapa = () => {
   }
 }
 
-
 const enviarCadastro = async () => {
   try {
     const dadosParaEnviar = {
-    nome: form.nome.trim(),
-    sobrenome: form.sobrenome.trim(),
-    apelido: form.apelido.trim(),
-    pj: form.tipoPessoa === 'pj',
-    cpf: form.tipoPessoa === 'pf' ? form.cpf : null,
-    cnpj: form.tipoPessoa === 'pj' ? form.cnpj : null,
-    diaNascimento: Number(form.dia),
-    mesNascimento: Number(form.mes),
-    anoNascimento: Number(form.ano),
-    genero: form.genero,
-    cep: form.cep.replace(/\D/g, ''),
-    numeroResidencia: form.numero,
-    email: form.email.trim(),
-    senha: form.senha
-  }
+      nome: form.nome.trim(),
+      sobrenome: form.sobrenome.trim(),
+      apelido: form.apelido.trim(),
+      pj: form.tipoPessoa === 'pj',
+      cpf: form.tipoPessoa === 'pf' ? form.cpf : null,
+      cnpj: form.tipoPessoa === 'pj' ? form.cnpj : null,
+      nomeEmpresa: form.tipoPessoa === 'pj' ? form.nomeEmpresa.trim() : null,
+      codigoPublico: form.tipoPessoa === 'pj' ? form.codigoPublico.trim() : null,
+      diaNascimento: Number(form.dia),
+      mesNascimento: Number(form.mes),
+      anoNascimento: Number(form.ano),
+      genero: form.genero,
+      cep: form.cep.replace(/\D/g, ''),
+      numeroResidencia: form.numero,
+      complemento:form.complemento,
+      email: form.email.trim(),
+      senha: form.senha
+    }
 
     const response = await fetch('http://localhost:8080/api/auth/register', {
       method: 'POST',
@@ -612,12 +676,80 @@ const formatarCNPJ = () => {
 }
 </script>
 
+
 <style scoped>
+.etapa-tipo-pessoa .input-group {
+  display: flex;
+  flex-direction: column; /* empilha verticalmente input e mensagem */
+  align-items: flex-start; /* alinhamento à esquerda */
+  margin-bottom: 1rem; /* espaçamento abaixo do grupo */
+}
+
+.etapa-tipo-pessoa .mensagem-erro,
+.etapa-tipo-pessoa .erro-campo,
+.etapa-tipo-pessoa .erro-tipo,
+.etapa-tipo-pessoa .mensagem-erro-etapa2 {
+margin-bottom: 0px;
+margin-top: 0px;
+}
+
+.etapa-tipo-pessoa input[type="text"] {
+  width: 350px; /* ou 100%, ou o que desejar */
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* ---------- BOTÃO SUBMIT E VOLTAR ---------- */
+section.botoes {
+  display: flex;
+  justify-content: flex-end; /* Alinha à direita */
+  margin-top: 16px;
+  gap: 12px; /* Espaço entre os botões */
+}
+
+section.botoes button[type="submit"],
+section.botoes button[type="button"] {
+  background-color: #fffda2;
+  border-radius: 14px;
+  color: rgb(0, 0, 0);
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 16px;
+  padding: 10px 24px;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 1px 1px rgb(0 0 0 / 0.1);
+  transition: background-color 0.15s ease-in-out;
+  user-select: none;
+}
+
+section.botoes button[type="submit"]:hover,
+section.botoes button[type="button"]:hover {
+  background-color: #ffffff;
+}
+
+button[type="button"] {
+  margin-right: 1rem;
+  background-color: #f0f0f0;
+  color: #333;
+  border: 1px solid #ccc;
+  padding: 0.5rem 1.2rem;
+  border-radius: 6px;
+  cursor: pointer;
+}
+button[type="button"]:hover {
+  background-color: #e0e0e0;
+}
+section.botoes button[type="submit"],
+section.botoes button[type="button"] {
+  padding: 0px 35px; /* Aumenta a largura do botão */
+  /* restante do código */
+}
 
 .erro-campo {
   display: flex;
   align-items: center;
-  color: #ff0000;
+  color: #1eff00;
   font-weight: 500;
   font-size: 0.7rem;
   text-align: left;
@@ -628,7 +760,7 @@ const formatarCNPJ = () => {
 }
 
 .icone-erro {
-  background-color: #ff0000;
+  background-color: #7bff00;
   color: white;
   font-weight: bold;
   border-radius: 50%;
@@ -688,7 +820,7 @@ const formatarCNPJ = () => {
 .erro-tipo {
   display: flex;
   align-items: center;
-  color: #ff0000;
+  color: #d93025;
   font-weight: 500;
   font-size: 0.8rem;
   text-align: left;
@@ -697,7 +829,7 @@ const formatarCNPJ = () => {
 }
 
 .icone-erro {
-  background-color: #ff0000;
+  background-color: #d93025;
   color: white;
   font-weight: bold;
   border-radius: 50%;

@@ -8,6 +8,8 @@ public class UserRequestDTO {
     private String nome;
     private String sobrenome;
     private String apelido;
+    private String cargo;
+    private String telefone;
     private String cpf;
     private String cnpj;
     private boolean pj;
@@ -17,6 +19,7 @@ public class UserRequestDTO {
     private String genero;
     private String cep;
     private String numeroResidencia;
+    private String complemento;
     private String email;
     private String senha;
 }
