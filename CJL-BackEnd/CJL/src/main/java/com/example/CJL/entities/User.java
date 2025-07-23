@@ -16,6 +16,8 @@ public class User {
     private String nome;
     private String sobrenome;
     private String apelido;
+    private String cargo;
+    private String telefone;
     @Column(unique = true)
     private String cpf;
     @Column(unique = true)
@@ -31,6 +33,7 @@ public class User {
     private String cep;
     private String logradouro;
     private String numeroResidencia;
+    private String complemento;
     private String bairro;
     private String cidade;
     private String estado;
@@ -41,5 +44,17 @@ public class User {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
+
+    @ManyToOne
+    @JoinColumn(name = "empresa_id")
+    private Empresa empresa;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "tb_user_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
     private Set<Role> roles = new HashSet<>();
+
 }

@@ -76,6 +76,8 @@ public class AuthController {
         user.setNome(dto.getNome());
         user.setSobrenome(dto.getSobrenome());
         user.setApelido(dto.getApelido());
+        user.setCargo(dto.getCargo());
+        user.setTelefone(dto.getTelefone());
         user.setPj(dto.isPj());
 
         if (dto.isPj()){
@@ -91,6 +93,7 @@ public class AuthController {
         user.setGenero(dto.getGenero());
         user.setCep(dto.getCep());
         user.setNumeroResidencia(dto.getNumeroResidencia());
+        user.setComplemento(dto.getComplemento());
         user.setEmail(dto.getEmail());
         user.setSenha(passwordEncoder.encode(dto.getSenha()));
 
@@ -180,6 +183,9 @@ public class AuthController {
         response.put("cidade",dadosUser.getCidade());
         response.put("estado",dadosUser.getEstado());
         response.put("cep",dadosUser.getCep());
+        response.put("logradouro", dadosUser.getLogradouro());
+        response.put("numero", dadosUser.getNumeroResidencia());
+        response.put("bairro",dadosUser.getBairro());
 
         if (dadosUser.isPj()){
             response.put("cnpj", dadosUser.getCnpj());

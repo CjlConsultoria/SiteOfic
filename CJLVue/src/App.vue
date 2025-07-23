@@ -18,7 +18,9 @@ const usuario = reactive({
   cep: '-',
   cidade: '-',
   estado: '-',
-  genero: '-'
+  genero: '-',
+  cpf: '',
+  cnpj: ''
 })
 
 function irParaLogin() {
@@ -104,6 +106,8 @@ async function buscarUsuarioLogado() {
     usuario.genero = dados.genero || '-'
     usuario.fotoUrl = dados.fotoUrl || 'https://thumbs.dreamstime.com/b/vetor-de-%C3%ADcone-perfil-do-avatar-padr%C3%A3o-foto-usu%C3%A1rio-m%C3%ADdia-social-183042379.jpg'
 
+    usuario.cpf = dados.cpf || ''      // <-- Aqui
+    usuario.cnpj = dados.cnpj || ''    // <-- Aqui
   } catch (erro: any) {
     console.error('Erro ao buscar usuário logado:', erro)
     if (erro.response?.status === 401) {
@@ -142,14 +146,17 @@ div.layout-wrapper(:class="{ 'layout-plataforma': ehPlataforma }")
             img.foto-perfil-google(:src="usuario.fotoUrl", alt="Foto do perfil")
             h3.ola-msg Olá, {{ usuario.nomeCompleto.split(' ')[0] }}!
             p.nome-completo {{ usuario.nomeCompleto }}
-            p {{ usuario.email }}
+            p.email {{ usuario.email }}
+            p.cpf(v-if="usuario.cpf && usuario.cpf !== ''") CPF: {{ usuario.cpf }}
+            p.cnpj(v-else-if="usuario.cnpj && usuario.cnpj !== ''") CNPJ: {{ usuario.cnpj }}
+
 
             //-Informações adicionais, se quiser ativar
             //-p {{ usuario.genero }}
             //-p {{ usuario.cidade }} - {{ usuario.estado }}
             //-p CEP: {{ usuario.cep }}
 
-            button.gerenciar-conta Gerenciar sua Conta CJL
+            //-button.gerenciar-conta Gerenciar sua Conta CJL
             hr
             button.sair(@click="logoff") Sair
 
@@ -194,11 +201,27 @@ div.layout-wrapper(:class="{ 'layout-plataforma': ehPlataforma }")
     p © 2025 - Todos os direitos reservados
 </template>
 
-
-
-
-
 <style scoped>
+.nome-completo {
+  font-size: 1.1rem;
+  color: #222222;
+  margin-bottom: 6px;
+}
+
+.email {
+  font-style: italic;
+  color: #4b4b4b;
+  margin-bottom: 6px;
+}
+
+.cpf, .cnpj {
+  font-size: 0.95rem;
+  color: #3f3f3f;
+  font-weight: 600;
+  margin-bottom: 6px;
+  margin-top: 12px;
+}
+
 .nome-completo {
   font-size: 0.9rem;
   color: #444;
