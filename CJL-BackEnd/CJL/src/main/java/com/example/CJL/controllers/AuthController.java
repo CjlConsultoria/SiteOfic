@@ -1,11 +1,11 @@
 package com.example.CJL.controllers;
 
-import com.example.CJL.dtos.JwtResponseDTO;
-import com.example.CJL.dtos.LoginRequestDTO;
-import com.example.CJL.dtos.UserRequestDTO;
+import com.example.CJL.dtos.*;
 import com.example.CJL.dtos.enums.RoleName;
+import com.example.CJL.entities.Empresa;
 import com.example.CJL.entities.Role;
 import com.example.CJL.entities.User;
+import com.example.CJL.repositories.EmpresaRepository;
 import com.example.CJL.repositories.RoleRepository;
 import com.example.CJL.repositories.UserRepository;
 import com.example.CJL.security.JwtUtil;
@@ -43,6 +43,9 @@ public class AuthController {
     private RoleRepository roleRepository;
 
     @Autowired
+    private EmpresaRepository empresaRepository;
+
+    @Autowired
     private AuthenticationManager authenticationManager;
 
     @Autowired
@@ -66,7 +69,9 @@ public class AuthController {
     })
 
     @PostMapping("/register")
-    public ResponseEntity<Map<String, String>> register(@RequestBody UserRequestDTO dto){
+    public ResponseEntity<Map<String, String>> register(@RequestBody RegistroCompletoDTO registro){
+        UserRequestDTO dto = registro.getUser();
+        EmpresaRequestDTO empresaDto = registro.getEmpresa();
         if (userRepository.existsByEmail(dto.getEmail())){
             Map<String, String> errorResponse = Map.of("message", "Email já utilizado");
             return ResponseEntity.badRequest().body(errorResponse);
@@ -81,12 +86,18 @@ public class AuthController {
         user.setPj(dto.isPj());
 
         if (dto.isPj()){
-            user.setCnpj(dto.getCnpj());
-            user.setCpf(null);
+            Empresa empresa = empresaRepository.findByCnpj(empresaDto.getCnpj())
+                            .orElseGet(() -> {
+                                Empresa nova = new Empresa();
+                                nova.setCnpj(empresaDto.getCnpj());
+                                nova.setNome(empresaDto.getNome());
+                                return empresaRepository.save(nova);
+                            });
+            user.setEmpresa(empresa);
         } else {
-            user.setCpf(dto.getCpf());
-            user.setCnpj(null);
+            user.setEmpresa(null);
         }
+        user.setCpf(dto.getCpf());
         user.setDiaNascimento(dto.getDiaNascimento());
         user.setMesNascimento(dto.getMesNascimento());
         user.setAnoNascimento(dto.getAnoNascimento());
@@ -170,7 +181,6 @@ public class AuthController {
         if (user.isEmpty()){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuário não encontrado");
         }
-
         var dadosUser = user.get();
         Map<String, Object> response = new HashMap<>();
         response.put("nome", dadosUser.getNome());
@@ -186,17 +196,14 @@ public class AuthController {
         response.put("logradouro", dadosUser.getLogradouro());
         response.put("numero", dadosUser.getNumeroResidencia());
         response.put("bairro",dadosUser.getBairro());
-
         if (dadosUser.isPj()){
             response.put("cnpj", dadosUser.getCnpj());
         } else {
             response.put("cpf", dadosUser.getCpf());
         }
-
         response.put("roles", dadosUser.getRoles().stream()
                 .map(Role::getNome)
                 .toList());
-
         return ResponseEntity.ok(response);
     }
 }

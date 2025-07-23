@@ -20,8 +20,6 @@ public class User {
     private String telefone;
     @Column(unique = true)
     private String cpf;
-    @Column(unique = true)
-    private String cnpj;
     private boolean pj;
     @Column(unique = true)
     private String email;
@@ -44,7 +42,6 @@ public class User {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
-
     @ManyToOne
     @JoinColumn(name = "empresa_id")
     private Empresa empresa;

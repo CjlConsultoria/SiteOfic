@@ -20,7 +20,7 @@ export async function register(dados) {
   try {
     dadosResposta = texto ? JSON.parse(texto) : {}
   } catch {
-    // resposta não é JSON válido
+
     throw new Error('Resposta inválida do servidor')
   }
 

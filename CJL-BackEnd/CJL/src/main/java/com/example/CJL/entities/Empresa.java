@@ -16,9 +16,5 @@ public class Empresa {
     private Long id;
     private String nome;
     @Column(unique = true)
-    private String codigoPublico;
-
-    @OneToMany(mappedBy = "empresa")
-    private List<User> usuarios = new ArrayList<>();
-
+    private String cnpj;
 }

@@ -1,6 +1,5 @@
 package com.example.CJL.dtos;
 
-import jakarta.persistence.Column;
 import lombok.Data;
 
 @Data
@@ -11,7 +10,6 @@ public class UserRequestDTO {
     private String cargo;
     private String telefone;
     private String cpf;
-    private String cnpj;
     private boolean pj;
     private int diaNascimento;
     private int mesNascimento;
