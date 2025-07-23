@@ -1,10 +1,6 @@
 package com.example.CJL.controllers;
 
 import com.example.CJL.dtos.*;
-import com.example.CJL.dtos.enums.RoleName;
-import com.example.CJL.entities.Empresa;
-import com.example.CJL.entities.Role;
-import com.example.CJL.entities.User;
 import com.example.CJL.repositories.EmpresaRepository;
 import com.example.CJL.repositories.RoleRepository;
 import com.example.CJL.repositories.UserRepository;
@@ -28,7 +24,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-import java.util.HashMap;
 import java.util.Map;
 
 
@@ -78,7 +73,14 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<Map<String, String>> register(@RequestBody RegistroCompletoDTO registro) {
+        UserRequestDTO dto = registro.getUser();
+        EmpresaRequestDTO empresaDto = registro.getEmpresa();
         Map<String, String> result = registroService.registrarUsuario(registro);
+
+        if (result == null || result.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("message", "Erro interno: resultado vazio"));
+        }
 
         if ("Email já utilizado".equals(result.get("message"))) {
             return ResponseEntity.badRequest().body(result);
@@ -86,6 +88,7 @@ public class AuthController {
 
         return ResponseEntity.ok(result);
     }
+
 
     @Operation(
             summary = "Realizar login",

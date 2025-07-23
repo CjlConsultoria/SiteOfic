@@ -589,31 +589,36 @@ const proximaEtapa = () => {
 const enviarCadastro = async () => {
   try {
     const dadosParaEnviar = {
-      nome: form.nome.trim(),
-      sobrenome: form.sobrenome.trim(),
-      apelido: form.apelido.trim(),
-      pj: form.tipoPessoa === 'pj',
-      cpf: form.tipoPessoa === 'pf' ? form.cpf : null,
-      cnpj: form.tipoPessoa === 'pj' ? form.cnpj : null,
-      nomeEmpresa: form.tipoPessoa === 'pj' ? form.nomeEmpresa.trim() : null,
-      codigoPublico: form.tipoPessoa === 'pj' ? form.codigoPublico.trim() : null,
-      diaNascimento: Number(form.dia),
-      mesNascimento: Number(form.mes),
-      anoNascimento: Number(form.ano),
-      genero: form.genero,
-      cep: form.cep.replace(/\D/g, ''),
-      numeroResidencia: form.numero,
-      complemento:form.complemento,
-      email: form.email.trim(),
-      senha: form.senha
-    }
+  user: {
+    nome: form.nome.trim(),
+    sobrenome: form.sobrenome.trim(),
+    apelido: form.apelido.trim(),
+    pj: form.tipoPessoa === 'pj',
+    cpf: form.cpf.replace(/\D/g, ''),
+    diaNascimento: Number(form.dia),
+    mesNascimento: Number(form.mes),
+    anoNascimento: Number(form.ano),
+    genero: form.genero,
+    cep: form.cep.replace(/\D/g, ''),
+    numeroResidencia: form.numero,
+    complemento: form.complemento,
+    email: form.email.trim(),
+    senha: form.senha
+  },
+  empresa: form.tipoPessoa === 'pj'
+    ? {
+        nome: form.nomeEmpresa.trim(),
+        cnpj: form.cnpj.replace(/\D/g, '')
+      }
+    : null
+}
+
 
     const response = await fetch('http://localhost:8080/api/auth/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(dadosParaEnviar)
     })
-
     const contentType = response.headers.get('content-type')
     let data
 

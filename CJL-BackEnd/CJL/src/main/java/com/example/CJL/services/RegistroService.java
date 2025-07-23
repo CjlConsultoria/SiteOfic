@@ -29,6 +29,7 @@ public class RegistroService {
     public Map<String, String> registrarUsuario(RegistroCompletoDTO registro) {
 
         UserRequestDTO dto = registro.getUser();
+        String email = dto.getEmail();
         EmpresaRequestDTO empresaDto = registro.getEmpresa();
 
         if (userRepository.existsByEmail(dto.getEmail())) {
