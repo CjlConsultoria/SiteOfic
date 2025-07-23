@@ -255,9 +255,9 @@ onMounted(() => {
   margin: 0;
   padding: 0;
   background-color: #f3f3f3;
-  overflow-x: hidden; /* <- ESSENCIAL PRA REMOVER BARRA LATERAL */
+  overflow-x: hidden; 
 }
-
+ 
 .app {
   min-height: 100vh;
   display: flex;
