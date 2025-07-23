@@ -14,6 +14,7 @@ section.registro-multi
     small.etapa-titulo(v-else-if="etapaAtual === 4") Endereço
     small.etapa-titulo(v-else-if="etapaAtual === 5") Credenciais de acesso
 
+
     form(@submit.prevent="proximaEtapa")
 
       // Etapa 1 - Nome
@@ -65,6 +66,7 @@ section.registro-multi
                 value="pf"
                 v-model="form.tipoPessoa"
                 @change="erros.tipoPessoa = false"
+
               )
               span Pessoa Física
 
@@ -74,17 +76,20 @@ section.registro-multi
                 value="pj"
                 v-model="form.tipoPessoa"
                 @change="erros.tipoPessoa = false"
+
               )
               span Pessoa Jurídica
 
           span.erro-tipo(v-if="erros.tipoPessoa")
             span.icone-erro !
+
             | Selecione o tipo de pessoa.
 
           // Mensagem dinâmica para CPF
           p.msg-digite-cpf.text-branco(v-if="form.tipoPessoa === 'pf'") Digite o CPF
 
           .input-group(v-if="form.tipoPessoa === 'pf'")
+
             input(
               type="text"
               v-model="form.cpf"
@@ -104,6 +109,7 @@ section.registro-multi
           p.msg-digite-cnpj.text-branco(v-if="form.tipoPessoa === 'pj'") Digite o CNPJ
 
           .input-group(v-if="form.tipoPessoa === 'pj'")
+
             input(
               type="text"
               v-model="form.cnpj"
@@ -112,6 +118,7 @@ section.registro-multi
               placeholder=" "
               id="cnpj"
               @input="formatarCNPJ"
+
               :class="{ 'input-erro': erros.cnpjInvalido }"
             )
             label(for="cnpj") CNPJ
@@ -149,7 +156,6 @@ section.registro-multi
           button(type="submit") Seguinte
 
 
-      // Etapa 3 - Data de nascimento e gênero
       template(v-if="etapaAtual === 3")
         section.data-nascimento
           section.data-nascimento-selects
@@ -335,12 +341,11 @@ section.registro-multi
 </template>
 
 
-
-
 <script setup>
 import { reactive, ref } from 'vue'
 import { register } from '@/services/authServices'
 import router from '@/router'
+
 
 const etapaAtual = ref(1)
 
@@ -387,6 +392,7 @@ const erros = reactive({
   cnpjInvalido: false,
   nomeEmpresaInvalido: false,
   codigoPublicoInvalido: false,
+
   diaInvalido: false,
   mesInvalido: false,
   anoInvalido: false,
@@ -421,8 +427,10 @@ const validarEtapa2 = () => {
   erros.tipoPessoa = !form.tipoPessoa
   erros.cpfInvalido = false
   erros.cnpjInvalido = false
+
   erros.nomeEmpresaInvalido = false
   erros.codigoPublicoInvalido = false
+
 
   if (form.tipoPessoa === 'pf') {
     erros.cpfInvalido = !/^\d{11}$/.test(form.cpf.replace(/\D/g, ''))
@@ -670,7 +678,6 @@ const formatarCNPJ = () => {
 
 
 <style scoped>
-
 .etapa-tipo-pessoa .input-group {
   display: flex;
   flex-direction: column; /* empilha verticalmente input e mensagem */
