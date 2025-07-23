@@ -8,12 +8,12 @@ section.registro-multi
     )
 
   .form-container
-    small.etapa-titulo(v-if="etapaAtual === 1") Insira seu nome
-    small.etapa-titulo(v-else-if="etapaAtual === 2") Insira seu CPF
-    small.etapa-titulo(v-else-if="etapaAtual === 3") Pessoa Jurídica (caso se aplique)
-    small.etapa-titulo(v-else-if="etapaAtual === 4") Data de nascimento e gênero
-    small.etapa-titulo(v-else-if="etapaAtual === 5") Endereço
-    small.etapa-titulo(v-else-if="etapaAtual === 6") Credenciais de acesso
+    small.etapa-titulo(v-if="etapaAtual === 1") 
+    small.etapa-titulo(v-else-if="etapaAtual === 2") 
+    small.etapa-titulo(v-else-if="etapaAtual === 3") 
+    small.etapa-titulo(v-else-if="etapaAtual === 4") 
+    small.etapa-titulo(v-else-if="etapaAtual === 5") 
+    small.etapa-titulo(v-else-if="etapaAtual === 6") 
 
     form(@submit.prevent="proximaEtapa")
 
@@ -73,50 +73,50 @@ section.registro-multi
         span.mensagem-erro(v-if="tentativas.etapa2 && erros.cpfVazio") CPF é obrigatório.
         span.mensagem-erro(v-else-if="tentativas.etapa2 && erros.cpfInvalido") CPF inválido.
 
-
         section.botoes
           button(type="button", @click="etapaAtual--") Voltar
           button(type="submit") Seguinte
 
       // Etapa 3 - Pessoa Jurídica (opcional)
       template(v-if="etapaAtual === 3")
-        p.titulo-etapa2 Caso seja Pessoa Jurídica, preencha os campos abaixo:
+        p.titulo-etapa2 Você é uma Pessoa Jurídica?
 
-        .input-group
-          input(
-            type="text"
-            v-model="form.cnpj"
-            inputmode="numeric"
-            maxlength="18"
-            placeholder=" "
-            id="cnpj"
-            @input="formatarCNPJ"
-            :class="{ 'input-erro': erros.cnpjInvalido }"
-          )
-          label(for="cnpj") CNPJ
-        span.mensagem-erro(v-if="erros.cnpjInvalido") CNPJ inválido.
+        .radio-group
+          .radio-option
+            input#pj-sim(type="radio" name="pessoaJuridica" value="sim" v-model="form.ehPessoaJuridica")
+            label(for="pj-sim") Sim, sou Pessoa Jurídica
 
-        .input-group
-          input(
-            type="text"
-            v-model="form.nomeEmpresa"
-            id="nomeEmpresa"
-            placeholder=" "
-            :class="{ 'input-erro': erros.nomeEmpresaInvalido }"
-          )
-          label(for="nomeEmpresa") Nome da empresa
-        span.mensagem-erro(v-if="erros.nomeEmpresaInvalido") Nome da empresa é obrigatório.
+          .radio-option
+            input#pj-nao(type="radio" name="pessoaJuridica" value="nao" v-model="form.ehPessoaJuridica")
+            label(for="pj-nao") Não, não sou Pessoa Jurídica
 
-        .input-group
-          input(
-            type="text"
-            v-model="form.codigoPublico"
-            id="codigoPublico"
-            placeholder=" "
-            :class="{ 'input-erro': erros.codigoPublicoInvalido }"
-          )
-          label(for="codigoPublico") Código público
-        span.mensagem-erro(v-if="erros.codigoPublicoInvalido") Código público é obrigatório.
+        // Campos aparecem somente se for PJ
+        template(v-if="form.ehPessoaJuridica === 'sim'")
+          .input-group
+            input(
+              type="text"
+              v-model="form.cnpj"
+              inputmode="numeric"
+              maxlength="18"
+              placeholder=" "
+              id="cnpj"
+              @input="formatarCNPJ"
+              :class="{ 'input-erro': erros.cnpjInvalido }"
+            )
+            label(for="cnpj") CNPJ
+          span.mensagem-erro(v-if="erros.cnpjInvalido") CNPJ inválido.
+
+          .input-group
+            input(
+              type="text"
+              v-model="form.nomeEmpresa"
+              id="nomeEmpresa"
+              placeholder=" "
+              :class="{ 'input-erro': erros.nomeEmpresaInvalido }"
+            )
+            label(for="nomeEmpresa") Nome da empresa
+          span.mensagem-erro(v-if="erros.nomeEmpresaInvalido") Nome da empresa é obrigatório.
+
 
         section.botoes
           button(type="button", @click="etapaAtual--") Voltar
@@ -307,8 +307,10 @@ section.registro-multi
             button(type="submit") Finalizar
 </template>
 
+
+
 <script setup>
-import { reactive, ref, watch } from 'vue'
+import { reactive, ref } from 'vue'
 import router from '@/router'
 
 const etapaAtual = ref(1)
@@ -321,6 +323,7 @@ const tentativas = reactive({
   etapa5: false,
   etapa6: false,
 })
+
 const dias = Array.from({ length: 31 }, (_, i) => i + 1)
 const meses = [
   'Janeiro', 'Fevereiro', 'Março', 'Abril',
@@ -334,7 +337,7 @@ const form = reactive({
   nome: '',
   sobrenome: '',
   apelido: '',
-  tipoPessoa: 'pf', // default para pessoa física, pode ajustar conforme necessidade
+  ehPessoaJuridica: false, // alterado de tipoPessoa para boolean
   cpf: '',
   cnpj: '',
   nomeEmpresa: '',
@@ -359,7 +362,6 @@ const erros = reactive({
   nome: false,
   sobrenome: false,
   apelido: false,
-  tipoPessoa: false,
   cpfVazio: false,
   cpfInvalido: false,
   cnpjInvalido: false,
@@ -384,7 +386,9 @@ const erros = reactive({
   senhaVazia: false,
   senhaInvalida: false,
   confirmaSenhaVazia: false,
-  senhasDiferentes: false
+  senhasDiferentes: false,
+  ehPessoaJuridicaVazio: false,
+
 })
 
 const mostrarSenha = ref(false)
@@ -422,19 +426,22 @@ const validarEtapa2 = () => {
 }
 
 const validarEtapa3 = () => {
-  erros.tipoPessoa = !form.tipoPessoa
+  erros.ehPessoaJuridicaVazio = form.ehPessoaJuridica !== 'sim' && form.ehPessoaJuridica !== 'nao'
+
   erros.cnpjInvalido = false
   erros.nomeEmpresaInvalido = false
   erros.codigoPublicoInvalido = false
 
-  if (form.tipoPessoa === 'pj') {
+  if (form.ehPessoaJuridica === 'sim') {
     erros.cnpjInvalido = !/^\d{14}$/.test(form.cnpj.replace(/\D/g, ''))
     erros.nomeEmpresaInvalido = form.nomeEmpresa.trim() === ''
     erros.codigoPublicoInvalido = form.codigoPublico.trim() === ''
   }
 
-  return !erros.tipoPessoa &&
-    !(form.tipoPessoa === 'pj' && (erros.cnpjInvalido || erros.nomeEmpresaInvalido || erros.codigoPublicoInvalido))
+  return !(
+    erros.ehPessoaJuridicaVazio ||
+    (form.ehPessoaJuridica === 'sim' && (erros.cnpjInvalido || erros.nomeEmpresaInvalido || erros.codigoPublicoInvalido))
+  )
 }
 
 const validarEtapa4 = () => {
@@ -472,7 +479,6 @@ function temMaisDe18Anos(dia, mes, ano) {
   }
   return idade >= 18
 }
-
 
 const validarEtapa5 = () => {
   erros.cepInvalido = !form.cep.match(/^\d{5}-?\d{3}$/)
@@ -558,7 +564,7 @@ const proximaEtapa = () => {
     tentativas.etapa1 = true
     if (validarEtapa1()) {
       etapaAtual.value++
-      tentativas.etapa1 = false  // Reseta ao avançar
+      tentativas.etapa1 = false
     } else {
       console.log('Erro etapa 1:', JSON.stringify(erros))
     }
@@ -606,19 +612,17 @@ const proximaEtapa = () => {
   }
 }
 
-
-
 const enviarCadastro = async () => {
   try {
     const dadosParaEnviar = {
       nome: form.nome.trim(),
       sobrenome: form.sobrenome.trim(),
       apelido: form.apelido.trim(),
-      pj: form.tipoPessoa === 'pj',
-      cpf: form.tipoPessoa === 'pf' ? form.cpf : null,
-      cnpj: form.tipoPessoa === 'pj' ? form.cnpj : null,
-      nomeEmpresa: form.tipoPessoa === 'pj' ? form.nomeEmpresa.trim() : null,
-      codigoPublico: form.tipoPessoa === 'pj' ? form.codigoPublico.trim() : null,
+      pj: form.ehPessoaJuridica,
+      cpf: form.ehPessoaJuridica ? null : form.cpf,
+      cnpj: form.ehPessoaJuridica ? form.cnpj : null,
+      nomeEmpresa: form.ehPessoaJuridica ? form.nomeEmpresa.trim() : null,
+      codigoPublico: form.ehPessoaJuridica ? form.codigoPublico.trim() : null,
       diaNascimento: Number(form.dia),
       mesNascimento: Number(form.mes),
       anoNascimento: Number(form.ano),
@@ -700,6 +704,60 @@ const formatarCNPJ = () => {
 
 
 <style scoped>
+.radio-group {
+  display: flex;
+  flex-direction: column; /* coloca em coluna (um em cima do outro) */
+  align-items: center;    /* centraliza horizontalmente */
+  gap: 0.75rem;           /* espaçamento entre os dois */
+  margin-bottom: 1.5rem;
+}
+
+.radio-option {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+.radio-option input[type="radio"] {
+  appearance: none;       /* esconde o padrão */
+  -webkit-appearance: none;
+  width: 15px;
+  height: 15px;
+  border: 2px solid #ffffff; /* borda cinza clara */
+  border-radius: 4px;     /* leve arredondado */
+  cursor: pointer;
+  position: relative;
+  margin: 0;
+}
+
+/* Quadrado preenchido branco ao marcar */
+.radio-option input[type="radio"]:checked {
+  background-color: white;
+
+}
+
+/* Quadradinho escuro dentro quando marcado */
+
+
+/* Texto afastado */
+
+/* Estilo básico do “radio” que será quadrado */
+
+/* Mantém o estilo padrão do navegador (não usa appearance:none) */
+
+.radio-option label {
+  color: #ffffff; /* texto vermelho */
+  cursor: pointer;
+  user-select: none;
+  font-size: 1rem;
+  margin-left: 0.6rem; /* ajuste conforme quiser */
+}
+
+/* Quadradinho interno para indicar seleção */
+
+
+
+
+
 .msg-digite-cpf {
   text-align: left !important;
   margin-left: 0 !important;
@@ -824,10 +882,11 @@ section.botoes button[type="button"] {
 }
 
 .titulo-etapa2 {
-  font-size: 1.1rem;
+  font-size: 1.3rem;
   font-weight: 500;
-  color: #fff;
+  color: #ffffff;
   text-align: center;
+  margin-bottom: 20px;
 }
 
 .grupo-radio {
