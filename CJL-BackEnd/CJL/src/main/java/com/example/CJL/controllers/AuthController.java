@@ -176,34 +176,44 @@ public class AuthController {
     @GetMapping("/dados")
     public ResponseEntity<?> getLoggerUser(@AuthenticationPrincipal UserDetails userDetails){
         String email = userDetails.getUsername();
-
         var user = userRepository.findByEmail(email);
-        if (user.isEmpty()){
+
+        if (user.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuário não encontrado");
         }
+
         var dadosUser = user.get();
         Map<String, Object> response = new HashMap<>();
         response.put("nome", dadosUser.getNome());
         response.put("sobrenome", dadosUser.getSobrenome());
-        if (dadosUser.getApelido()!= null && !dadosUser.getApelido().isBlank()){
-            response.put("apelido",dadosUser.getApelido());
+
+        if (dadosUser.getApelido() != null && !dadosUser.getApelido().isBlank()) {
+            response.put("apelido", dadosUser.getApelido());
         }
-        response.put("email",dadosUser.getEmail());
-        response.put("genero",dadosUser.getGenero());
-        response.put("cidade",dadosUser.getCidade());
-        response.put("estado",dadosUser.getEstado());
-        response.put("cep",dadosUser.getCep());
+
+        response.put("email", dadosUser.getEmail());
+        response.put("genero", dadosUser.getGenero());
+        response.put("cidade", dadosUser.getCidade());
+        response.put("estado", dadosUser.getEstado());
+        response.put("cep", dadosUser.getCep());
         response.put("logradouro", dadosUser.getLogradouro());
         response.put("numero", dadosUser.getNumeroResidencia());
-        response.put("bairro",dadosUser.getBairro());
-        if (dadosUser.isPj()){
-            response.put("cnpj", dadosUser.getCnpj());
+        response.put("bairro", dadosUser.getBairro());
+        if (dadosUser.isPj()) {
+            response.put("cnpj", dadosUser.getEmpresa().getCnpj());
+            Empresa empresa = dadosUser.getEmpresa();
+            if (empresa != null) {
+                response.put("empresa_nome", empresa.getNome());
+                response.put("empresa_id", empresa.getId());
+            }
         } else {
             response.put("cpf", dadosUser.getCpf());
         }
+
         response.put("roles", dadosUser.getRoles().stream()
                 .map(Role::getNome)
                 .toList());
+
         return ResponseEntity.ok(response);
     }
 }

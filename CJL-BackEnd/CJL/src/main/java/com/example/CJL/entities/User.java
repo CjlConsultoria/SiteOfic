@@ -1,5 +1,4 @@
 package com.example.CJL.entities;
-
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -18,11 +17,15 @@ public class User {
     private String apelido;
     private String cargo;
     private String telefone;
+
     @Column(unique = true)
     private String cpf;
+
     private boolean pj;
+
     @Column(unique = true)
     private String email;
+
     private String senha;
     private int diaNascimento;
     private int mesNascimento;
@@ -36,13 +39,7 @@ public class User {
     private String cidade;
     private String estado;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "tb_user_roles",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id")
-    )
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "empresa_id")
     private Empresa empresa;
 

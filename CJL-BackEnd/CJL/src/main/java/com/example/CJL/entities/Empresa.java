@@ -1,20 +1,17 @@
 package com.example.CJL.entities;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import lombok.Data;
-
-import java.util.ArrayList;
-import java.util.List;
-
 
 @Entity
 @Data
-@Table(name = "tb_empresas")
 public class Empresa {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String nome;
-    @Column(unique = true)
     private String cnpj;
 }
