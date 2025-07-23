@@ -40,7 +40,6 @@ public class RegistroService {
         user.setNome(dto.getNome());
         user.setSobrenome(dto.getSobrenome());
         user.setApelido(dto.getApelido());
-        user.setCargo(dto.getCargo());
         user.setTelefone(dto.getTelefone());
         user.setPj(dto.isPj());
 

@@ -15,7 +15,6 @@ public class User {
     private String nome;
     private String sobrenome;
     private String apelido;
-    private String cargo;
     private String telefone;
 
     @Column(unique = true)
