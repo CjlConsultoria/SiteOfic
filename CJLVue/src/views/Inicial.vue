@@ -1010,7 +1010,7 @@ section.sobre h2::before {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background: url('@/assets/Conta.png') no-repeat center center / cover;
+  background: url('@/assets/conta.png') no-repeat center center / cover;
   box-sizing: border-box;
   color: white;
   scroll-behavior: smooth;
