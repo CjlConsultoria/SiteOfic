@@ -83,15 +83,15 @@ section.registro-multi
 
         .radio-group
           .radio-option
-            input#pj-sim(type="radio" name="pessoaJuridica" value="sim" v-model="form.ehPessoaJuridica")
+            input#pj-sim(type="radio" name="pessoaJuridica" :value="true" v-model="form.ehPessoaJuridica")
             label(for="pj-sim") Sim, sou Pessoa Jurídica
 
           .radio-option
-            input#pj-nao(type="radio" name="pessoaJuridica" value="nao" v-model="form.ehPessoaJuridica")
+            input#pj-nao(type="radio" name="pessoaJuridica" :value="false" v-model="form.ehPessoaJuridica")
             label(for="pj-nao") Não, não sou Pessoa Jurídica
 
         // Campos aparecem somente se for PJ
-        template(v-if="form.ehPessoaJuridica === 'sim'")
+        template(v-if="form.ehPessoaJuridica === true")
           .input-group
             input(
               type="text"
@@ -117,6 +117,16 @@ section.registro-multi
             label(for="nomeEmpresa") Nome da empresa
           span.mensagem-erro(v-if="erros.nomeEmpresaInvalido") Nome da empresa é obrigatório.
 
+          .input-group
+            input(
+              type="text"
+              v-model="form.codigoPublico"
+              id="codigoPublico"
+              placeholder=" "
+              :class="{ 'input-erro': erros.codigoPublicoInvalido }"
+            )
+            label(for="codigoPublico") Código Público
+          span.mensagem-erro(v-if="erros.codigoPublicoInvalido") Código Público é obrigatório.
 
         section.botoes
           button(type="button", @click="etapaAtual--") Voltar
@@ -307,14 +317,14 @@ section.registro-multi
             button(type="submit") Finalizar
 </template>
 
-
-
 <script setup>
 import { reactive, ref } from 'vue'
 import router from '@/router'
 
+// Etapa atual do formulário
 const etapaAtual = ref(1)
 
+// Flags para controle de tentativas por etapa
 const tentativas = reactive({
   etapa1: false,
   etapa2: false,
@@ -324,6 +334,7 @@ const tentativas = reactive({
   etapa6: false,
 })
 
+// Datas para selects de nascimento
 const dias = Array.from({ length: 31 }, (_, i) => i + 1)
 const meses = [
   'Janeiro', 'Fevereiro', 'Março', 'Abril',
@@ -333,11 +344,12 @@ const meses = [
 const anos = []
 for (let a = 2025; a >= 1900; a--) anos.push(a)
 
+// Dados do formulário
 const form = reactive({
   nome: '',
   sobrenome: '',
   apelido: '',
-  ehPessoaJuridica: false, // alterado de tipoPessoa para boolean
+  ehPessoaJuridica: null,
   cpf: '',
   cnpj: '',
   nomeEmpresa: '',
@@ -358,6 +370,7 @@ const form = reactive({
   confirmaSenha: ''
 })
 
+// Objeto de erros
 const erros = reactive({
   nome: false,
   sobrenome: false,
@@ -365,6 +378,7 @@ const erros = reactive({
   cpfVazio: false,
   cpfInvalido: false,
   cnpjInvalido: false,
+  cpfDuplicado: false,
   nomeEmpresaInvalido: false,
   codigoPublicoInvalido: false,
   diaInvalido: false,
@@ -388,11 +402,9 @@ const erros = reactive({
   confirmaSenhaVazia: false,
   senhasDiferentes: false,
   ehPessoaJuridicaVazio: false,
-
 })
 
-const mostrarSenha = ref(false)
-
+// Validação de CPF
 const validarCPF = (cpf) => {
   cpf = cpf.replace(/[^\d]+/g, '')
   if (cpf.length !== 11 || /^(\d)\1+$/.test(cpf)) return false
@@ -412,6 +424,21 @@ const validarCPF = (cpf) => {
   return true
 }
 
+// Verifica se o CPF já existe via API
+const verificarCPFJaExiste = async (cpf) => {
+  const cpfNumeros = cpf.replace(/\D/g, '')
+  try {
+    const response = await fetch(`http://localhost:8080/api/auth/verificar-cpf/${cpfNumeros}`)
+    if (!response.ok) return false
+    const data = await response.json()
+    return data.existe
+  } catch (error) {
+    console.error('Erro ao verificar CPF:', error)
+    return false
+  }
+}
+
+// Etapas de validação
 const validarEtapa1 = () => {
   erros.nome = form.nome.trim() === ''
   erros.sobrenome = form.sobrenome.trim() === ''
@@ -426,13 +453,12 @@ const validarEtapa2 = () => {
 }
 
 const validarEtapa3 = () => {
-  erros.ehPessoaJuridicaVazio = form.ehPessoaJuridica !== 'sim' && form.ehPessoaJuridica !== 'nao'
-
+  erros.ehPessoaJuridicaVazio = typeof form.ehPessoaJuridica !== 'boolean'
   erros.cnpjInvalido = false
   erros.nomeEmpresaInvalido = false
   erros.codigoPublicoInvalido = false
 
-  if (form.ehPessoaJuridica === 'sim') {
+  if (form.ehPessoaJuridica === true) {
     erros.cnpjInvalido = !/^\d{14}$/.test(form.cnpj.replace(/\D/g, ''))
     erros.nomeEmpresaInvalido = form.nomeEmpresa.trim() === ''
     erros.codigoPublicoInvalido = form.codigoPublico.trim() === ''
@@ -440,7 +466,7 @@ const validarEtapa3 = () => {
 
   return !(
     erros.ehPessoaJuridicaVazio ||
-    (form.ehPessoaJuridica === 'sim' && (erros.cnpjInvalido || erros.nomeEmpresaInvalido || erros.codigoPublicoInvalido))
+    (form.ehPessoaJuridica === true && (erros.cnpjInvalido || erros.nomeEmpresaInvalido || erros.codigoPublicoInvalido))
   )
 }
 
@@ -453,28 +479,20 @@ const validarEtapa4 = () => {
   erros.mesInvalido = !(mes >= 1 && mes <= 12)
   erros.anoInvalido = !(ano >= 1900 && ano <= 2025)
   erros.nascimentoIncompleto = erros.diaInvalido || erros.mesInvalido || erros.anoInvalido
-
   erros.idadeInvalida = false
+
   if (!erros.nascimentoIncompleto) {
     erros.idadeInvalida = !temMaisDe18Anos(dia, mes, ano)
   }
 
   erros.generoInvalido = form.genero === ''
-
-  return !(
-    erros.nascimentoIncompleto ||
-    erros.idadeInvalida ||
-    erros.generoInvalido
-  )
+  return !(erros.nascimentoIncompleto || erros.idadeInvalida || erros.generoInvalido)
 }
 
 function temMaisDe18Anos(dia, mes, ano) {
   const hoje = new Date()
   let idade = hoje.getFullYear() - ano
-  if (
-    hoje.getMonth() + 1 < mes ||
-    (hoje.getMonth() + 1 === mes && hoje.getDate() < dia)
-  ) {
+  if ((hoje.getMonth() + 1 < mes) || (hoje.getMonth() + 1 === mes && hoje.getDate() < dia)) {
     idade--
   }
   return idade >= 18
@@ -489,12 +507,8 @@ const validarEtapa5 = () => {
   erros.estadoInvalido = !form.estado.match(/^[A-Za-z]{2}$/)
 
   erros.enderecoIncompleto =
-    erros.cepInvalido ||
-    erros.ruaInvalida ||
-    erros.numeroInvalido ||
-    erros.bairroInvalido ||
-    erros.cidadeInvalida ||
-    erros.estadoInvalido
+    erros.cepInvalido || erros.ruaInvalida || erros.numeroInvalido ||
+    erros.bairroInvalido || erros.cidadeInvalida || erros.estadoInvalido
 
   return !erros.enderecoIncompleto
 }
@@ -502,33 +516,26 @@ const validarEtapa5 = () => {
 const validarEtapa6 = () => {
   erros.emailVazio = form.email.trim() === ''
   erros.emailInvalido = !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)
-
   erros.senhaVazia = form.senha.trim() === ''
   erros.senhaInvalida = !/(?=.*[A-Z])(?=.*\d)/.test(form.senha)
-
   erros.confirmaSenhaVazia = form.confirmaSenha.trim() === ''
   erros.senhasDiferentes = form.senha !== form.confirmaSenha
 
   return !(
-    erros.emailVazio ||
-    erros.emailInvalido ||
-    erros.senhaVazia ||
-    erros.senhaInvalida ||
-    erros.confirmaSenhaVazia ||
-    erros.senhasDiferentes
+    erros.emailVazio || erros.emailInvalido ||
+    erros.senhaVazia || erros.senhaInvalida ||
+    erros.confirmaSenhaVazia || erros.senhasDiferentes
   )
 }
 
+// Busca automática do endereço via CEP
 const buscarEndereco = async () => {
   const cepLimpo = form.cep.replace(/\D/g, '')
   const cepValido = /^\d{8}$/.test(cepLimpo)
   erros.cepInvalido = !cepValido
 
   if (!cepValido) {
-    form.rua = ''
-    form.bairro = ''
-    form.cidade = ''
-    form.estado = ''
+    form.rua = form.bairro = form.cidade = form.estado = ''
     return
   }
 
@@ -538,10 +545,7 @@ const buscarEndereco = async () => {
 
     if (dados.erro) {
       erros.cepInvalido = true
-      form.rua = ''
-      form.bairro = ''
-      form.cidade = ''
-      form.estado = ''
+      form.rua = form.bairro = form.cidade = form.estado = ''
     } else {
       erros.cepInvalido = false
       form.rua = dados.logradouro || ''
@@ -551,67 +555,39 @@ const buscarEndereco = async () => {
     }
   } catch (error) {
     erros.cepInvalido = true
-    form.rua = ''
-    form.bairro = ''
-    form.cidade = ''
-    form.estado = ''
+    form.rua = form.bairro = form.cidade = form.estado = ''
     console.error('Erro ao buscar CEP:', error)
   }
 }
 
+// Avança para próxima etapa
 const proximaEtapa = () => {
-  if (etapaAtual.value === 1) {
-    tentativas.etapa1 = true
-    if (validarEtapa1()) {
-      etapaAtual.value++
-      tentativas.etapa1 = false
-    } else {
-      console.log('Erro etapa 1:', JSON.stringify(erros))
-    }
-  } else if (etapaAtual.value === 2) {
-    tentativas.etapa2 = true
-    if (validarEtapa2()) {
-      etapaAtual.value++
-      tentativas.etapa2 = false
-    } else {
-      console.log('Erro etapa 2:', JSON.stringify(erros))
-    }
-  } else if (etapaAtual.value === 3) {
-    tentativas.etapa3 = true
-    if (validarEtapa3()) {
-      etapaAtual.value++
-      tentativas.etapa3 = false
-    } else {
-      console.log('Erro etapa 3:', JSON.stringify(erros))
-    }
-  } else if (etapaAtual.value === 4) {
-    tentativas.etapa4 = true
-    if (validarEtapa4()) {
-      etapaAtual.value++
-      tentativas.etapa4 = false
-    } else {
-      console.log('Erro etapa 4:', JSON.stringify(erros))
-    }
-  } else if (etapaAtual.value === 5) {
-    tentativas.etapa5 = true
-    if (validarEtapa5()) {
-      etapaAtual.value++
-      tentativas.etapa5 = false
-    } else {
-      console.log('Erro etapa 5:', JSON.stringify(erros))
-    }
-  } else if (etapaAtual.value === 6) {
-    tentativas.etapa6 = true
-    if (validarEtapa6()) {
+  const etapa = etapaAtual.value
+  tentativas[`etapa${etapa}`] = true
+
+  const validadores = [
+    validarEtapa1,
+    validarEtapa2,
+    validarEtapa3,
+    validarEtapa4,
+    validarEtapa5,
+    validarEtapa6,
+  ]
+
+  if (validadores[etapa - 1]()) {
+    if (etapa === 6) {
       enviarCadastro()
       alert('Cadastro concluído com sucesso!')
-      tentativas.etapa6 = false
     } else {
-      console.log('Erro etapa 6:', JSON.stringify(erros))
+      etapaAtual.value++
     }
+    tentativas[`etapa${etapa}`] = false
+  } else {
+    console.log(`Erro etapa ${etapa}:`, JSON.stringify(erros))
   }
 }
 
+// Envio final para backend
 const enviarCadastro = async () => {
   try {
     const dadosParaEnviar = {
@@ -667,41 +643,35 @@ const enviarCadastro = async () => {
   }
 }
 
+// Formatação visual de campos
+const mostrarSenha = ref(false)
+
 const formatarSomenteNumeros = (campo, maxLength) => {
   let valor = form[campo]
   valor = valor.replace(/\D/g, '')
-  if (valor.length > maxLength) {
-    valor = valor.slice(0, maxLength)
-  }
+  if (valor.length > maxLength) valor = valor.slice(0, maxLength)
   form[campo] = valor
 }
 
 const formatarCPF = () => {
   let valor = form.cpf || ''
   valor = valor.replace(/\D/g, '')
-
   if (valor.length > 3) valor = valor.replace(/^(\d{3})(\d)/, '$1.$2')
   if (valor.length > 6) valor = valor.replace(/^(\d{3})\.(\d{3})(\d)/, '$1.$2.$3')
   if (valor.length > 9) valor = valor.replace(/^(\d{3})\.(\d{3})\.(\d{3})(\d)/, '$1.$2.$3-$4')
-
-  valor = valor.slice(0, 14)
-  form.cpf = valor
+  form.cpf = valor.slice(0, 14)
 }
 
 const formatarCNPJ = () => {
   let valor = form.cnpj || ''
   valor = valor.replace(/\D/g, '')
-
   if (valor.length > 2) valor = valor.replace(/^(\d{2})(\d)/, '$1.$2')
   if (valor.length > 5) valor = valor.replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3')
   if (valor.length > 8) valor = valor.replace(/^(\d{2})\.(\d{3})\.(\d{3})(\d)/, '$1.$2.$3/$4')
   if (valor.length > 12) valor = valor.replace(/^(\d{2})\.(\d{3})\.(\d{3})\/(\d{4})(\d)/, '$1.$2.$3/$4-$5')
-
-  valor = valor.slice(0, 18)
-  form.cnpj = valor
+  form.cnpj = valor.slice(0, 18)
 }
 </script>
-
 
 <style scoped>
 .radio-group {
