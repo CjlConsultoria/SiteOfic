@@ -82,8 +82,10 @@ onUnmounted(() => {
 
 async function buscarUsuarioLogado() {
   const token = localStorage.getItem('token')
+  const emRotaProtegida = route.meta.requiresAuth || route.path === '/plataforma'
+
   if (!token) {
-    logoff()
+    if (emRotaProtegida) logoff()
     return
   }
 
@@ -95,9 +97,8 @@ async function buscarUsuarioLogado() {
     const dados = resposta.data
 
     usuario.nomeCompleto = (dados.nome && dados.sobrenome)
-  ? `${dados.nome} ${dados.sobrenome}`
-  : dados.nome || dados.apelido || 'Usuário'
-
+      ? `${dados.nome} ${dados.sobrenome}`
+      : dados.nome || dados.apelido || 'Usuário'
 
     usuario.email = dados.email || 'email@exemplo.com'
     usuario.cep = dados.cep || '-'
@@ -105,12 +106,12 @@ async function buscarUsuarioLogado() {
     usuario.estado = dados.estado || '-'
     usuario.genero = dados.genero || '-'
     usuario.fotoUrl = dados.fotoUrl || 'https://thumbs.dreamstime.com/b/vetor-de-%C3%ADcone-perfil-do-avatar-padr%C3%A3o-foto-usu%C3%A1rio-m%C3%ADdia-social-183042379.jpg'
-
-    usuario.cpf = dados.cpf || ''      // <-- Aqui
-    usuario.cnpj = dados.cnpj || ''    // <-- Aqui
+    usuario.cpf = dados.cpf || ''
+    usuario.cnpj = dados.cnpj || ''
   } catch (erro: any) {
     console.error('Erro ao buscar usuário logado:', erro)
-    if (erro.response?.status === 401) {
+
+    if (erro.response?.status === 401 && emRotaProtegida) {
       logoff()
     }
   }
@@ -140,7 +141,6 @@ div.layout-wrapper(:class="{ 'layout-plataforma': ehPlataforma }")
           )
 
           div.user-dropdown-google(v-if="userDropdownOpen")
-            //- Botão de fechar
             button.fechar-dropdown(@click="userDropdownOpen = false" aria-label="Fechar") ×
 
             img.foto-perfil-google(:src="usuario.fotoUrl", alt="Foto do perfil")
@@ -150,13 +150,6 @@ div.layout-wrapper(:class="{ 'layout-plataforma': ehPlataforma }")
             p.cpf(v-if="usuario.cpf && usuario.cpf !== ''") CPF: {{ usuario.cpf }}
             p.cnpj(v-else-if="usuario.cnpj && usuario.cnpj !== ''") CNPJ: {{ usuario.cnpj }}
 
-
-            //-Informações adicionais, se quiser ativar
-            //-p {{ usuario.genero }}
-            //-p {{ usuario.cidade }} - {{ usuario.estado }}
-            //-p CEP: {{ usuario.cep }}
-
-            //-button.gerenciar-conta Gerenciar sua Conta CJL
             hr
             button.sair(@click="logoff") Sair
 
@@ -165,31 +158,39 @@ div.layout-wrapper(:class="{ 'layout-plataforma': ehPlataforma }")
               span ·
               a(href="#", target="_blank") Termos de Serviço
 
-  //- Se não estiver na rota da Plataforma
+  //- Se NÃO estiver na rota da Plataforma
   template(v-else)
     header.fixed-header(:class="{ scrolled: isScrolled }")
       .wrapper
         img.logo(src="@/assets/logocjl.png" alt="Logo CJL" width="60" height="60")
+
+        //- Botão hamburguer só aparece no mobile (controlado por CSS)
         button.hamburguer(@click="toggleMenu") ☰
 
+        //- Menu mobile - só aparece se isMenuOpen = true
         nav.menu-mobile(v-if="isMenuOpen")
           RouterLink(to="/") Início
           RouterLink(to="/sobre") Sobre
           RouterLink(to="/servicos") Serviços
           RouterLink(to="/planos") Planos
+          //-RouterLink(to="/plataforma") Plataforma
           .mobile-auth-buttons
+            //-a.external-btn.link-btn(href="/login") Login
+            //-RouterLink.external-btn.link-btn(to="/registre") Registre-se
             button.external-btn(@click="irParaURLExterna") Convivium
 
+        //- Menu desktop - visível apenas em telas maiores via CSS
         nav.menu-desktop
           RouterLink(to="/") Início
           RouterLink(to="/sobre") Sobre
           RouterLink(to="/servicos") Serviços
           RouterLink(to="/planos") Planos
-          RouterLink(to="/plataforma") Plataforma
+          //-RouterLink(to="/plataforma") Plataforma
 
+        //- Botões de login/registro
         .auth-buttons
-          a.external-btn.link-btn(href="/login") Login
-          RouterLink.external-btn.link-btn(to="/registre") Registrar
+          //-a.external-btn.link-btn(href="/login") Login
+          //-RouterLink.external-btn.link-btn(to="/registre") Registre-se
           button.external-btn(@click="irParaURLExterna") Convivium
 
   //- Conteúdo principal
@@ -201,7 +202,149 @@ div.layout-wrapper(:class="{ 'layout-plataforma': ehPlataforma }")
     p © 2025 - Todos os direitos reservados
 </template>
 
+
 <style scoped>
+@media (max-width: 768px) {
+  .menu-mobile .mobile-auth-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+@media (max-width: 768px) {
+  .menu-mobile .mobile-auth-buttons a:hover,
+  .menu-mobile .mobile-auth-buttons button:hover {
+    color: #a0a0a0; /* ou qualquer cor desejada */
+    cursor: pointer;
+  }
+}
+@media (max-width: 768px) {
+  .menu-mobile .mobile-auth-buttons a:hover,
+  .menu-mobile .mobile-auth-buttons button:hover,
+  .menu-mobile .mobile-auth-buttons .router-link-active:hover {
+    color: #a3a3a3 !important; /* Cor da fonte no hover */
+    transition: color 0.3s ease;
+  }
+}
+
+.menu-mobile .mobile-auth-buttons a:hover,
+.menu-mobile .mobile-auth-buttons button:hover {
+  color: #fff;
+  background-color: #bb6400;
+}
+
+  .menu-mobile .mobile-auth-buttons a,
+  .menu-mobile .mobile-auth-buttons button,
+  .menu-mobile .mobile-auth-buttons .external-btn {
+    font-size: 1rem !important;
+    padding: 0.6rem 1.4rem !important;
+    width: 100%;
+    text-align: center;
+    border-radius: 8px;
+  }
+}
+
+@media (min-width: 768px) {
+  .menu-mobile,
+  .hamburguer {
+    display: none !important;
+  }
+
+  .menu-desktop {
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+  }
+
+  .auth-buttons {
+    display: flex !important;
+    gap: 1rem;
+  }
+  
+}
+/* MOBILE: esconder menu-desktop */
+@media (max-width: 767px) {
+  .menu-desktop {
+    display: none !important;
+  }
+}
+
+/* DESKTOP: mostrar menu-desktop, esconder menu-mobile */
+@media (min-width: 768px) {
+  .menu-mobile,
+  .hamburguer {
+    display: none !important;
+  }
+
+  .menu-desktop {
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+  }
+
+  .auth-buttons {
+    display: flex !important;
+    gap: 1rem;
+  }
+}
+
+
+@media (min-width: 768px) {
+  .menu-mobile,
+  .hamburguer {
+    display: none !important;
+  }
+
+  .menu-desktop {
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+  }
+}
+/* Menu desktop escondido no mobile */
+
+
+/* Botão hamburguer só visível no mobile */
+.hamburguer {
+   display: block !important;
+  font-size: 2rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #333;
+}
+
+/* Menu mobile: só aparece quando isMenuOpen = true */
+.menu-mobile {
+  position: absolute;
+  top: 70px;
+  left: 0;
+  right: 0;
+  background-color: white;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  z-index: 100;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Tela ≥768px: oculta menu mobile e hamburguer, mostra menu desktop */
+@media (min-width: 768px) {
+  .menu-mobile,
+  .hamburguer {
+    display: none !important;
+  }
+
+  .menu-desktop {
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+  }
+}
+
+
+
 .nome-completo {
   font-size: 1.1rem;
   color: #222222;
