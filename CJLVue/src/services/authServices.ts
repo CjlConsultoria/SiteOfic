@@ -1,13 +1,16 @@
 // src/services/authService.ts
 import api from './apiServices'
 
-
 export const login = async (email: string, senha: string) => {
   const response = await api.post('auth/login', { email, senha })
   return response.data
 }
 
-export async function register(dados) {
+interface DadosResposta {
+  message?: string
+}
+
+export async function register(dados: any) {
   const response = await fetch('/api/register', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -16,11 +19,11 @@ export async function register(dados) {
 
   const texto = await response.text()
 
-  let dadosResposta = {}
+  let dadosResposta: DadosResposta = {}
   try {
     dadosResposta = texto ? JSON.parse(texto) : {}
   } catch {
-
+    // resposta não é JSON válido
     throw new Error('Resposta inválida do servidor')
   }
 
