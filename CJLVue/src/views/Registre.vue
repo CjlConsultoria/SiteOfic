@@ -117,16 +117,7 @@ section.registro-multi
             label(for="nomeEmpresa") Nome da empresa
           span.mensagem-erro(v-if="erros.nomeEmpresaInvalido") Nome da empresa é obrigatório.
 
-          .input-group
-            input(
-              type="text"
-              v-model="form.codigoPublico"
-              id="codigoPublico"
-              placeholder=" "
-              :class="{ 'input-erro': erros.codigoPublicoInvalido }"
-            )
-            label(for="codigoPublico") Código Público
-          span.mensagem-erro(v-if="erros.codigoPublicoInvalido") Código Público é obrigatório.
+          
 
         section.botoes
           button(type="button", @click="etapaAtual--") Voltar
@@ -353,7 +344,6 @@ const form = reactive({
   cpf: '',
   cnpj: '',
   nomeEmpresa: '',
-  codigoPublico: '',
   dia: '',
   mes: '',
   ano: '',
@@ -380,7 +370,6 @@ const erros = reactive({
   cnpjInvalido: false,
   cpfDuplicado: false,
   nomeEmpresaInvalido: false,
-  codigoPublicoInvalido: false,
   diaInvalido: false,
   mesInvalido: false,
   anoInvalido: false,
@@ -456,17 +445,16 @@ const validarEtapa3 = () => {
   erros.ehPessoaJuridicaVazio = typeof form.ehPessoaJuridica !== 'boolean'
   erros.cnpjInvalido = false
   erros.nomeEmpresaInvalido = false
-  erros.codigoPublicoInvalido = false
 
   if (form.ehPessoaJuridica === true) {
     erros.cnpjInvalido = !/^\d{14}$/.test(form.cnpj.replace(/\D/g, ''))
     erros.nomeEmpresaInvalido = form.nomeEmpresa.trim() === ''
-    erros.codigoPublicoInvalido = form.codigoPublico.trim() === ''
+
   }
 
   return !(
     erros.ehPessoaJuridicaVazio ||
-    (form.ehPessoaJuridica === true && (erros.cnpjInvalido || erros.nomeEmpresaInvalido || erros.codigoPublicoInvalido))
+    (form.ehPessoaJuridica === true && (erros.cnpjInvalido || erros.nomeEmpresaInvalido))
   )
 }
 
@@ -598,7 +586,6 @@ const enviarCadastro = async () => {
       cpf: form.ehPessoaJuridica ? null : form.cpf,
       cnpj: form.ehPessoaJuridica ? form.cnpj : null,
       nomeEmpresa: form.ehPessoaJuridica ? form.nomeEmpresa.trim() : null,
-      codigoPublico: form.ehPessoaJuridica ? form.codigoPublico.trim() : null,
       diaNascimento: Number(form.dia),
       mesNascimento: Number(form.mes),
       anoNascimento: Number(form.ano),
