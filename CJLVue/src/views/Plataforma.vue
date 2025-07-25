@@ -20,22 +20,30 @@ async function irParaPerfil() {
   await buscarUsuarioLogado()
 }
 
+// Função para controlar a navegação pelas páginas
+function irParaPagina(label) {
+  const labelLower = label.toLowerCase()
+  if (labelLower === 'serviços' || labelLower === 'servicos') {
+    paginaAtual.value = 'servicos'
+  } else if (labelLower === 'perfil') {
+    irParaPerfil()
+  } else {
+    paginaAtual.value = 'home'
+  }
+}
+
 // Menus principais e secundários
 const menuPrincipal = [
   { label: 'Dashboard', url: '#', icon: '📊' },
-  { label: 'Condomínios', url: '#', icon: '🏢' },
-  { label: 'Financeiro', url: '#', icon: '💰' },
-  { label: 'Usuários', url: '#', icon: '👥' },
   { label: 'Serviços', url: '#', icon: '🛠️' },
-  { label: 'Relatórios', url: '#', icon: '📑' },
+  { label: 'Sistemas', url: '#', icon: '📑' },
 ]
 
 const menuSecundaria = [
   { label: 'Perfil', url: '#', icon: '🙍‍♂️' },
   { label: 'Ajuda', url: '#', icon: '❓' },
-  { label: 'Sobre', url: '#', icon: 'ℹ️' },
-  { label: 'Configurações', url: '#', icon: '⚙️' },
-  { label: 'Sair', url: '#', icon: '🚪' },
+  { label: 'Sair', url: '#', icon: '🔒' }
+
 ]
 
 // Cards para a home
@@ -60,9 +68,89 @@ const cards = [
     rating: '4.8/5.0',
     reviews: 5,
   },
+  {
+    id: 3,
+    logo: LogoNexdom,
+    title: 'Sistema de Funilaria',
+    author: 'Consultoria CJL',
+    description:
+      'Ferramenta especializada para oficinas de funilaria, permitindo o registro de ordens de serviço, controle de peças, acompanhamento de reparos e histórico detalhado de veículos.',
+    rating: '4.9/5.0',
+    reviews: 3,
+  },
+  {
+    id: 4,
+    logo: LogoNexdom,
+    title: 'Sistema Escolar',
+    author: 'Consultoria CJL',
+    description:
+      'Plataforma completa para instituições de ensino, com recursos para gestão de alunos, turmas, boletins, frequência e comunicação entre pais, professores e coordenação.',
+    rating: '5.0/5.0',
+    reviews: 4,
+  },
+  {
+    id: 5,
+    logo: LogoNexdom,
+    title: 'Sistema de Clínica Médica',
+    author: 'Consultoria CJL',
+    description:
+      'Solução para clínicas que desejam organizar agendamentos, prontuários, controle de pacientes e histórico de atendimentos de forma digital e segura.',
+    rating: '4.7/5.0',
+    reviews: 6,
+  },
+  {
+    id: 6,
+    logo: LogoNexdom,
+    title: 'Sistema de Delivery Local',
+    author: 'Consultoria CJL',
+    description:
+      'Plataforma para pequenos negócios realizarem entregas, com gestão de pedidos, controle de entregadores, rastreamento e integração com pagamento online.',
+    rating: '4.9/5.0',
+    reviews: 7,
+  },
+  {
+    id: 7,
+    logo: LogoNexdom,
+    title: 'Sistema para Salão de Beleza',
+    author: 'Consultoria CJL',
+    description:
+      'Ferramenta ideal para agendamentos de serviços, controle de profissionais, histórico de clientes, pacotes promocionais e comunicação com o cliente.',
+    rating: '4.8/5.0',
+    reviews: 5,
+  },
+  {
+    id: 8,
+    logo: LogoNexdom,
+    title: 'Sistema Financeiro Pessoal',
+    author: 'Consultoria CJL',
+    description:
+      'Aplicação para organização das finanças pessoais, com controle de receitas, despesas, metas financeiras, gráficos e alertas de vencimentos.',
+    rating: '5.0/5.0',
+    reviews: 9,
+  },
+  {
+    id: 9,
+    logo: LogoNexdom,
+    title: 'Sistema de Eventos e Reservas',
+    author: 'Consultoria CJL',
+    description:
+      'Gerencie eventos, reservas de espaços, convites, pagamentos e check-ins de participantes com facilidade e segurança.',
+    rating: '4.6/5.0',
+    reviews: 4,
+  },
+  {
+    id: 10,
+    logo: LogoNexdom,
+    title: 'Sistema de Biblioteca Digital',
+    author: 'Consultoria CJL',
+    description:
+      'Sistema para cadastro, empréstimo e devolução de livros, com controle de usuários, notificações de vencimento e relatórios de uso.',
+    rating: '4.9/5.0',
+    reviews: 3,
+  },
 ]
 
-// Dados do usuário (formulário)
+// Dados do usuário
 const usuario = reactive({
   tipoPessoa: '',
   nome: '',
@@ -81,7 +169,6 @@ const usuario = reactive({
   codigoPublico: '',
 })
 
-// Buscar dados do usuário na API
 async function buscarUsuarioLogado() {
   const token = localStorage.getItem('token')
   if (!token) {
@@ -96,7 +183,6 @@ async function buscarUsuarioLogado() {
 
     const dados = resposta.data
 
-    // Preenche os campos conforme o objeto esperado no template
     usuario.nome = dados.nome || ''
     usuario.sobrenome = dados.sobrenome || ''
     usuario.email = dados.email || ''
@@ -106,11 +192,7 @@ async function buscarUsuarioLogado() {
     usuario.cpf = dados.cpf || ''
     usuario.cnpj = dados.cnpj || ''
     usuario.genero = dados.genero || ''
-
-    // Você pode mapear "tipoPessoa" com base na presença de cnpj
     usuario.tipoPessoa = dados.cnpj ? 'JURIDICA' : 'FISICA'
-
-    // Estes campos você pode adaptar se estiverem no backend
     usuario.logradouro = dados.logradouro || ''
     usuario.numero = dados.numero || ''
     usuario.complemento = dados.complemento || ''
@@ -125,8 +207,111 @@ async function buscarUsuarioLogado() {
     }
   }
 }
+const servicosAvancados = [
+  {
+    id: 1,
+    titulo: 'Gestão de TI Integrada',
+    descricao: 'Solução completa para infraestrutura e suporte técnico.',
+    topicos: ['Monitoramento 24h', 'Backup automatizado', 'Acesso remoto']
+  },
+  {
+    id: 2,
+    titulo: 'Automação de Processos',
+    descricao: 'Reduza tempo e erros com processos automatizados.',
+    topicos: ['Scripts personalizados', 'Integração com sistemas', 'Alertas automáticos']
+  },
+  {
+    id: 3,
+    titulo: 'Consultoria Estratégica',
+    descricao: 'Apoio técnico e estratégico para evolução digital.',
+    topicos: ['Análise de sistema', 'Planejamento tecnológico', 'Treinamento de equipe']
+  }
+]
 
-// Carregar dados automaticamente se já estiver na página de perfil
+const sistemas = [
+  {
+    nome: 'Sistema de Gestão de Condomínios',
+    descricaoIntro: 'Este sistema oferece controle completo para condomínios residenciais e comerciais, garantindo segurança e organização.',
+    descricao: [
+      'Controle de moradores e visitantes',
+      'Gestão financeira e rateio de despesas',
+      'Comunicação interna via avisos e mensagens',
+      'Desenvolvido com Vue.js, Node.js e MongoDB'
+    ]
+  },
+  {
+    nome: 'Gestão de Estoque',
+    descricaoIntro: 'Ferramenta robusta para gerenciamento eficiente do estoque, com alertas e relatórios detalhados.',
+    descricao: [
+      'Cadastro e controle de produtos',
+      'Alertas de estoque mínimo e máximo',
+      'Relatórios de movimentação e vendas',
+      'Construído usando React, Express e PostgreSQL'
+    ]
+  },
+  {
+    nome: 'Sistema de Funilaria',
+    descricaoIntro: 'Sistema especializado para oficinas de funilaria, facilitando o controle dos serviços e orçamentos.',
+    descricao: [
+      'Registro e acompanhamento de orçamentos',
+      'Controle de serviços e peças usadas',
+      'Agenda para atendimento e reparos',
+      'Feito com Angular, Firebase e TypeScript'
+    ]
+  },
+  {
+    nome: 'Sistema Escolar',
+    descricaoIntro: 'Solução completa para instituições de ensino com controle de alunos, notas e frequência.',
+    descricao: [
+      'Cadastro de alunos, professores e turmas',
+      'Lançamento de notas e frequências',
+      'Geração de boletins e relatórios',
+      'Desenvolvido com Laravel, Vue.js e MySQL'
+    ]
+  },
+  {
+    nome: 'Sistema de Delivery Local',
+    descricaoIntro: 'Plataforma para delivery com cadastro de restaurantes, gerenciamento de pedidos e avaliações.',
+    descricao: [
+      'Cadastro de restaurantes e cardápios',
+      'Gerenciamento de pedidos e entregas',
+      'Avaliações e feedback dos usuários',
+      'Criado com Next.js, Node.js e MongoDB'
+    ]
+  },
+  {
+    nome: 'Sistema para Salão de Beleza',
+    descricaoIntro: 'Gerencie agendamentos, clientes e estoque com uma solução pensada para salões de beleza.',
+    descricao: [
+      'Agendamento de serviços e profissionais',
+      'Controle de clientes e histórico',
+      'Gestão de estoque de produtos',
+      'Construído com React Native, Firebase e GraphQL'
+    ]
+  },
+  {
+    nome: 'Sistema Financeiro Pessoal',
+    descricaoIntro: 'Organize suas finanças pessoais com controle, planejamento e relatórios gráficos.',
+    descricao: [
+      'Controle de receitas e despesas',
+      'Planejamento orçamentário',
+      'Relatórios gráficos e alertas',
+      'Feito com Flutter, Dart e SQLite'
+    ]
+  },
+  {
+    nome: 'Sistema de Eventos e Reservas',
+    descricaoIntro: 'Gerencie eventos, reservas de espaços e comunicação com convidados de forma eficiente.',
+    descricao: [
+      'Cadastro e gerenciamento de eventos',
+      'Reserva de espaços e controle de lotação',
+      'Envio de convites e notificações',
+      'Desenvolvido com Django, React e PostgreSQL'
+    ]
+  }
+]
+
+
 onMounted(() => {
   if (paginaAtual.value === 'perfil') {
     buscarUsuarioLogado()
@@ -134,33 +319,22 @@ onMounted(() => {
 })
 </script>
 
-
-
 <template lang="pug">
 .app
-  // Sidebar lateral
   aside.sidebar(:class="{ open: menuAberto }")
-    .logo Logo
+    .logo 
     nav.menu
       ul.menu-principal
         li(v-for="item in menuPrincipal" :key="item.label")
-          a(:href="item.url")
+          a(href="#" @click.prevent="irParaPagina(item.label)")
             span.icon {{ item.icon }}&nbsp;
             | {{ item.label }}
       ul.menu-secundaria
-        li(
-          v-for="item in menuSecundaria"
-          :key="item.label"
-          :class="{ 'btn-sair': item.label === 'Sair' }"
-        )
-          a(
-            href="#"
-            @click.prevent="item.label === 'Perfil' ? irParaPerfil() : null"
-          )
+        li(v-for="item in menuSecundaria" :key="item.label" :class="{ 'btn-sair': item.label === 'Sair' }")
+          a(href="#" @click.prevent="item.label === 'Perfil' ? irParaPerfil() : null")
             span.icon {{ item.icon }}&nbsp;
             | {{ item.label }}
 
-  // Botão para abrir/fechar menu
   button.btn-menu(@click="toggleMenu") ☰
 
   // Seção HOME
@@ -168,28 +342,31 @@ onMounted(() => {
     h1.software-main-title Sistemas para Testes
     h2.software-title Lista de Softwares Disponíveis
     .software-cards-wrapper
-      .software-card(v-for="card in cards" :key="card.id")
+      .software-card(v-for="card in cards" :key="card.id" class="relative")
         .software-card-logo
           img(:src="card.logo", alt="Logo CJL")
         .software-card-content
           h3 {{ card.title }}
-          p.software-card-author Desenvolvido por
+          p.software-card-author Desenvolvido por 
             strong {{ card.author }}
           p.software-card-description {{ card.description }}
         .software-card-rating
           span.star ⭐
           span.rating-text {{ card.rating }}
           span.review-count {{ card.reviews }} avaliações
-        button.software-card-button Testar esse Sistema
-        label.software-card-checkbox
-          input(type="checkbox")
+        button.software-card-button(:disabled="card.id >= 3" :class="{ 'disabled': card.id >= 3 }") Testar esse Sistema
+        label.software-card-checkbox(:class="{ 'disabled': card.id >= 3 }")
+          input(type="checkbox" :disabled="card.id >= 3")
           | Comparar
+        template(v-if="card.id >= 3")
+          .cadeado-wrapper(title="Sistema em desenvolvimento")
+            svg(xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="black" class="cadeado-icone")
+              path(fill-rule="evenodd" d="M6 10V8a6 6 0 1112 0v2h1a1 1 0 011 1v10a1 1 0 01-1 1H5a1 1 0 01-1-1V11a1 1 0 011-1h1zm2-2a4 4 0 118 0v2H8V8z" clip-rule="evenodd")
+          .overlay-desenvolvimento
 
   // Seção PERFIL
   section.perfil-usuario(v-if="paginaAtual === 'perfil'")
     h1.perfil-titulo Meus Dados
-
-    // Informações Pessoais
     .card
       h2 Informações Pessoais
       .form-row
@@ -206,8 +383,6 @@ onMounted(() => {
         .field
           label E-mail
           input(type="email", :value="usuario.email", disabled)
-
-    // Endereço
     .card
       h2 Endereço
       .form-row
@@ -235,8 +410,6 @@ onMounted(() => {
         .field
           label Estado
           input(type="text", :value="usuario.estado", disabled)
-
-    // Empresa (somente se for pessoa jurídica)
     .card(v-if="usuario.tipoPessoa === 'JURIDICA'")
       h2 Empresa
       .form-row
@@ -250,10 +423,303 @@ onMounted(() => {
         .field
           label Código Público
           input(type="text", :value="usuario.codigoPublico", disabled)
+
+  // Seção SERVIÇOS
+  section.servico-cards-section(v-if="paginaAtual === 'servicos'")
+    h1.servico-titulo Sistemas da CJL
+    p.servico-subtitulo Descrição detalhada dos sistemas oferecidos pela Consultoria CJL, com funcionalidades e tecnologias utilizadas para atender suas necessidades.
+
+    .servico-card-wrapper
+      .servico-card(v-for="(sistema, index) in sistemas" :key="index")
+        h2.servico-card-titulo {{ sistema.nome }}
+        p.servico-card-intro {{ sistema.descricaoIntro }}
+        ul.servico-card-topicos
+          li(v-for="(item, idx) in sistema.descricao" :key="idx") {{ item }}
+
 </template>
 
 
+
 <style scoped>
+.servico-subtitulo {
+  color: #333333;        /* cinza claro */
+  font-size: 1.1rem;
+  text-align: center;
+  margin-top: -2rem;  /* ajusta espaçamento para ficar próximo ao título */
+  margin-bottom: 2rem;
+  font-style: italic;
+}
+
+.servico-card-topicos {
+  list-style-type: disc;
+  list-style-position: inside; /* bolinhas ficam dentro do bloco de texto */
+  padding-left: 0;
+  margin: 40px auto;       /* centraliza horizontalmente a UL */
+  text-align: center;      /* centraliza texto e bolinhas */
+  max-width: 100%;
+  display: block;
+}
+
+.servico-card-topicos li::marker {
+  color: white;                    /* Bolinha branca */
+}
+
+.servico-card-topicos li {
+  color: #f1f1f1;                  /* Garante que os <li> fiquem azuis */
+}
+
+
+.servico-card-topicos li::before {
+  /* content: '*'; */
+  content: ''; /* ou remova essa regra */
+}
+.servico-card-topicos li::before {
+  content: none !important;      /* remove qualquer pseudo-elemento */
+}
+
+.servico-cards-section {
+  padding: 2rem;
+  background-color: #f9f9f9; /* fundo claro da seção */
+}
+
+.servico-titulo {
+  text-align: center;
+  font-size: 2.2rem;
+  margin-bottom: 2rem;
+  color: #000000; /* título da seção */
+  font-weight: 700; /* deixa a letra mais grossa */
+}
+
+.servico-card-wrapper {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.8rem;
+}
+
+.servico-card {
+  background: #fff; /* fundo branco do card */
+  padding: 1.5rem 1.8rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgb(0 0 0 / 0.1);
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.3s ease;
+}
+
+
+/* Título do card em branco */
+.servico-card-titulo {
+  font-weight: 700;
+  font-size: 1.4rem;
+  margin-bottom: 0.8rem;
+  color: #ffffff;
+}
+
+/* Descrição introdutória cinza claro */
+.servico-card-intro {
+  font-style: italic;
+  margin-bottom: 1rem;
+  color: #d4d4d4; /* cinza claro */
+}
+
+/* Lista dos tópicos em branco */
+.servico-card-topicos {
+  padding-left: 0;
+  color: #fff;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+/* Itens da lista com asterisco em branco */
+.servico-card-topicos li {
+  margin-bottom: 0.5rem;
+  position: relative;
+
+}
+
+.servico-card-topicos li::before {
+  content: '*';
+  position: absolute;
+  left: 0;
+  color: #fff; /* asterisco branco */
+  font-weight: bold;
+}
+
+.servico-card-wrapper {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.8rem;
+}
+
+.servico-card {
+  background: #fff;
+  padding: 1.5rem 1.8rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgb(0 0 0 / 0.1);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  transition: transform 0.3s ease;
+}
+
+
+.servico-card-topicos {
+ 
+  padding-left: 0;
+  color: #555;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.servico-card-topicos li {
+  margin-bottom: 0.5rem;
+  position: relative;
+
+}
+
+.servico-card-topicos li::before {
+  content: '*';
+  position: absolute;
+  left: 0;
+  color: #07ca07;
+  font-weight: bold;
+}
+.servico-cards-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem;
+  margin-left: 16rem;
+  
+}
+
+
+
+.servico-card-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+  width: 100%;
+}
+
+.servico-card {
+  width: 80%;
+  background: #5f1f01;
+  border-radius: 10px;
+  padding: 1.5rem;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  text-align: center;
+}
+
+.servico-card img.servico-logo {
+  width: 80px;
+  height: auto;
+  margin-bottom: 1rem;
+}
+
+.servicos-container {
+  padding: 20px;
+}
+
+.servicos-titulo {
+  color: black;
+  font-size: 2rem;
+  margin-bottom: 12px;
+}
+body {
+  font-family: Arial, sans-serif;
+}
+
+.servicos-texto {
+  color: black;
+  font-size: 1.2rem;
+  line-height: 1.5;
+}
+
+button.software-card-button.disabled,
+label.software-card-checkbox.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  pointer-events: none; /* impede interação */
+}
+
+
+:global(html), :global(body), :global(#app) {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background-color: #f3f3f3;
+  overflow-x: hidden; 
+  
+}
+ 
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f3f3f3;
+}
+/* Cobre o card com fundo transparente */
+.overlay-desenvolvimento {
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.418);
+  border-radius: 8px;
+  pointer-events: none; /* para deixar passar eventos */
+  padding: 8px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-start;
+  z-index: 1;
+}
+
+
+/* Cadeado por baixo do fundo */
+.cadeado-wrapper {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  cursor: pointer;
+  pointer-events: auto;
+  z-index: 0; /* por baixo do overlay */
+}
+
+/* Estiliza o cadeado */
+.cadeado-icone {
+  width: 24px;
+  height: 24px;
+  fill: rgb(211, 77, 0);
+  transition: transform 0.2s;
+}
+
+/* Efeito ao passar o mouse */
+.cadeado-wrapper:hover .cadeado-icone {
+  transform: scale(1.1);
+}
+
+/* Tooltip */
+.cadeado-wrapper::after {
+  position: absolute;
+  top: -30px;
+  right: 0;
+  background: #000;
+  color: #fff;
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+  z-index: 2;
+}
+
+.cadeado-wrapper:hover::after {
+  opacity: 1;
+}
+
 input[disabled] {
   color: #222 !important; /* ou qualquer tom escuro que desejar */
 }
@@ -448,13 +914,16 @@ input[type="email"] {
   border: 1px solid #795200 !important;
   flex: 1 1 auto !important;
 }
+.software-main-title {
+  font-weight: bold; /* ou um valor numérico como 700 */
+}
 
 .software-main-title,
 .software-title {
   text-align: center;
   margin-left: 180px;
   font-size: 2rem;
-  color: #ffffff;
+  color: #000000;
   margin-bottom: -10px;
 
 }
@@ -466,9 +935,11 @@ input[type="email"] {
 }
 
 .software-title {
-  font-size: 20px;
+  font-size: 17px;
   font-weight: 600;
   margin-bottom: 1rem;
+  margin-top: 5px;
+  color: #505050;
 }
 
 .software-filters {
@@ -615,7 +1086,8 @@ nav.menu ul {
 }
 
 .menu-principal {
-  margin-bottom:12rem !important;
+  margin-bottom:25rem !important;
+  margin-top: 2rem;
 }
 
 .menu-secundaria {
@@ -636,7 +1108,7 @@ nav.menu ul {
   top: 0;
   bottom: 0;
   width: 250px;
-  background-color: #ffffff;
+  background-color: #2b2b2b;
   color: #fff;
   transition: width 0.3s ease;
   overflow: hidden;
@@ -660,7 +1132,7 @@ nav.menu ul {
 }
 
 .menu a {
-  color: #000000;
+  color: #ffffff;
   text-decoration: none;
   font-size: 1.1rem;
   display: block;
@@ -670,7 +1142,7 @@ nav.menu ul {
 }
 
 .menu a:hover {
-  background-color: #1f1f1f;
+  background-color: #525252;
   color: white;
 }
 
