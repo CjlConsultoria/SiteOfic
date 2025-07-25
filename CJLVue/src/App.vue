@@ -82,8 +82,10 @@ onUnmounted(() => {
 
 async function buscarUsuarioLogado() {
   const token = localStorage.getItem('token')
+  const emRotaProtegida = route.meta.requiresAuth || route.path === '/plataforma'
+
   if (!token) {
-    logoff()
+    if (emRotaProtegida) logoff()
     return
   }
 
@@ -95,9 +97,8 @@ async function buscarUsuarioLogado() {
     const dados = resposta.data
 
     usuario.nomeCompleto = (dados.nome && dados.sobrenome)
-  ? `${dados.nome} ${dados.sobrenome}`
-  : dados.nome || dados.apelido || 'Usuário'
-
+      ? `${dados.nome} ${dados.sobrenome}`
+      : dados.nome || dados.apelido || 'Usuário'
 
     usuario.email = dados.email || 'email@exemplo.com'
     usuario.cep = dados.cep || '-'
@@ -105,12 +106,12 @@ async function buscarUsuarioLogado() {
     usuario.estado = dados.estado || '-'
     usuario.genero = dados.genero || '-'
     usuario.fotoUrl = dados.fotoUrl || 'https://thumbs.dreamstime.com/b/vetor-de-%C3%ADcone-perfil-do-avatar-padr%C3%A3o-foto-usu%C3%A1rio-m%C3%ADdia-social-183042379.jpg'
-
-    usuario.cpf = dados.cpf || ''      // <-- Aqui
-    usuario.cnpj = dados.cnpj || ''    // <-- Aqui
+    usuario.cpf = dados.cpf || ''
+    usuario.cnpj = dados.cnpj || ''
   } catch (erro: any) {
     console.error('Erro ao buscar usuário logado:', erro)
-    if (erro.response?.status === 401) {
+
+    if (erro.response?.status === 401 && emRotaProtegida) {
       logoff()
     }
   }

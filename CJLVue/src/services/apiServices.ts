@@ -9,27 +9,21 @@ const api = axios.create({
   },
 })
 
-// Interceptor de resposta
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    // Verifica se é um erro 401 (não autorizado)
     if (error.response && error.response.status === 401) {
-      // Mostra o toast de erro para a expiração da sessão
-      localStorage.clear() // Limpa o localStorage
-      sessionStorage.clear() // Limpa o sessionStorage
-
-      // Limpa o cabeçalho de Authorization do Axios
+      localStorage.clear()
+      sessionStorage.clear()
       delete api.defaults.headers['Authorization']
 
-      // Redireciona o usuário para a tela de login após 1 segundo
-      setTimeout(() => {
-        router.push('/login') // Redireciona para a página de login
-      }, 1000)
+      // Exibe mensagem amigável, sem redirecionar
+      // toast.error('Sessão expirada. Faça login novamente.')
+
+      // Se quiser redirecionar manualmente em outras partes, OK.
     }
 
-    return Promise.reject(error) // Rejeita o erro
+    return Promise.reject(error)
   },
 )
-
 export default api
