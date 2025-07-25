@@ -1,5 +1,5 @@
 <script setup>
-import { ref, reactive, onMounted } from 'vue'
+import { ref, reactive, onMounted, computed } from 'vue'
 import axios from 'axios'
 import LogoNexdom from '@/assets/cjl.jpg'
 
@@ -23,20 +23,34 @@ async function irParaPerfil() {
 // Função para controlar a navegação pelas páginas
 function irParaPagina(label) {
   const labelLower = label.toLowerCase()
+
+  if (labelLower === 'sair') {
+    localStorage.clear()
+    window.location.href = '/login'
+    return
+  }
+
   if (labelLower === 'serviços' || labelLower === 'servicos') {
     paginaAtual.value = 'servicos'
+  } else if (labelLower === 'sistemas') {
+    paginaAtual.value = 'sistemas' // <--- adicionado
   } else if (labelLower === 'perfil') {
     irParaPerfil()
+  } else if (labelLower === 'ajuda') {
+    paginaAtual.value = 'ajuda'
   } else {
     paginaAtual.value = 'home'
   }
 }
 
+
+
+
 // Menus principais e secundários
 const menuPrincipal = [
   { label: 'Dashboard', url: '#', icon: '📊' },
-  { label: 'Serviços', url: '#', icon: '🛠️' },
-  { label: 'Sistemas', url: '#', icon: '📑' },
+  { label: 'Sistemas', url: '#', icon: '🛠️' },
+  { label: 'Serviços', url: '#', icon: '📑' },
 ]
 
 const menuSecundaria = [
@@ -47,108 +61,104 @@ const menuSecundaria = [
 ]
 
 // Cards para a home
-const cards = [
+// Cards completos
+const cards = ref([
   {
     id: 1,
-    logo: LogoNexdom,
     title: 'Sistema de Gestão de Condomínios',
-    author: 'Consultoria CJL',
-    description:
-      'Sistema completo para gestão de condomínios, integrando controle financeiro, comunicação eficiente entre moradores e administração de reservas, simplificando a rotina do síndico.',
-    rating: '5.0/5.0',
-    reviews: 2,
+    author: 'Desenvolvido por Consultoria CJL',
+    description: 'Gerencie moradores, boletos e reservas de áreas comuns com facilidade.',
+    rating: 4.5,
+    reviews: 12,
+    logo: LogoNexdom
   },
   {
     id: 2,
-    logo: LogoNexdom,
     title: 'Gestão de Estoque',
-    author: 'Consultoria CJL',
-    description:
-      'Sistema eficiente para controle de estoque, facilitando o monitoramento de produtos, entradas, saídas e reposições em tempo real, otimizando a gestão e reduzindo perdas.',
-    rating: '4.8/5.0',
-    reviews: 5,
+    author: 'Desenvolvido por Consultoria CJL',
+    description: 'Controle seu inventário, entradas, saídas e relatórios com agilidade.',
+    rating: 4.2,
+    reviews: 8,
+    logo: LogoNexdom
   },
   {
     id: 3,
-    logo: LogoNexdom,
-    title: 'Sistema de Funilaria',
-    author: 'Consultoria CJL',
-    description:
-      'Ferramenta especializada para oficinas de funilaria, permitindo o registro de ordens de serviço, controle de peças, acompanhamento de reparos e histórico detalhado de veículos.',
-    rating: '4.9/5.0',
-    reviews: 3,
+    title: 'Sistema de Vendas Online',
+    author: 'Equipe CJL',
+    description: 'Gerencie produtos, carrinho, pagamentos e pedidos em tempo real.',
+    rating: 4.8,
+    reviews: 22,
+    logo: LogoNexdom
   },
   {
     id: 4,
-    logo: LogoNexdom,
-    title: 'Sistema Escolar',
-    author: 'Consultoria CJL',
-    description:
-      'Plataforma completa para instituições de ensino, com recursos para gestão de alunos, turmas, boletins, frequência e comunicação entre pais, professores e coordenação.',
-    rating: '5.0/5.0',
-    reviews: 4,
+    title: 'Sistema Financeiro Pessoal',
+    author: 'Equipe CJL',
+    description: 'Organize despesas, receitas e metas financeiras com clareza.',
+    rating: 4.3,
+    reviews: 11,
+    logo: LogoNexdom
   },
   {
     id: 5,
-    logo: LogoNexdom,
-    title: 'Sistema de Clínica Médica',
-    author: 'Consultoria CJL',
-    description:
-      'Solução para clínicas que desejam organizar agendamentos, prontuários, controle de pacientes e histórico de atendimentos de forma digital e segura.',
-    rating: '4.7/5.0',
-    reviews: 6,
+    title: 'Sistema de Agendamento Online',
+    author: 'Equipe CJL',
+    description: 'Ideal para clínicas, salões e consultórios com controle de horários.',
+    rating: 4.6,
+    reviews: 17,
+    logo: LogoNexdom
   },
   {
     id: 6,
-    logo: LogoNexdom,
-    title: 'Sistema de Delivery Local',
-    author: 'Consultoria CJL',
-    description:
-      'Plataforma para pequenos negócios realizarem entregas, com gestão de pedidos, controle de entregadores, rastreamento e integração com pagamento online.',
-    rating: '4.9/5.0',
-    reviews: 7,
+    title: 'Sistema de RH e Folha de Pagamento',
+    author: 'Equipe CJL',
+    description: 'Gestão de funcionários, salários, férias e benefícios integrada.',
+    rating: 4.4,
+    reviews: 13,
+    logo: LogoNexdom
   },
   {
     id: 7,
-    logo: LogoNexdom,
-    title: 'Sistema para Salão de Beleza',
-    author: 'Consultoria CJL',
-    description:
-      'Ferramenta ideal para agendamentos de serviços, controle de profissionais, histórico de clientes, pacotes promocionais e comunicação com o cliente.',
-    rating: '4.8/5.0',
-    reviews: 5,
+    title: 'Sistema de Chamados Técnicos',
+    author: 'Equipe CJL',
+    description: 'Organize atendimentos, histórico de chamados e suporte técnico.',
+    rating: 4.5,
+    reviews: 15,
+    logo: LogoNexdom
   },
   {
     id: 8,
-    logo: LogoNexdom,
-    title: 'Sistema Financeiro Pessoal',
-    author: 'Consultoria CJL',
-    description:
-      'Aplicação para organização das finanças pessoais, com controle de receitas, despesas, metas financeiras, gráficos e alertas de vencimentos.',
-    rating: '5.0/5.0',
-    reviews: 9,
+    title: 'Sistema de Gestão Escolar',
+    author: 'Equipe CJL',
+    description: 'Controle de alunos, notas, turmas e boletins com interface intuitiva.',
+    rating: 4.7,
+    reviews: 19,
+    logo: LogoNexdom
   },
   {
     id: 9,
-    logo: LogoNexdom,
-    title: 'Sistema de Eventos e Reservas',
-    author: 'Consultoria CJL',
-    description:
-      'Gerencie eventos, reservas de espaços, convites, pagamentos e check-ins de participantes com facilidade e segurança.',
-    rating: '4.6/5.0',
-    reviews: 4,
-  },
-  {
-    id: 10,
-    logo: LogoNexdom,
-    title: 'Sistema de Biblioteca Digital',
-    author: 'Consultoria CJL',
-    description:
-      'Sistema para cadastro, empréstimo e devolução de livros, com controle de usuários, notificações de vencimento e relatórios de uso.',
-    rating: '4.9/5.0',
-    reviews: 3,
-  },
-]
+    title: 'Sistema de Logística e Entregas',
+    author: 'Equipe CJL',
+    description: 'Rastreamento de pedidos, entregadores e roteirização de rotas.',
+    rating: 4.6,
+    reviews: 16,
+    logo: LogoNexdom
+  }
+])
+
+
+const paginaAtualCard = ref(1)
+const cardsPorPagina = 4
+
+const cardsPaginados = computed(() => {
+  const inicio = (paginaAtualCard.value - 1) * cardsPorPagina
+  const fim = inicio + cardsPorPagina
+  return cards.value.slice(inicio, fim)
+})
+
+function mudarPaginaCard(pagina) {
+  paginaAtualCard.value = pagina
+}
 
 // Dados do usuário
 const usuario = reactive({
@@ -249,68 +259,123 @@ const sistemas = [
       'Construído usando React, Express e PostgreSQL'
     ]
   },
+/*
+{
+  nome: 'Sistema de Funilaria',
+  descricaoIntro: 'Sistema especializado para oficinas de funilaria, facilitando o controle dos serviços e orçamentos.',
+  descricao: [
+    'Registro e acompanhamento de orçamentos',
+    'Controle de serviços e peças usadas',
+    'Agenda para atendimento e reparos',
+    'Feito com Angular, Firebase e TypeScript'
+  ]
+},
+{
+  nome: 'Sistema Escolar',
+  descricaoIntro: 'Solução completa para instituições de ensino com controle de alunos, notas e frequência.',
+  descricao: [
+    'Cadastro de alunos, professores e turmas',
+    'Lançamento de notas e frequências',
+    'Geração de boletins e relatórios',
+    'Desenvolvido com Laravel, Vue.js e MySQL'
+  ]
+},
+{
+  nome: 'Sistema de Delivery Local',
+  descricaoIntro: 'Plataforma para delivery com cadastro de restaurantes, gerenciamento de pedidos e avaliações.',
+  descricao: [
+    'Cadastro de restaurantes e cardápios',
+    'Gerenciamento de pedidos e entregas',
+    'Avaliações e feedback dos usuários',
+    'Criado com Next.js, Node.js e MongoDB'
+  ]
+},
+{
+  nome: 'Sistema para Salão de Beleza',
+  descricaoIntro: 'Gerencie agendamentos, clientes e estoque com uma solução pensada para salões de beleza.',
+  descricao: [
+    'Agendamento de serviços e profissionais',
+    'Controle de clientes e histórico',
+    'Gestão de estoque de produtos',
+    'Construído com React Native, Firebase e GraphQL'
+  ]
+},
+{
+  nome: 'Sistema Financeiro Pessoal',
+  descricaoIntro: 'Organize suas finanças pessoais com controle, planejamento e relatórios gráficos.',
+  descricao: [
+    'Controle de receitas e despesas',
+    'Planejamento orçamentário',
+    'Relatórios gráficos e alertas',
+    'Feito com Flutter, Dart e SQLite'
+  ]
+},
+{
+  nome: 'Sistema de Eventos e Reservas',
+  descricaoIntro: 'Gerencie eventos, reservas de espaços e comunicação com convidados de forma eficiente.',
+  descricao: [
+    'Cadastro e gerenciamento de eventos',
+    'Reserva de espaços e controle de lotação',
+    'Envio de convites e notificações',
+    'Desenvolvido com Django, React e PostgreSQL'
+  ]
+}
+*/
+
+]
+const faqs = ref([
   {
-    nome: 'Sistema de Funilaria',
-    descricaoIntro: 'Sistema especializado para oficinas de funilaria, facilitando o controle dos serviços e orçamentos.',
-    descricao: [
-      'Registro e acompanhamento de orçamentos',
-      'Controle de serviços e peças usadas',
-      'Agenda para atendimento e reparos',
-      'Feito com Angular, Firebase e TypeScript'
-    ]
+    pergunta: 'Como posso alterar meus dados pessoais?',
+    resposta: 'Você pode alterar seus dados acessando a aba "Editar Perfil" no topo da página.',
+    aberto: false,
   },
   {
-    nome: 'Sistema Escolar',
-    descricaoIntro: 'Solução completa para instituições de ensino com controle de alunos, notas e frequência.',
-    descricao: [
-      'Cadastro de alunos, professores e turmas',
-      'Lançamento de notas e frequências',
-      'Geração de boletins e relatórios',
-      'Desenvolvido com Laravel, Vue.js e MySQL'
-    ]
+    pergunta: 'É possível excluir minha conta?',
+    resposta: 'Sim, vá até Configurações > Conta > Excluir Conta.',
+    aberto: false,
   },
   {
-    nome: 'Sistema de Delivery Local',
-    descricaoIntro: 'Plataforma para delivery com cadastro de restaurantes, gerenciamento de pedidos e avaliações.',
-    descricao: [
-      'Cadastro de restaurantes e cardápios',
-      'Gerenciamento de pedidos e entregas',
-      'Avaliações e feedback dos usuários',
-      'Criado com Next.js, Node.js e MongoDB'
-    ]
+    pergunta: 'Como redefinir minha senha?',
+    resposta: 'Use a opção "Esqueci minha senha" na tela de login para redefinir.',
+    aberto: false,
+  }
+])
+const servicos = [
+  {
+    titulo: 'Consultoria Estratégica',
+    descricao: 'Auxiliamos na transformação digital da sua empresa.',
+    icone: `<svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24"><path d="M12 2a5 5 0 00-5 5v3H6a2 2 0 00-2 2v10h16V12a2 2 0 00-2-2h-1V7a5 5 0 00-5-5zm-3 5a3 3 0 116 0v3h-6V7zm-1 5h8v3H8v-3zm0 5h8v3H8v-3z"/></svg>`
   },
   {
-    nome: 'Sistema para Salão de Beleza',
-    descricaoIntro: 'Gerencie agendamentos, clientes e estoque com uma solução pensada para salões de beleza.',
-    descricao: [
-      'Agendamento de serviços e profissionais',
-      'Controle de clientes e histórico',
-      'Gestão de estoque de produtos',
-      'Construído com React Native, Firebase e GraphQL'
-    ]
+    titulo: 'Suporte Remoto',
+    descricao: 'Atendimento ágil com especialistas via acesso remoto.',
+    icone: `<svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-7.07 17.07L2 22l2.93-2.93A10 10 0 1012 2zm1 14h-2v-2h2v2zm0-4h-2V7h2v5z"/></svg>`
   },
   {
-    nome: 'Sistema Financeiro Pessoal',
-    descricaoIntro: 'Organize suas finanças pessoais com controle, planejamento e relatórios gráficos.',
-    descricao: [
-      'Controle de receitas e despesas',
-      'Planejamento orçamentário',
-      'Relatórios gráficos e alertas',
-      'Feito com Flutter, Dart e SQLite'
-    ]
+    titulo: 'Gestão de TI',
+    descricao: 'Cuidamos da infraestrutura e segurança da informação.',
+    icone: `<svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24"><path d="M12 2l4 4h-3v4h-2V6H8l4-4zm0 20l-4-4h3v-4h2v4h3l-4 4zM2 12l4 4v-3h4v-2H6V8l-4 4zm20 0l-4-4v3h-4v2h4v3l4-4z"/></svg>`
   },
   {
-    nome: 'Sistema de Eventos e Reservas',
-    descricaoIntro: 'Gerencie eventos, reservas de espaços e comunicação com convidados de forma eficiente.',
-    descricao: [
-      'Cadastro e gerenciamento de eventos',
-      'Reserva de espaços e controle de lotação',
-      'Envio de convites e notificações',
-      'Desenvolvido com Django, React e PostgreSQL'
-    ]
+    titulo: 'Infraestrutura em Nuvem',
+    descricao: 'Soluções de servidores cloud escaláveis.',
+    icone: `<svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24"><path d="M6 19h13a4 4 0 00.25-7.99A6 6 0 006.5 7a6.5 6.5 0 00-.5 13z"/></svg>`
+  },
+  {
+    titulo: 'Segurança de Dados',
+    descricao: 'Backup, firewall, antivírus e políticas de acesso.',
+    icone: `<svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24"><path d="M12 2l8 4v6c0 5.25-3.5 10-8 12-4.5-2-8-6.75-8-12V6l8-4z"/></svg>`
+  },
+  {
+    titulo: 'Automação de Processos',
+    descricao: 'Melhore sua produtividade com RPA e sistemas integrados.',
+    icone: `<svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24"><path d="M4 4h16v2H4V4zm1 4h14l-1.5 10.5a1 1 0 01-1 .5H7a1 1 0 01-1-.5L5 8zm5 2v6h2v-6H10zm4 0v6h2v-6h-2z"/></svg>`
   }
 ]
 
+const toggleFAQ = (index) => {
+  faqs.value[index].aberto = !faqs.value[index].aberto
+}
 
 onMounted(() => {
   if (paginaAtual.value === 'perfil') {
@@ -321,6 +386,7 @@ onMounted(() => {
 
 <template lang="pug">
 .app
+  // Sidebar Lateral
   aside.sidebar(:class="{ open: menuAberto }")
     .logo 
     nav.menu
@@ -330,19 +396,25 @@ onMounted(() => {
             span.icon {{ item.icon }}&nbsp;
             | {{ item.label }}
       ul.menu-secundaria
-        li(v-for="item in menuSecundaria" :key="item.label" :class="{ 'btn-sair': item.label === 'Sair' }")
-          a(href="#" @click.prevent="item.label === 'Perfil' ? irParaPerfil() : null")
+        li(
+          v-for="item in menuSecundaria" 
+          :key="item.label" 
+          :class="{ 'btn-sair': item.label === 'Sair' }"
+        )
+          a(href="#" @click.prevent="irParaPagina(item.label)")
             span.icon {{ item.icon }}&nbsp;
             | {{ item.label }}
 
+  // Botão para abrir/fechar menu lateral
   button.btn-menu(@click="toggleMenu") ☰
 
   // Seção HOME
   section.software-list-container(v-if="paginaAtual === 'home'")
     h1.software-main-title Sistemas para Testes
     h2.software-title Lista de Softwares Disponíveis
+
     .software-cards-wrapper
-      .software-card(v-for="card in cards" :key="card.id" class="relative")
+      .software-card(v-for="card in cardsPaginados" :key="card.id" class="relative")
         .software-card-logo
           img(:src="card.logo", alt="Logo CJL")
         .software-card-content
@@ -363,6 +435,16 @@ onMounted(() => {
             svg(xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="black" class="cadeado-icone")
               path(fill-rule="evenodd" d="M6 10V8a6 6 0 1112 0v2h1a1 1 0 011 1v10a1 1 0 01-1 1H5a1 1 0 01-1-1V11a1 1 0 011-1h1zm2-2a4 4 0 118 0v2H8V8z" clip-rule="evenodd")
           .overlay-desenvolvimento
+
+    // Paginação dos cards
+    .paginacao
+      button(
+        v-for="n in Math.ceil(cards.length / cardsPorPagina)",
+        :key="n",
+        @click="mudarPaginaCard(n)",
+        :class="{ ativo: paginaAtualCard === n }"
+      ) {{ n }}
+
 
   // Seção PERFIL
   section.perfil-usuario(v-if="paginaAtual === 'perfil'")
@@ -419,15 +501,11 @@ onMounted(() => {
         .field
           label CNPJ
           input(type="text", :value="usuario.cnpj", disabled)
-      .form-row
-        .field
-          label Código Público
-          input(type="text", :value="usuario.codigoPublico", disabled)
 
   // Seção SERVIÇOS
   section.servico-cards-section(v-if="paginaAtual === 'servicos'")
     h1.servico-titulo Sistemas da CJL
-    p.servico-subtitulo Descrição detalhada dos sistemas oferecidos pela Consultoria CJL, com funcionalidades e tecnologias utilizadas para atender suas necessidades.
+    p.servico-subtitulo Na CJL, desenvolvemos sistemas de software personalizados para diferentes segmentos do mercado, com foco em eficiência, usabilidade e inovação. Nossas soluções atendem desde pequenas empresas até grandes organizações, oferecendo funcionalidades sob medida, design intuitivo e tecnologias modernas para transformar processos e impulsionar resultados.
 
     .servico-card-wrapper
       .servico-card(v-for="(sistema, index) in sistemas" :key="index")
@@ -436,19 +514,417 @@ onMounted(() => {
         ul.servico-card-topicos
           li(v-for="(item, idx) in sistema.descricao" :key="idx") {{ item }}
 
+  // Seção AJUDA
+  section.ajuda-section(v-if="paginaAtual === 'ajuda'")
+    h1.titulo-ajuda Ajuda e Suporte
+
+    .ajuda-bloco
+      .ajuda-coluna-img
+        img(:src="LogoNexdom", alt="Consultoria Estratégica")
+      .ajuda-coluna-texto
+        h2.ajuda-titulo Consultoria Estratégica em TI
+        p
+          | A Consultoria CJL oferece orientação especializada para alavancar seu negócio com soluções tecnológicas sob medida. 
+          strong Alinhamos a TI aos objetivos da sua empresa 
+          | com análise de processos, planejamento estratégico e inovação digital.
+
+    .ajuda-bloco
+      .ajuda-coluna-texto
+        h2.ajuda-titulo Gestão de Infraestrutura e Segurança
+        p
+          | Monitoramos, protegemos e mantemos sua infraestrutura com foco em 
+          strong performance, escalabilidade e segurança.
+          |  Garanta disponibilidade total e proteção contra ameaças digitais.
+
+      .ajuda-coluna-img
+        img(:src="LogoNexdom", alt="Segurança de Dados")
+
+    .ajuda-bloco
+      .ajuda-coluna-img
+        img(:src="LogoNexdom", alt="Transformação Digital")
+      .ajuda-coluna-texto
+        h2.ajuda-titulo Transformação Digital para Empresas
+        p
+          | Digitalizamos operações e modernizamos processos internos para aumentar produtividade e competitividade. 
+          strong A Consultoria CJL utiliza tecnologias como cloud, automação e IA 
+          | para transformar seu negócio.
+
+    .ajuda-bloco
+      .ajuda-coluna-texto
+        h2.ajuda-titulo Suporte Técnico Proativo
+        p
+          | Oferecemos suporte técnico contínuo, ágil e eficiente. 
+          strong Nossos especialistas atuam de forma preventiva 
+          | para evitar falhas e garantir a estabilidade dos sistemas.
+
+      .ajuda-coluna-img
+        img(:src="LogoNexdom", alt="Suporte Técnico")
+
+    .ajuda-bloco
+      .ajuda-coluna-img
+        img(:src="LogoNexdom", alt="DevOps e Integração Contínua")
+      .ajuda-coluna-texto
+        h2.ajuda-titulo DevOps e Integração Contínua
+        p
+          | Aplicamos práticas modernas de desenvolvimento com pipelines automatizados, testes contínuos e integração entre times. 
+          strong Reduza erros, acelere entregas 
+          | e melhore a qualidade dos seus softwares com a CJL.
+
+    .ajuda-bloco
+      .ajuda-coluna-texto
+        h2.ajuda-titulo Business Intelligence e Dados
+        p
+          | Transforme dados em decisões estratégicas com dashboards personalizados e relatórios inteligentes. 
+          strong A Consultoria CJL ajuda sua empresa 
+          | a extrair valor real das suas informações.
+
+      .ajuda-coluna-img
+        img(:src="LogoNexdom", alt="Business Intelligence")
+
+  section.faq-container(v-if="paginaAtual === 'ajuda'")
+    h2.faq-title Perguntas Frequentes
+
+    ul.faq-list
+      li.faq-item(v-for="(faq, index) in faqs" :key="index")
+        div.faq-header(@click="toggleFAQ(index)")
+          span.faq-question {{ faq.pergunta }}
+          span.faq-icon(:class="{ aberto: faq.aberto }")
+            svg(xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round")
+              polyline(points="6 9 12 15 18 9")
+        transition(name="fade")
+          p.faq-resposta(v-if="faq.aberto") {{ faq.resposta }}
+
+  // Seção SISTEMAS (nova)
+  section.servicos-premium
+  h2.titulo-secao Veja o que está incluso:
+  .container-cards
+    .card-servico(v-for="(item, index) in servicos" :key="index")
+      .icone(v-html="item.icone")
+      h3.titulo-servico {{ item.titulo }}
+      p.descricao-servico {{ item.descricao }}
+      span.numero-servico {{ ('0' + (index + 1)).slice(-2) }}
+
 </template>
 
 
 
 <style scoped>
-.servico-subtitulo {
-  color: #333333;        /* cinza claro */
-  font-size: 1.1rem;
-  text-align: center;
-  margin-top: -2rem;  /* ajusta espaçamento para ficar próximo ao título */
+.icone {
+  display: inline-block;
+  padding: 0;
+  margin: 0 0 0.5rem 0;
+  vertical-align: middle;
+  width: 3.2rem;
+  height: 3.2rem;
+}
+
+.icone svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  fill: white;
+}
+
+
+
+
+.servicos-premium {
+  padding-top: 30px; /* ou um valor bem pequeno, tipo 0.5rem */
+  margin-top: 0;
+}
+
+.titulo-secao {
+  margin-left: 21rem;
+  color: #2c2c2c;
+  text-align: left;
+  font-size: 2rem;
+  font-weight: 100;
   margin-bottom: 2rem;
+  /* Para centralizar verticalmente a altura da seção, depende do layout, mas geralmente acima basta */
+}
+
+
+.container-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 250px); /* mesmo tamanho dos cards */
+  column-gap: 2.5rem; /* pequeno espaço horizontal entre os cards */
+  row-gap: 1.6rem; /* opcional, espaço vertical */
+  justify-content: center; /* centraliza o grid inteiro */
+}
+
+.card-servico {
+  width: 270px; /* largura exata */
+  background-color: #865700;
+  color: white;
+  padding: 2rem;
+  position: relative;
+  border-radius: 0px;
+  height: 100%;
+  text-align: left;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+  margin-left: 120px;
+}
+
+
+@media (max-width: 900px) {
+  .container-cards {
+    grid-template-columns: repeat(2, 1fr); /* 2 colunas no tablet */
+  }
+}
+
+@media (max-width: 600px) {
+  .container-cards {
+    grid-template-columns: 1fr; /* 1 por linha no mobile */
+  }
+}
+.card-servico {
+  transition: transform 0.3s ease;
+}
+
+.card-servico:hover {
+  transform: translateY(-10px); /* sobe 10px ao passar o mouse */
+  cursor: pointer; /* opcional, muda o cursor para indicar interatividade */
+}
+
+.icone {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.titulo-servico {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.descricao-servico {
+  font-size: 0.95rem;
+  margin-bottom: 2rem;
+}
+
+.numero-servico {
+  position: absolute;
+  bottom: 1rem;
+  right: 1rem;
+  font-size: 3.5rem;
+  font-weight: 900;
+  color: rgba(255, 255, 255, 0.1);
+  pointer-events: none;
+  user-select: none;
+}
+.texto-vermelho {
+  color: red;
+  font-weight: bold;
+}
+
+.paginacao {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 2rem;
+  margin-left: 17rem;
+}
+
+.paginacao button {
+  background-color: #e0e0e0;
+  border: none;
+  padding: 0.5rem 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.paginacao button.ativo {
+  background-color: #d87300;
+  color: rgb(255, 255, 255);
+}
+
+.faq-icon svg {
+  transition: transform 0.3s ease;
+  transform: rotate(0deg); /* seta padrão pra baixo */
+}
+
+.faq-icon.aberto svg {
+  transform: rotate(180deg); /* seta pra cima */
+}
+
+.faq-container {
+  margin-top: 4rem;
+  padding: 2rem;
+  border-radius: 1rem;
+
+  width: 100%;
+  max-width: 800px;
+
+  margin-left: auto;
+  margin-right: 8%;
+  margin-bottom: 100px;
+
+  /* Visual */
+  background-color: #ffffff;
+  text-align: center;
+
+  /* Borda lateral */
+  border-left: 4px solid #bb6400;
+}
+
+
+.faq-title {
+  font-size: 1.8rem;
+  margin-bottom: 1.5rem;
+  font-weight: bold;
+  color: #000000;
+}
+
+.faq-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  text-align: left;
+}
+
+.faq-item + .faq-item {
+  margin-top: 1.5rem;
+}
+
+.faq-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  font-weight: 800 !important;
+  color: #ffffff;
+  background-color: #bb6400;
+
+  /* Aumenta largura do card */
+  padding: 1.2rem 2rem;
+  border-radius: 0.7rem;
+  transition: background 0.2s ease;
+  font-size: 1.1rem;
+}
+
+
+
+.faq-icon {
+  margin-left: 1rem;
+  display: flex;
+  align-items: center;
+}
+
+.faq-icon.aberto {
+  transform: rotate(180deg);
+}
+
+.faq-resposta {
+  margin-top: 0.5rem;
+  padding: 1rem 1.5rem;
+  background: #fff4ea;
+  border-left: 4px solid #bb6400;
+  border-radius: 0.5rem;
+  color: #272727;
+  font-weight: bold;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+.ajuda-bloco {
+  display: flex;
+   align-items: flex-start; /* <-- Alinha o conteúdo verticalmente no topo */
+ 
+  justify-content: center;
+  gap: 6rem;
+  margin: 3rem 0;
+  flex-wrap: wrap;
+}
+
+.ajuda-coluna-img img {
+  width: 360px;         /* Aumenta a largura */
+  height: 240px;        /* Mantém a altura anterior (ajuste conforme necessário) */
+  object-fit: cover;    /* Garante que a imagem preencha sem deformar muito */
+  border-radius: 12px;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.1);
+}
+
+.ajuda-coluna-texto {
+  max-width: 400px;
+  text-align: left;
+}
+
+.ajuda-titulo {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #bb6400;
+  margin-bottom: 1rem;
+}
+
+.ajuda-coluna-texto p {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: #333;
+}
+
+.titulo-ajuda {
+  font-size: 2.2rem;
+  font-weight: bold;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.ajuda-section {
+  text-align: center; /* centraliza elementos inline-block */
+  padding: 2rem;
+   padding-left: 23vw; /* Move tudo para a direita */
+}
+
+.titulo-ajuda {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 1.5rem;
+  color: #000;
+  margin-top: -3rem;
+  display: inline-block; /* necessário para o ::after ter base apenas no texto */
+  position: relative;
+  margin-left: 0px;
+}
+
+.titulo-ajuda::after {
+  content: '';
+  position: absolute; /* permite posicionar dentro do título */
+  left: 0; /* alinha à esquerda */
+  bottom: -5px; /* opcional: controla a distância do sublinhado */
+  width: 40%;
+  height: 3px;
+  background-color: #bb6400;
+}
+
+
+.servico-card-titulo,
+.servico-card-intro,
+.servico-card-topicos li {
+  text-align: left;
+}
+
+.servico-cards-section {
+  text-align: left;
+}
+
+.servico-subtitulo {
+  color: #1a1a1a;        /* cinza escuro */
+  font-size: 1.1rem;
+  text-align: justify;   /* justifica o texto */
+  max-width: 800px;      /* define uma largura máxima para o parágrafo */
+  margin: -2rem auto 4rem auto; /* aumentada a margem inferior */
   font-style: italic;
 }
+
 
 .servico-card-topicos {
   list-style-type: disc;
@@ -458,14 +934,15 @@ onMounted(() => {
   text-align: center;      /* centraliza texto e bolinhas */
   max-width: 100%;
   display: block;
+  margin-left: 0;
 }
 
 .servico-card-topicos li::marker {
-  color: white;                    /* Bolinha branca */
+  color: rgb(0, 0, 0);                    /* Bolinha branca */
 }
 
 .servico-card-topicos li {
-  color: #f1f1f1;                  /* Garante que os <li> fiquem azuis */
+  color: #333333;                  /* Garante que os <li> fiquem azuis */
 }
 
 
@@ -479,17 +956,51 @@ onMounted(() => {
 
 .servico-cards-section {
   padding: 2rem;
-  background-color: #f9f9f9; /* fundo claro da seção */
+
 }
 
 .servico-titulo {
-  text-align: center;
-  font-size: 2.2rem;
-  margin-bottom: 2rem;
-  color: #000000; /* título da seção */
-  font-weight: 700; /* deixa a letra mais grossa */
+  text-align: left;
+  font-size: 2rem;
+  margin-bottom: 3rem;
+  color: #000000;
+  font-weight: 700;
+  margin-top: -1rem;
+  position: relative;
+  display: inline-block; /* mantém o ::after só no conteúdo */
+  
 }
 
+/* Linha sublinhada alinhada à esquerda */
+.servico-titulo::after {
+  content: '';
+  display: block;
+  width: 40%;
+  height: 3px;
+  background-color: #bb6400;
+  margin-top: 0rem;
+}
+.software-main-title {
+  text-align: left;             /* mantém o texto alinhado à esquerda DENTRO do bloco */
+  font-size: 2.3rem;
+  margin-bottom: 3rem;
+  color: #000000;
+  font-weight: 700;
+  margin-top: -1rem;
+  position: relative;
+  display: inline-block;
+  left: 50%;
+  transform: translateX(-70%);  /* centraliza o bloco na tela */
+}
+.servico-titulo::after,
+.software-main-title::after {
+  content: '';
+  display: block;
+  width: 40%;
+  height: 3px;
+  background-color: #bb6400;
+  margin-top: 0rem;
+}
 .servico-card-wrapper {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -497,35 +1008,37 @@ onMounted(() => {
 }
 
 .servico-card {
-  background: #fff; /* fundo branco do card */
+  background: #ffffff; /* fundo branco do card */
   padding: 1.5rem 1.8rem;
   border-radius: 12px;
   box-shadow: 0 4px 10px rgb(0 0 0 / 0.1);
   display: flex;
   flex-direction: column;
   transition: transform 0.3s ease;
+  border-left: 4px solid #bb6400;
+  padding-left: 1rem; /* opcional, para afastar o conteúdo da borda */
 }
 
 
 /* Título do card em branco */
 .servico-card-titulo {
   font-weight: 700;
-  font-size: 1.4rem;
+  font-size: 1.6rem;
   margin-bottom: 0.8rem;
-  color: #ffffff;
+  color: #000000;
 }
 
 /* Descrição introdutória cinza claro */
 .servico-card-intro {
   font-style: italic;
   margin-bottom: 1rem;
-  color: #d4d4d4; /* cinza claro */
+  color: #1f1f1f; /* cinza claro */
 }
 
 /* Lista dos tópicos em branco */
 .servico-card-topicos {
   padding-left: 0;
-  color: #fff;
+  color: #ffffff;
   font-size: 1rem;
   line-height: 1.5;
 }
@@ -541,7 +1054,7 @@ onMounted(() => {
   content: '*';
   position: absolute;
   left: 0;
-  color: #fff; /* asterisco branco */
+  color: #ffffff; /* asterisco branco */
   font-weight: bold;
 }
 
@@ -572,9 +1085,9 @@ onMounted(() => {
 }
 
 .servico-card-topicos li {
-  margin-bottom: 0.5rem;
-  position: relative;
-
+ margin-left: 0;
+  padding-left: 0;
+  list-style-position: inside;
 }
 
 .servico-card-topicos li::before {
@@ -605,7 +1118,7 @@ onMounted(() => {
 
 .servico-card {
   width: 80%;
-  background: #5f1f01;
+  background: #ffffff;
   border-radius: 10px;
   padding: 1.5rem;
   box-shadow: 0 0 10px rgba(0,0,0,0.1);
@@ -659,8 +1172,10 @@ label.software-card-checkbox.disabled {
   display: flex;
   flex-direction: column;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #f3f3f3;
+  background-color: #f0f0f0;
+  
 }
+
 /* Cobre o card com fundo transparente */
 .overlay-desenvolvimento {
   position: absolute;
@@ -690,7 +1205,7 @@ label.software-card-checkbox.disabled {
 .cadeado-icone {
   width: 24px;
   height: 24px;
-  fill: rgb(211, 77, 0);
+  fill: #bb6400;
   transition: transform 0.2s;
 }
 
@@ -855,16 +1370,28 @@ input[type="email"] {
 
 .perfil-titulo {
   font-size: 2rem;
-  font-weight: 500; /* ou bold */
+  font-weight: 700;
   margin-bottom: 2rem;
-  text-align: center;
-  margin-left: 230px;
-  color: #ffffff;
+  text-align: Center;     /* alinha o texto à esquerda */
+  color: #000000;
+  position: relative;   /* necessário para o ::after */
+  display: inline-block; /* limita o sublinhado ao tamanho do texto */
+  margin-left: 380px;
+  margin-top: -2rem;
+}
+
+.perfil-titulo::after {
+  content: '';
+  display: block;
+  width: 40%;
+  height: 3px;
+  background-color: #bb6400;
+  margin-top: 0rem; /* aproxima a linha do texto */
 }
 
 
 .card {
-  background: white;
+  background: rgb(255, 255, 255);
   padding: 1.5rem;
   margin-bottom: 2rem;
   border-radius: 10px;
@@ -892,7 +1419,7 @@ input[type="email"] {
 
 .form-row input {
   flex: 1 1 auto;
-  background-color: #fff4b5;
+  background-color: #ffffff;
   border-radius: 6px;
   padding: 0.5rem;
   min-width: 250px;
@@ -924,10 +1451,13 @@ input[type="email"] {
   margin-left: 180px;
   font-size: 2rem;
   color: #000000;
-  margin-bottom: -10px;
+  margin-bottom: -30px;
 
 }
-
+.software-title {
+  text-align: center;
+  margin-left: 240px;
+}
 /* Mantém todo o seu CSS como estava, sem alterações */
 .software-list-container {
   padding: 2rem;
@@ -938,7 +1468,7 @@ input[type="email"] {
   font-size: 17px;
   font-weight: 600;
   margin-bottom: 1rem;
-  margin-top: 5px;
+  margin-top: 20px;
   color: #505050;
 }
 
