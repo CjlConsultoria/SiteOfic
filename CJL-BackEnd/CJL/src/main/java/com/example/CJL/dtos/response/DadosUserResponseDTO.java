@@ -1,4 +1,4 @@
-package com.example.CJL.dtos;
+package com.example.CJL.dtos.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;
@@ -23,8 +23,6 @@ public class DadosUserResponseDTO {
     private String numero;
     private String bairro;
     private String cpf;
-
-
     private String cnpj;
     private Long empresaId;
     private String empresaNome;

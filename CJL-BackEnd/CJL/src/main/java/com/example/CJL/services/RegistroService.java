@@ -1,8 +1,8 @@
 package com.example.CJL.services;
 
-import com.example.CJL.dtos.EmpresaRequestDTO;
-import com.example.CJL.dtos.RegistroCompletoDTO;
-import com.example.CJL.dtos.UserRequestDTO;
+import com.example.CJL.dtos.request.EmpresaRequestDTO;
+import com.example.CJL.dtos.request.RegistroCompletoDTO;
+import com.example.CJL.dtos.request.UserRequestDTO;
 import com.example.CJL.dtos.enums.RoleName;
 import com.example.CJL.entities.Empresa;
 import com.example.CJL.entities.Role;

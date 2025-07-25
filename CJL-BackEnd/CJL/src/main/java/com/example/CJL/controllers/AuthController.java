@@ -1,6 +1,11 @@
 package com.example.CJL.controllers;
 
-import com.example.CJL.dtos.*;
+import com.example.CJL.dtos.request.EmpresaRequestDTO;
+import com.example.CJL.dtos.request.LoginRequestDTO;
+import com.example.CJL.dtos.request.RegistroCompletoDTO;
+import com.example.CJL.dtos.request.UserRequestDTO;
+import com.example.CJL.dtos.response.DadosUserResponseDTO;
+import com.example.CJL.dtos.response.JwtResponseDTO;
 import com.example.CJL.repositories.EmpresaRepository;
 import com.example.CJL.repositories.RoleRepository;
 import com.example.CJL.repositories.UserRepository;

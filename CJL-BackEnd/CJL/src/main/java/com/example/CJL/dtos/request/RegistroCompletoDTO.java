@@ -1,4 +1,4 @@
-package com.example.CJL.dtos;
+package com.example.CJL.dtos.request;
 
 import lombok.Data;
 

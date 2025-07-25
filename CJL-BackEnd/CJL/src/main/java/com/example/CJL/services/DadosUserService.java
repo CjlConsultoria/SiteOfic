@@ -1,6 +1,6 @@
 package com.example.CJL.services;
 
-import com.example.CJL.dtos.DadosUserResponseDTO;
+import com.example.CJL.dtos.response.DadosUserResponseDTO;
 import com.example.CJL.entities.Empresa;
 import com.example.CJL.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;

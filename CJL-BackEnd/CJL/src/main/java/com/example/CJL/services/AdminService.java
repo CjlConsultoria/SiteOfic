@@ -1,7 +1,7 @@
 package com.example.CJL.services;
 
-import com.example.CJL.dtos.DadosUserResponseDTO;
-import com.example.CJL.dtos.UserRequestDTO;
+import com.example.CJL.dtos.response.DadosUserResponseDTO;
+import com.example.CJL.dtos.request.UserRequestDTO;
 import com.example.CJL.entities.User;
 import com.example.CJL.repositories.UserRepository;
 import jakarta.persistence.EntityNotFoundException;

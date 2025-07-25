@@ -77,7 +77,6 @@ const usuario = reactive({
   codigoPublico: '',
 })
 
-// Buscar dados do usuário na API
 async function buscarUsuarioLogado() {
   const token = localStorage.getItem('token')
   if (!token) {
@@ -92,7 +91,7 @@ async function buscarUsuarioLogado() {
 
     const dados = resposta.data
 
-    // Preenche os campos conforme o objeto esperado no template
+    // Campos do usuário
     usuario.nome = dados.nome || ''
     usuario.sobrenome = dados.sobrenome || ''
     usuario.email = dados.email || ''
@@ -102,17 +101,17 @@ async function buscarUsuarioLogado() {
     usuario.cpf = dados.cpf || ''
     usuario.cnpj = dados.cnpj || ''
     usuario.genero = dados.genero || ''
-
-    // Você pode mapear "tipoPessoa" com base na presença de cnpj
-    usuario.tipoPessoa = dados.cnpj ? 'JURIDICA' : 'FISICA'
-
-    // Estes campos você pode adaptar se estiverem no backend
+    usuario.codigoPublico = dados.codigoPublico || ''
     usuario.logradouro = dados.logradouro || ''
     usuario.numero = dados.numero || ''
     usuario.complemento = dados.complemento || ''
     usuario.bairro = dados.bairro || ''
-    usuario.nomeEmpresa = dados.nomeEmpresa || ''
-    usuario.codigoPublico = dados.codigoPublico || ''
+
+    // Mapeando empresaNome do backend para nomeEmpresa no frontend
+    usuario.nomeEmpresa = dados.empresaNome || ''
+
+    // Definindo tipoPessoa com base em cnpj
+    usuario.tipoPessoa = dados.cnpj ? 'JURIDICA' : 'FISICA'
 
   } catch (erro) {
     console.error('Erro ao buscar usuário logado:', erro)
@@ -121,6 +120,7 @@ async function buscarUsuarioLogado() {
     }
   }
 }
+
 
 // Carregar dados automaticamente se já estiver na página de perfil
 onMounted(() => {
@@ -322,7 +322,6 @@ input[type="email"] {
   border-radius: 6px !important;
   box-sizing: border-box !important;
   line-height: 1 !important;     /* evita espaçamento extra */
-  vertical-align: top !important; /* força alinhamento no topo */
   display: block !important;     /* remove inline gap */
 }
 
