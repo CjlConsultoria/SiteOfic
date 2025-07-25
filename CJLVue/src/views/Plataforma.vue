@@ -1,5 +1,5 @@
 <script setup>
-import { ref, reactive, onMounted } from 'vue'
+import { ref, reactive, onMounted, computed } from 'vue'
 import axios from 'axios'
 import LogoNexdom from '@/assets/cjl.jpg'
 
@@ -25,13 +25,15 @@ function irParaPagina(label) {
   const labelLower = label.toLowerCase()
 
   if (labelLower === 'sair') {
-    localStorage.clear() // limpa token ou dados salvos, se necessário
-    window.location.href = '/login' // redireciona para a página de login
+    localStorage.clear()
+    window.location.href = '/login'
     return
   }
 
   if (labelLower === 'serviços' || labelLower === 'servicos') {
     paginaAtual.value = 'servicos'
+  } else if (labelLower === 'sistemas') {
+    paginaAtual.value = 'sistemas' // <--- adicionado
   } else if (labelLower === 'perfil') {
     irParaPerfil()
   } else if (labelLower === 'ajuda') {
@@ -40,6 +42,7 @@ function irParaPagina(label) {
     paginaAtual.value = 'home'
   }
 }
+
 
 
 
@@ -58,108 +61,104 @@ const menuSecundaria = [
 ]
 
 // Cards para a home
-const cards = [
+// Cards completos
+const cards = ref([
   {
     id: 1,
-    logo: LogoNexdom,
     title: 'Sistema de Gestão de Condomínios',
-    author: 'Consultoria CJL',
-    description:
-      'Sistema completo para gestão de condomínios, integrando controle financeiro, comunicação eficiente entre moradores e administração de reservas, simplificando a rotina do síndico.',
-    rating: '5.0/5.0',
-    reviews: 2,
+    author: 'Desenvolvido por Consultoria CJL',
+    description: 'Gerencie moradores, boletos e reservas de áreas comuns com facilidade.',
+    rating: 4.5,
+    reviews: 12,
+    logo: LogoNexdom
   },
   {
     id: 2,
-    logo: LogoNexdom,
     title: 'Gestão de Estoque',
-    author: 'Consultoria CJL',
-    description:
-      'Sistema eficiente para controle de estoque, facilitando o monitoramento de produtos, entradas, saídas e reposições em tempo real, otimizando a gestão e reduzindo perdas.',
-    rating: '4.8/5.0',
-    reviews: 5,
+    author: 'Desenvolvido por Consultoria CJL',
+    description: 'Controle seu inventário, entradas, saídas e relatórios com agilidade.',
+    rating: 4.2,
+    reviews: 8,
+    logo: LogoNexdom
   },
   {
     id: 3,
-    logo: LogoNexdom,
-    title: 'Sistema de Funilaria',
-    author: 'Consultoria CJL',
-    description:
-      'Ferramenta especializada para oficinas de funilaria, permitindo o registro de ordens de serviço, controle de peças, acompanhamento de reparos e histórico detalhado de veículos.',
-    rating: '4.9/5.0',
-    reviews: 3,
+    title: 'Sistema de Vendas Online',
+    author: 'Equipe CJL',
+    description: 'Gerencie produtos, carrinho, pagamentos e pedidos em tempo real.',
+    rating: 4.8,
+    reviews: 22,
+    logo: LogoNexdom
   },
   {
     id: 4,
-    logo: LogoNexdom,
-    title: 'Sistema Escolar',
-    author: 'Consultoria CJL',
-    description:
-      'Plataforma completa para instituições de ensino, com recursos para gestão de alunos, turmas, boletins, frequência e comunicação entre pais, professores e coordenação.',
-    rating: '5.0/5.0',
-    reviews: 4,
+    title: 'Sistema Financeiro Pessoal',
+    author: 'Equipe CJL',
+    description: 'Organize despesas, receitas e metas financeiras com clareza.',
+    rating: 4.3,
+    reviews: 11,
+    logo: LogoNexdom
   },
   {
     id: 5,
-    logo: LogoNexdom,
-    title: 'Sistema de Clínica Médica',
-    author: 'Consultoria CJL',
-    description:
-      'Solução para clínicas que desejam organizar agendamentos, prontuários, controle de pacientes e histórico de atendimentos de forma digital e segura.',
-    rating: '4.7/5.0',
-    reviews: 6,
+    title: 'Sistema de Agendamento Online',
+    author: 'Equipe CJL',
+    description: 'Ideal para clínicas, salões e consultórios com controle de horários.',
+    rating: 4.6,
+    reviews: 17,
+    logo: LogoNexdom
   },
   {
     id: 6,
-    logo: LogoNexdom,
-    title: 'Sistema de Delivery Local',
-    author: 'Consultoria CJL',
-    description:
-      'Plataforma para pequenos negócios realizarem entregas, com gestão de pedidos, controle de entregadores, rastreamento e integração com pagamento online.',
-    rating: '4.9/5.0',
-    reviews: 7,
+    title: 'Sistema de RH e Folha de Pagamento',
+    author: 'Equipe CJL',
+    description: 'Gestão de funcionários, salários, férias e benefícios integrada.',
+    rating: 4.4,
+    reviews: 13,
+    logo: LogoNexdom
   },
   {
     id: 7,
-    logo: LogoNexdom,
-    title: 'Sistema para Salão de Beleza',
-    author: 'Consultoria CJL',
-    description:
-      'Ferramenta ideal para agendamentos de serviços, controle de profissionais, histórico de clientes, pacotes promocionais e comunicação com o cliente.',
-    rating: '4.8/5.0',
-    reviews: 5,
+    title: 'Sistema de Chamados Técnicos',
+    author: 'Equipe CJL',
+    description: 'Organize atendimentos, histórico de chamados e suporte técnico.',
+    rating: 4.5,
+    reviews: 15,
+    logo: LogoNexdom
   },
   {
     id: 8,
-    logo: LogoNexdom,
-    title: 'Sistema Financeiro Pessoal',
-    author: 'Consultoria CJL',
-    description:
-      'Aplicação para organização das finanças pessoais, com controle de receitas, despesas, metas financeiras, gráficos e alertas de vencimentos.',
-    rating: '5.0/5.0',
-    reviews: 9,
+    title: 'Sistema de Gestão Escolar',
+    author: 'Equipe CJL',
+    description: 'Controle de alunos, notas, turmas e boletins com interface intuitiva.',
+    rating: 4.7,
+    reviews: 19,
+    logo: LogoNexdom
   },
   {
     id: 9,
-    logo: LogoNexdom,
-    title: 'Sistema de Eventos e Reservas',
-    author: 'Consultoria CJL',
-    description:
-      'Gerencie eventos, reservas de espaços, convites, pagamentos e check-ins de participantes com facilidade e segurança.',
-    rating: '4.6/5.0',
-    reviews: 4,
-  },
-  {
-    id: 10,
-    logo: LogoNexdom,
-    title: 'Sistema de Biblioteca Digital',
-    author: 'Consultoria CJL',
-    description:
-      'Sistema para cadastro, empréstimo e devolução de livros, com controle de usuários, notificações de vencimento e relatórios de uso.',
-    rating: '4.9/5.0',
-    reviews: 3,
-  },
-]
+    title: 'Sistema de Logística e Entregas',
+    author: 'Equipe CJL',
+    description: 'Rastreamento de pedidos, entregadores e roteirização de rotas.',
+    rating: 4.6,
+    reviews: 16,
+    logo: LogoNexdom
+  }
+])
+
+
+const paginaAtualCard = ref(1)
+const cardsPorPagina = 4
+
+const cardsPaginados = computed(() => {
+  const inicio = (paginaAtualCard.value - 1) * cardsPorPagina
+  const fim = inicio + cardsPorPagina
+  return cards.value.slice(inicio, fim)
+})
+
+function mudarPaginaCard(pagina) {
+  paginaAtualCard.value = pagina
+}
 
 // Dados do usuário
 const usuario = reactive({
@@ -341,6 +340,38 @@ const faqs = ref([
     aberto: false,
   }
 ])
+const servicos = [
+  {
+    titulo: 'Consultoria Estratégica',
+    descricao: 'Auxiliamos na transformação digital da sua empresa.',
+    icone: `<svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24"><path d="M12 2a5 5 0 00-5 5v3H6a2 2 0 00-2 2v10h16V12a2 2 0 00-2-2h-1V7a5 5 0 00-5-5zm-3 5a3 3 0 116 0v3h-6V7zm-1 5h8v3H8v-3zm0 5h8v3H8v-3z"/></svg>`
+  },
+  {
+    titulo: 'Suporte Remoto',
+    descricao: 'Atendimento ágil com especialistas via acesso remoto.',
+    icone: `<svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-7.07 17.07L2 22l2.93-2.93A10 10 0 1012 2zm1 14h-2v-2h2v2zm0-4h-2V7h2v5z"/></svg>`
+  },
+  {
+    titulo: 'Gestão de TI',
+    descricao: 'Cuidamos da infraestrutura e segurança da informação.',
+    icone: `<svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24"><path d="M12 2l4 4h-3v4h-2V6H8l4-4zm0 20l-4-4h3v-4h2v4h3l-4 4zM2 12l4 4v-3h4v-2H6V8l-4 4zm20 0l-4-4v3h-4v2h4v3l4-4z"/></svg>`
+  },
+  {
+    titulo: 'Infraestrutura em Nuvem',
+    descricao: 'Soluções de servidores cloud escaláveis.',
+    icone: `<svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24"><path d="M6 19h13a4 4 0 00.25-7.99A6 6 0 006.5 7a6.5 6.5 0 00-.5 13z"/></svg>`
+  },
+  {
+    titulo: 'Segurança de Dados',
+    descricao: 'Backup, firewall, antivírus e políticas de acesso.',
+    icone: `<svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24"><path d="M12 2l8 4v6c0 5.25-3.5 10-8 12-4.5-2-8-6.75-8-12V6l8-4z"/></svg>`
+  },
+  {
+    titulo: 'Automação de Processos',
+    descricao: 'Melhore sua produtividade com RPA e sistemas integrados.',
+    icone: `<svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24"><path d="M4 4h16v2H4V4zm1 4h14l-1.5 10.5a1 1 0 01-1 .5H7a1 1 0 01-1-.5L5 8zm5 2v6h2v-6H10zm4 0v6h2v-6h-2z"/></svg>`
+  }
+]
 
 const toggleFAQ = (index) => {
   faqs.value[index].aberto = !faqs.value[index].aberto
@@ -355,6 +386,7 @@ onMounted(() => {
 
 <template lang="pug">
 .app
+  // Sidebar Lateral
   aside.sidebar(:class="{ open: menuAberto }")
     .logo 
     nav.menu
@@ -364,19 +396,25 @@ onMounted(() => {
             span.icon {{ item.icon }}&nbsp;
             | {{ item.label }}
       ul.menu-secundaria
-        li(v-for="item in menuSecundaria" :key="item.label" :class="{ 'btn-sair': item.label === 'Sair' }")
+        li(
+          v-for="item in menuSecundaria" 
+          :key="item.label" 
+          :class="{ 'btn-sair': item.label === 'Sair' }"
+        )
           a(href="#" @click.prevent="irParaPagina(item.label)")
             span.icon {{ item.icon }}&nbsp;
             | {{ item.label }}
 
+  // Botão para abrir/fechar menu lateral
   button.btn-menu(@click="toggleMenu") ☰
 
   // Seção HOME
   section.software-list-container(v-if="paginaAtual === 'home'")
     h1.software-main-title Sistemas para Testes
     h2.software-title Lista de Softwares Disponíveis
+
     .software-cards-wrapper
-      .software-card(v-for="card in cards" :key="card.id" class="relative")
+      .software-card(v-for="card in cardsPaginados" :key="card.id" class="relative")
         .software-card-logo
           img(:src="card.logo", alt="Logo CJL")
         .software-card-content
@@ -397,6 +435,16 @@ onMounted(() => {
             svg(xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="black" class="cadeado-icone")
               path(fill-rule="evenodd" d="M6 10V8a6 6 0 1112 0v2h1a1 1 0 011 1v10a1 1 0 01-1 1H5a1 1 0 01-1-1V11a1 1 0 011-1h1zm2-2a4 4 0 118 0v2H8V8z" clip-rule="evenodd")
           .overlay-desenvolvimento
+
+    // Paginação dos cards
+    .paginacao
+      button(
+        v-for="n in Math.ceil(cards.length / cardsPorPagina)",
+        :key="n",
+        @click="mudarPaginaCard(n)",
+        :class="{ ativo: paginaAtualCard === n }"
+      ) {{ n }}
+
 
   // Seção PERFIL
   section.perfil-usuario(v-if="paginaAtual === 'perfil'")
@@ -546,11 +594,150 @@ onMounted(() => {
         transition(name="fade")
           p.faq-resposta(v-if="faq.aberto") {{ faq.resposta }}
 
+  // Seção SISTEMAS (nova)
+  section.servicos-premium
+  h2.titulo-secao Veja o que está incluso:
+  .container-cards
+    .card-servico(v-for="(item, index) in servicos" :key="index")
+      .icone(v-html="item.icone")
+      h3.titulo-servico {{ item.titulo }}
+      p.descricao-servico {{ item.descricao }}
+      span.numero-servico {{ ('0' + (index + 1)).slice(-2) }}
+
 </template>
 
 
 
 <style scoped>
+.icone {
+  display: inline-block;
+  padding: 0;
+  margin: 0 0 0.5rem 0;
+  vertical-align: middle;
+  width: 3.2rem;
+  height: 3.2rem;
+}
+
+.icone svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  fill: white;
+}
+
+
+
+
+.servicos-premium {
+  padding-top: 30px; /* ou um valor bem pequeno, tipo 0.5rem */
+  margin-top: 0;
+}
+
+.titulo-secao {
+  margin-left: 21rem;
+  color: #2c2c2c;
+  text-align: left;
+  font-size: 2rem;
+  font-weight: 100;
+  margin-bottom: 2rem;
+  /* Para centralizar verticalmente a altura da seção, depende do layout, mas geralmente acima basta */
+}
+
+
+.container-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 250px); /* mesmo tamanho dos cards */
+  column-gap: 2.5rem; /* pequeno espaço horizontal entre os cards */
+  row-gap: 1.6rem; /* opcional, espaço vertical */
+  justify-content: center; /* centraliza o grid inteiro */
+}
+
+.card-servico {
+  width: 270px; /* largura exata */
+  background-color: #865700;
+  color: white;
+  padding: 2rem;
+  position: relative;
+  border-radius: 0px;
+  height: 100%;
+  text-align: left;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+  margin-left: 120px;
+}
+
+
+@media (max-width: 900px) {
+  .container-cards {
+    grid-template-columns: repeat(2, 1fr); /* 2 colunas no tablet */
+  }
+}
+
+@media (max-width: 600px) {
+  .container-cards {
+    grid-template-columns: 1fr; /* 1 por linha no mobile */
+  }
+}
+.card-servico {
+  transition: transform 0.3s ease;
+}
+
+.card-servico:hover {
+  transform: translateY(-10px); /* sobe 10px ao passar o mouse */
+  cursor: pointer; /* opcional, muda o cursor para indicar interatividade */
+}
+
+.icone {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.titulo-servico {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.descricao-servico {
+  font-size: 0.95rem;
+  margin-bottom: 2rem;
+}
+
+.numero-servico {
+  position: absolute;
+  bottom: 1rem;
+  right: 1rem;
+  font-size: 3.5rem;
+  font-weight: 900;
+  color: rgba(255, 255, 255, 0.1);
+  pointer-events: none;
+  user-select: none;
+}
+.texto-vermelho {
+  color: red;
+  font-weight: bold;
+}
+
+.paginacao {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 2rem;
+  margin-left: 17rem;
+}
+
+.paginacao button {
+  background-color: #e0e0e0;
+  border: none;
+  padding: 0.5rem 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.paginacao button.ativo {
+  background-color: #d87300;
+  color: rgb(255, 255, 255);
+}
 
 .faq-icon svg {
   transition: transform 0.3s ease;
