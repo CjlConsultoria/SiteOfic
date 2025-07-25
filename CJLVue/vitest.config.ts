@@ -1,19 +1,11 @@
-import { fileURLToPath } from 'node:url'
-import { mergeConfig, defineConfig, configDefaults } from 'vitest/config'
-import viteConfig from './vite.config'
+import { defineConfig } from 'vite'
+import vue from '@vitejs/plugin-vue'
 
-export default mergeConfig(
-  viteConfig,
-  defineConfig({
-    test: {
-      environment: 'jsdom',
-      exclude: [...configDefaults.exclude, 'e2e/**'],
-      root: fileURLToPath(new URL('./', import.meta.url)),
-    },
-    preview: {
-      host: '0.0.0.0',
-      port: parseInt(process.env.PORT) || 4173,
-      allowedHosts: ['www.cjlconsultoria.com'],
-    },
-  }),
-)
+export default defineConfig({
+  plugins: [vue()],
+  preview: {
+    host: '0.0.0.0',
+    port: parseInt(process.env.PORT || '4173'),
+    allowedHosts: ['www.cjlconsultoria.com', 'cjlconsultoria.com'],
+  },
+})
