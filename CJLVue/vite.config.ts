@@ -12,14 +12,14 @@ export default defineConfig({
     },
   },
   server: {
-    host: '0.0.0.0', // permite acesso externo
-    port: 3000, // porta do modo dev
+    host: '0.0.0.0',
+    port: 3000,
     strictPort: true,
   },
   preview: {
     host: '0.0.0.0',
     port: parseInt(process.env.PORT || '4173'),
     strictPort: true,
-    allowedHosts: ['*'], // permite qualquer host no modo preview
+    allowedHosts: ['www.cjlconsultoria.com', 'cjlconsultoria.com', 'localhost', '127.0.0.1'],
   },
 })
