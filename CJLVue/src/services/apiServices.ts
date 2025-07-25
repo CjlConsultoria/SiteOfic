@@ -15,17 +15,19 @@ api.interceptors.response.use(
   (error) => {
     // Verifica se é um erro 401 (não autorizado)
     if (error.response && error.response.status === 401) {
-      // Mostra o toast de erro para a expiração da sessão
-      localStorage.clear() // Limpa o localStorage
-      sessionStorage.clear() // Limpa o sessionStorage
+      const rotaAtual = router.currentRoute.value.path
+      if (rotaAtual !== '/') {
+        localStorage.clear() // Limpa o localStorage
+        sessionStorage.clear() // Limpa o sessionStorage
 
-      // Limpa o cabeçalho de Authorization do Axios
-      delete api.defaults.headers['Authorization']
+        // Limpa o cabeçalho de Authorization do Axios
+        delete api.defaults.headers['Authorization']
 
-      // Redireciona o usuário para a tela de login após 1 segundo
-      setTimeout(() => {
-        router.push('/login') // Redireciona para a página de login
-      }, 1000)
+        // Redireciona o usuário para a tela de login após 1 segundo
+        setTimeout(() => {
+          router.push('/login') // Redireciona para a página de login
+        }, 1000)
+      }
     }
 
     return Promise.reject(error) // Rejeita o erro
