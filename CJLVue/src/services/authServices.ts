@@ -1,11 +1,18 @@
 // src/services/authService.ts
 import api from './apiServices'
 
-// Função de login
+
 export const login = async (email: string, senha: string) => {
   const response = await api.post('auth/login', { email, senha })
   return response.data
 }
+
+
+interface DadosResposta {
+  message?: string
+}
+
+export async function register(dados: any) {
 
 // Tipagem dos dados de cadastro
 type DadosCadastro = {
@@ -25,7 +32,7 @@ export async function register(dados: DadosCadastro) {
 
   const texto = await response.text()
 
-  let dadosResposta = {}
+  let dadosResposta: DadosResposta = {}
   try {
     dadosResposta = texto ? JSON.parse(texto) : {}
   } catch {
