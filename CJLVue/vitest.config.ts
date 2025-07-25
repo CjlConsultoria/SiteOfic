@@ -10,5 +10,10 @@ export default mergeConfig(
       exclude: [...configDefaults.exclude, 'e2e/**'],
       root: fileURLToPath(new URL('./', import.meta.url)),
     },
+    preview: {
+      host: '0.0.0.0',
+      port: parseInt(process.env.PORT) || 4173,
+      allowedHosts: ['www.cjlconsultoria.com'],
+    },
   }),
 )
