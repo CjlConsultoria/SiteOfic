@@ -1,25 +1,22 @@
 // src/services/authService.ts
 import api from './apiServices'
 
-
-export const login = async (email: string, senha: string) => {
-  const response = await api.post('auth/login', { email, senha })
-  return response.data
+// Tipagem dos dados de cadastro
+type DadosCadastro = {
+  nome: string
+  email: string
+  senha: string
+  // outros campos que seu formulário enviar
 }
-
 
 interface DadosResposta {
   message?: string
 }
 
-export async function register(dados: any) {
-
-// Tipagem dos dados de cadastro
-type DadosCadastro = {
-  nome: string;
-  email: string;
-  senha: string;
-  // outros campos que seu formulário enviar, adicione aqui se necessário
+// Função de login
+export const login = async (email: string, senha: string) => {
+  const response = await api.post('auth/login', { email, senha })
+  return response.data
 }
 
 // Função de registro
@@ -36,12 +33,11 @@ export async function register(dados: DadosCadastro) {
   try {
     dadosResposta = texto ? JSON.parse(texto) : {}
   } catch {
-    // resposta não é JSON válido
     throw new Error('Resposta inválida do servidor')
   }
 
   if (!response.ok) {
-    throw new Error((dadosResposta as any).message || 'Erro ao registrar')
+    throw new Error(dadosResposta.message || 'Erro ao registrar')
   }
 
   return dadosResposta
