@@ -1,13 +1,22 @@
 // src/services/authService.ts
 import api from './apiServices'
 
-
+// Função de login
 export const login = async (email: string, senha: string) => {
   const response = await api.post('auth/login', { email, senha })
   return response.data
 }
 
-export async function register(dados) {
+// Tipagem dos dados de cadastro
+type DadosCadastro = {
+  nome: string;
+  email: string;
+  senha: string;
+  // outros campos que seu formulário enviar, adicione aqui se necessário
+}
+
+// Função de registro
+export async function register(dados: DadosCadastro) {
   const response = await fetch('/api/register', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -25,7 +34,7 @@ export async function register(dados) {
   }
 
   if (!response.ok) {
-    throw new Error(dadosResposta.message || 'Erro ao registrar')
+    throw new Error((dadosResposta as any).message || 'Erro ao registrar')
   }
 
   return dadosResposta
