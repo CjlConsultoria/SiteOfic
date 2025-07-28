@@ -189,8 +189,8 @@ div.layout-wrapper(:class="{ 'layout-plataforma': ehPlataforma }")
 
         //- Botões de login/registro
         .auth-buttons
-          //-a.external-btn.link-btn(href="/login") Login
-          //-RouterLink.external-btn.link-btn(to="/registre") Registre-se
+          a.external-btn.link-btn(href="/login") Login
+          RouterLink.external-btn.link-btn(to="/registre") Registre-se
           button.external-btn(@click="irParaURLExterna") Convivium
 
   //- Conteúdo principal
@@ -548,13 +548,14 @@ button.external-btn:hover {
   height: 40px;
   border-radius: 50%;
   object-fit: cover;
-  border: 2px solid rgb(0, 0, 0);
+  border: none;
   transition: box-shadow 0.3s ease;
 }
 
+
 .layout-plataforma .user-photo:hover,
 .layout-plataforma .user-photo:focus {
-  box-shadow: 0 0 8px 2px #ffe920;
+  box-shadow: 0 0 8px 2px #e1ff3a;
   outline: none;
 }
 

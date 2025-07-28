@@ -33,7 +33,7 @@ function irParaPagina(label) {
   if (labelLower === 'serviços' || labelLower === 'servicos') {
     paginaAtual.value = 'servicos'
   } else if (labelLower === 'sistemas') {
-    paginaAtual.value = 'sistemas' // <--- adicionado
+    paginaAtual.value = 'sistemas'
   } else if (labelLower === 'perfil') {
     irParaPerfil()
   } else if (labelLower === 'ajuda') {
@@ -43,8 +43,19 @@ function irParaPagina(label) {
   }
 }
 
+// Controle do modal de sistema
+const modalAberto = ref(false)
+const sistemaSelecionado = ref(null)
 
+function abrirModal(sistema) {
+  sistemaSelecionado.value = sistema
+  modalAberto.value = true
+}
 
+function fecharModal() {
+  modalAberto.value = false
+  sistemaSelecionado.value = null
+}
 
 // Menus principais e secundários
 const menuPrincipal = [
@@ -57,11 +68,9 @@ const menuSecundaria = [
   { label: 'Perfil', url: '#', icon: '🙍‍♂️' },
   { label: 'Ajuda', url: '#', icon: '❓' },
   { label: 'Sair', url: '#', icon: '🔒' }
-
 ]
 
 // Cards para a home
-// Cards completos
 const cards = ref([
   {
     id: 1,
@@ -146,7 +155,7 @@ const cards = ref([
   }
 ])
 
-
+// Paginação dos cards da home
 const paginaAtualCard = ref(1)
 const cardsPorPagina = 4
 
@@ -217,6 +226,8 @@ async function buscarUsuarioLogado() {
     }
   }
 }
+
+// Serviços avançados
 const servicosAvancados = [
   {
     id: 1,
@@ -237,92 +248,188 @@ const servicosAvancados = [
     topicos: ['Análise de sistema', 'Planejamento tecnológico', 'Treinamento de equipe']
   }
 ]
+const sistemass = [
+  {
+    nome: 'Sistema de Gestão de Condomínio',
+    descricaoIntro: 'Administre seu condomínio com facilidade e eficiência através de uma plataforma completa que integra moradores, síndicos e administradoras. Ideal para manter a organização, facilitar a comunicação e garantir a transparência na gestão.',
+    descricao: [
+      'Cadastro e controle de moradores e unidades',
+      'Gestão de boletos, inadimplência e pagamentos',
+      'Reservas de áreas comuns com calendário integrado',
+      'Comunicados e avisos internos via plataforma'
+    ],
+    preco: 'A partir de R$ 149,00/mês',
+    buttonText: 'Solicitar Demonstração'
+  },
+  {
+    nome: 'Sistema de Oficina',
+    descricaoIntro: 'Organize os serviços, materiais e ordens da sua oficina com um sistema prático e completo. Ideal para oficinas de marcenaria, pintura, eletrônica e outros segmentos que buscam agilidade no atendimento e controle dos processos internos.',
+    descricao: [
+      'Emissão e controle de ordens de serviço com status em tempo real',
+      'Cadastro de clientes e histórico de atendimentos',
+      'Gestão de materiais e insumos utilizados nos projetos',
+      'Relatórios de produção, entregas e controle de prazos'
+    ],
+    preco: 'A partir de R$ 129,00/mês',
+    buttonText: 'Solicitar Demonstração'
+  },
+  {
+    nome: 'Sistema para Escritórios de Contabilidade',
+    descricaoIntro: 'Facilite a rotina contábil com um sistema integrado, desenvolvido especialmente para atender às necessidades de escritórios de contabilidade que lidam com múltiplos clientes, documentos fiscais e obrigações legais diariamente.',
+    descricao: [
+      'Cadastro de clientes, empresas e documentos fiscais',
+      'Geração automática de relatórios e declarações',
+      'Painel de obrigações fiscais e calendário tributário',
+      'Upload e armazenamento seguro de documentos'
+    ],
+    preco: 'A partir de R$ 179,00/mês',
+    buttonText: 'Solicitar Demonstração'
+  }
+]
 
+
+// Array de sistemas (renomeado para 'sistemas' para consistência)
 const sistemas = [
   {
-    nome: 'Sistema de Gestão de Condomínios',
-    descricaoIntro: 'Este sistema oferece controle completo para condomínios residenciais e comerciais, garantindo segurança e organização.',
+    nome: 'Essencial',
+    descricaoIntro: 'Suporte básico e orientação pontual via e-mail ou WhatsApp. Ideal para autônomos e pequenos negócios iniciando na tecnologia.',
     descricao: [
-      'Controle de moradores e visitantes',
-      'Gestão financeira e rateio de despesas',
-      'Comunicação interna via avisos e mensagens',
-      'Desenvolvido com Vue.js, Node.js e MongoDB'
-    ]
+      'Até 1 reunião mensal (30 min)',
+      'Suporte via e-mail/WhatsApp',
+      'Avaliação inicial da infraestrutura'
+    ],
+    preco: 'R$ 267,30/mês | R$ 2.673,00/ano',
+    buttonText: 'Desconto de 10% disponivel'
   },
   {
-    nome: 'Gestão de Estoque',
-    descricaoIntro: 'Ferramenta robusta para gerenciamento eficiente do estoque, com alertas e relatórios detalhados.',
+    nome: 'Diagnóstico',
+    descricaoIntro: 'Análise técnica completa da empresa, com relatório de melhorias e riscos.',
     descricao: [
-      'Cadastro e controle de produtos',
-      'Alertas de estoque mínimo e máximo',
-      'Relatórios de movimentação e vendas',
-      'Construído usando React, Express e PostgreSQL'
-    ]
+      'Entrevistas com equipe técnica',
+      'Mapeamento de sistemas e processos',
+      'Relatório com sugestões e riscos',
+      'Entrega em até 5 dias úteis'
+    ],
+    preco: 'R$ 447,30/mês | R$ 4.473,00/ano',
+    buttonText: 'Desconto de 10% disponivel'
   },
-/*
-{
-  nome: 'Sistema de Funilaria',
-  descricaoIntro: 'Sistema especializado para oficinas de funilaria, facilitando o controle dos serviços e orçamentos.',
-  descricao: [
-    'Registro e acompanhamento de orçamentos',
-    'Controle de serviços e peças usadas',
-    'Agenda para atendimento e reparos',
-    'Feito com Angular, Firebase e TypeScript'
-  ]
-},
-{
-  nome: 'Sistema Escolar',
-  descricaoIntro: 'Solução completa para instituições de ensino com controle de alunos, notas e frequência.',
-  descricao: [
-    'Cadastro de alunos, professores e turmas',
-    'Lançamento de notas e frequências',
-    'Geração de boletins e relatórios',
-    'Desenvolvido com Laravel, Vue.js e MySQL'
-  ]
-},
-{
-  nome: 'Sistema de Delivery Local',
-  descricaoIntro: 'Plataforma para delivery com cadastro de restaurantes, gerenciamento de pedidos e avaliações.',
-  descricao: [
-    'Cadastro de restaurantes e cardápios',
-    'Gerenciamento de pedidos e entregas',
-    'Avaliações e feedback dos usuários',
-    'Criado com Next.js, Node.js e MongoDB'
-  ]
-},
-{
-  nome: 'Sistema para Salão de Beleza',
-  descricaoIntro: 'Gerencie agendamentos, clientes e estoque com uma solução pensada para salões de beleza.',
-  descricao: [
-    'Agendamento de serviços e profissionais',
-    'Controle de clientes e histórico',
-    'Gestão de estoque de produtos',
-    'Construído com React Native, Firebase e GraphQL'
-  ]
-},
-{
-  nome: 'Sistema Financeiro Pessoal',
-  descricaoIntro: 'Organize suas finanças pessoais com controle, planejamento e relatórios gráficos.',
-  descricao: [
-    'Controle de receitas e despesas',
-    'Planejamento orçamentário',
-    'Relatórios gráficos e alertas',
-    'Feito com Flutter, Dart e SQLite'
-  ]
-},
-{
-  nome: 'Sistema de Eventos e Reservas',
-  descricaoIntro: 'Gerencie eventos, reservas de espaços e comunicação com convidados de forma eficiente.',
-  descricao: [
-    'Cadastro e gerenciamento de eventos',
-    'Reserva de espaços e controle de lotação',
-    'Envio de convites e notificações',
-    'Desenvolvido com Django, React e PostgreSQL'
-  ]
-}
-*/
-
+  {
+    nome: 'Orientação Técnica',
+    descricaoIntro: 'Suporte técnico contínuo com foco em boas práticas, ferramentas e processos.',
+    descricao: [
+      'Consultas técnicas ilimitadas',
+      'Indicação de ferramentas e tecnologias',
+      'Orientação para equipes de desenvolvimento',
+      'Acompanhamento de boas práticas'
+    ],
+    preco: 'R$ 627,30/mês | R$ 6.273,00/ano',
+    buttonText: 'Desconto de 10% disponivel'
+  },
+  {
+    nome: 'Plano DevOps',
+    descricaoIntro: 'Acompanhamento completo na construção ou otimização de pipelines e infraestrutura em nuvem.',
+    descricao: [
+      'Planejamento e revisão de pipelines CI/CD',
+      'Automatização de deploys',
+      'Monitoramento e alertas',
+      'Infraestrutura como código'
+    ],
+    preco: 'R$ 807,30/mês | R$ 8.073,00/ano',
+    buttonText: 'Desconto de 10% disponivel'
+  },
+  {
+    nome: 'Consultoria Estratégica',
+    descricaoIntro: 'Alinhamento entre tecnologia e objetivos de negócio com foco em resultados.',
+    descricao: [
+      'Sessões com especialistas em gestão e TI',
+      'Planejamento estratégico de sistemas',
+      'Análise de ROI tecnológico',
+      'Mentorias trimestrais'
+    ],
+    preco: 'R$ 987,30/mês | R$ 9.873,00/ano',
+    buttonText: 'Desconto de 10% disponivel'
+  },
+  {
+    nome: 'Mentoria para Times',
+    descricaoIntro: 'Capacitação e acompanhamento de equipes técnicas em projetos reais.',
+    descricao: [
+      'Acompanhamento semanal por especialista',
+      'Revisões de código e arquitetura',
+      'Mentorias práticas por squad',
+      'Feedback contínuo de performance'
+    ],
+    preco: 'R$ 1.127,30/mês | R$ 11.273,00/ano',
+    buttonText: 'Desconto de 10% disponivel'
+  },
+  {
+    nome: 'Plano Startup',
+    descricaoIntro: 'Mentoria e suporte completo para startups em fase inicial ou em crescimento.',
+    descricao: [
+      'Validação de produto (MVP)',
+      'Modelagem de negócio e tecnologia',
+      'Acompanhamento de pitch e captação',
+      'Integração com stack recomendada'
+    ],
+    preco: 'R$ 1.287,30/mês | R$ 12.873,00/ano',
+    buttonText: 'Desconto de 10% disponivel'
+  },
+  {
+    nome: 'Transformação Digital',
+    descricaoIntro: 'Modernização completa dos processos empresariais com soluções digitais.',
+    descricao: [
+      'Digitalização de processos internos',
+      'Automação de tarefas manuais',
+      'Implantação de ferramentas modernas',
+      'Acompanhamento durante a migração'
+    ],
+    preco: 'R$ 1.487,30/mês | R$ 14.873,00/ano',
+    buttonText: 'Desconto de 10% disponivel'
+  },
+  {
+    nome: 'Segurança e Compliance',
+    descricaoIntro: 'Auditoria técnica e consultoria em segurança e conformidade digital.',
+    descricao: [
+      'Análise de riscos e vulnerabilidades',
+      'Revisão de políticas de segurança',
+      'Ajustes para LGPD e ISO 27001',
+      'Simulações de invasão (pentest leve)'
+    ],
+    preco: 'R$ 1.697,30/mês | R$ 16.973,00/ano',
+    buttonText: 'Desconto de 10% disponivel'
+  },
+  {
+    nome: 'Plano Corporativo',
+    descricaoIntro: 'Consultoria sob demanda com soluções personalizadas para grandes empresas.',
+    descricao: [
+      'Consultor dedicado',
+      'Plano de ação exclusivo por área',
+      'Treinamentos internos para equipes',
+      'Dashboard de progresso e indicadores'
+    ],
+    preco: 'R$ 2.497,30/mês | R$ 24.973,00/ano',
+    buttonText: 'Desconto de 10% disponivel'
+  }
 ]
+
+
+
+// Controle da paginação dos sistemas
+const paginaAtualSistema = ref(1)
+const sistemasPorPagina = 4
+
+const sistemasPaginados = computed(() => {
+  const inicio = (paginaAtualSistema.value - 1) * sistemasPorPagina
+  const fim = inicio + sistemasPorPagina
+  return sistemas.slice(inicio, fim)
+})
+
+const totalPaginasSistema = computed(() => Math.ceil(sistemas.length / sistemasPorPagina))
+
+function mudarPaginaSistema(pagina) {
+  paginaAtualSistema.value = pagina
+}
+
+// FAQs
 const faqs = ref([
   {
     pergunta: 'Como posso alterar meus dados pessoais?',
@@ -340,49 +447,25 @@ const faqs = ref([
     aberto: false,
   }
 ])
-const servicos = [
-  {
-    titulo: 'Consultoria Estratégica',
-    descricao: 'Auxiliamos na transformação digital da sua empresa.',
-    icone: `<svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24"><path d="M12 2a5 5 0 00-5 5v3H6a2 2 0 00-2 2v10h16V12a2 2 0 00-2-2h-1V7a5 5 0 00-5-5zm-3 5a3 3 0 116 0v3h-6V7zm-1 5h8v3H8v-3zm0 5h8v3H8v-3z"/></svg>`
-  },
-  {
-    titulo: 'Suporte Remoto',
-    descricao: 'Atendimento ágil com especialistas via acesso remoto.',
-    icone: `<svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-7.07 17.07L2 22l2.93-2.93A10 10 0 1012 2zm1 14h-2v-2h2v2zm0-4h-2V7h2v5z"/></svg>`
-  },
-  {
-    titulo: 'Gestão de TI',
-    descricao: 'Cuidamos da infraestrutura e segurança da informação.',
-    icone: `<svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24"><path d="M12 2l4 4h-3v4h-2V6H8l4-4zm0 20l-4-4h3v-4h2v4h3l-4 4zM2 12l4 4v-3h4v-2H6V8l-4 4zm20 0l-4-4v3h-4v2h4v3l4-4z"/></svg>`
-  },
-  {
-    titulo: 'Infraestrutura em Nuvem',
-    descricao: 'Soluções de servidores cloud escaláveis.',
-    icone: `<svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24"><path d="M6 19h13a4 4 0 00.25-7.99A6 6 0 006.5 7a6.5 6.5 0 00-.5 13z"/></svg>`
-  },
-  {
-    titulo: 'Segurança de Dados',
-    descricao: 'Backup, firewall, antivírus e políticas de acesso.',
-    icone: `<svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24"><path d="M12 2l8 4v6c0 5.25-3.5 10-8 12-4.5-2-8-6.75-8-12V6l8-4z"/></svg>`
-  },
-  {
-    titulo: 'Automação de Processos',
-    descricao: 'Melhore sua produtividade com RPA e sistemas integrados.',
-    icone: `<svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24"><path d="M4 4h16v2H4V4zm1 4h14l-1.5 10.5a1 1 0 01-1 .5H7a1 1 0 01-1-.5L5 8zm5 2v6h2v-6H10zm4 0v6h2v-6h-2z"/></svg>`
-  }
-]
 
 const toggleFAQ = (index) => {
   faqs.value[index].aberto = !faqs.value[index].aberto
 }
+const mostrarTodos = ref(false)
 
+const sistemasVisiveis = computed(() => {
+  return mostrarTodos.value ? sistemass : sistemass.slice(0, 4)
+})
+
+// onMounted para buscar dados se estiver na página perfil
 onMounted(() => {
   if (paginaAtual.value === 'perfil') {
     buscarUsuarioLogado()
   }
 })
+
 </script>
+
 
 <template lang="pug">
 .app
@@ -445,7 +528,6 @@ onMounted(() => {
         :class="{ ativo: paginaAtualCard === n }"
       ) {{ n }}
 
-
   // Seção PERFIL
   section.perfil-usuario(v-if="paginaAtual === 'perfil'")
     h1.perfil-titulo Meus Dados
@@ -505,14 +587,57 @@ onMounted(() => {
   // Seção SERVIÇOS
   section.servico-cards-section(v-if="paginaAtual === 'servicos'")
     h1.servico-titulo Sistemas da CJL
-    p.servico-subtitulo Na CJL, desenvolvemos sistemas de software personalizados para diferentes segmentos do mercado, com foco em eficiência, usabilidade e inovação. Nossas soluções atendem desde pequenas empresas até grandes organizações, oferecendo funcionalidades sob medida, design intuitivo e tecnologias modernas para transformar processos e impulsionar resultados.
+    p.servico-subtitulo Na CJL, desenvolvemos sistemas de software personalizados para diferentes segmentos...
 
     .servico-card-wrapper
-      .servico-card(v-for="(sistema, index) in sistemas" :key="index")
+      .servico-card(v-for="(sistema, index) in sistemasVisiveis" :key="index")
         h2.servico-card-titulo {{ sistema.nome }}
         p.servico-card-intro {{ sistema.descricaoIntro }}
-        ul.servico-card-topicos
+
+        // Mostra os tópicos apenas nos 4 primeiros
+        ul.servico-card-topicos(v-if="index < 4")
           li(v-for="(item, idx) in sistema.descricao" :key="idx") {{ item }}
+
+        p.servico-preco {{ sistema.preco }}
+        button.servico-botao {{ sistema.buttonText }}
+
+
+  // Seção SISTEMAS (fora da seção serviços)
+  section.sistemas-cards-section(v-if="paginaAtual === 'sistemas'")
+    .introducao-sistemas
+      h1.softwaree-main-title Planos de Consultoria
+      p.intro-sistemas-texto Abaixo você encontra os softwares e funcionalidades disponíveis para sua empresa.
+
+    .sistemas-card-wrapper
+      .sistema-card(v-for="(sistema, index) in sistemasPaginados" :key="index")
+        h2.sistema-card-titulo {{ sistema.nome }}
+        p.sistema-card-intro {{ sistema.descricaoIntro }}
+        ul.sistema-card-topicos
+          li(v-for="(item, idx) in sistema.descricao" :key="idx") {{ item }}
+        p.preco {{ sistema.preco }}
+        button.btn-contratar(@click="abrirModal(sistema)") {{ sistema.buttonText }}
+
+    // Paginação com botões numerados
+    .paginacao
+      button.pag-btn(
+        v-for="pagina in totalPaginasSistema"
+        :key="pagina"
+        :class="{ ativo: paginaAtualSistema === pagina }"
+        @click="mudarPaginaSistema(pagina)"
+      ) {{ pagina }}
+
+  // Modal (fora das seções para não sumir em troca de página)
+  .modal-fundo(v-if="modalAberto")
+    .modal-card
+      button.modal-fechar(@click="fecharModal") ✕
+      h3.modal-titulo {{ sistemaSelecionado?.nome }}
+      .modal-conteudo
+        p {{ sistemaSelecionado?.descricaoIntro }}
+        //-ul
+          li(v-for="(item, idx) in sistemaSelecionado?.descricao" :key="idx") {{ item }}
+        p.modal-preco {{ sistemaSelecionado?.preco }}
+      button.btn-vote(@click="fecharModal") Contratar
+
 
   // Seção AJUDA
   section.ajuda-section(v-if="paginaAtual === 'ajuda'")
@@ -583,7 +708,6 @@ onMounted(() => {
 
   section.faq-container(v-if="paginaAtual === 'ajuda'")
     h2.faq-title Perguntas Frequentes
-
     ul.faq-list
       li.faq-item(v-for="(faq, index) in faqs" :key="index")
         div.faq-header(@click="toggleFAQ(index)")
@@ -594,21 +718,336 @@ onMounted(() => {
         transition(name="fade")
           p.faq-resposta(v-if="faq.aberto") {{ faq.resposta }}
 
-  // Seção SISTEMAS (nova)
-  section.servicos-premium
-  h2.titulo-secao Veja o que está incluso:
-  .container-cards
-    .card-servico(v-for="(item, index) in servicos" :key="index")
-      .icone(v-html="item.icone")
-      h3.titulo-servico {{ item.titulo }}
-      p.descricao-servico {{ item.descricao }}
-      span.numero-servico {{ ('0' + (index + 1)).slice(-2) }}
-
 </template>
 
 
 
+
 <style scoped>
+/* Título principal da seção */
+.sistemas-cards-section .softwaree-main-title {
+  position: relative;
+  top: -2rem; /* sobe 5rem para cima */
+  font-size: 2rem;
+  font-weight: 700;
+  color: #000;
+  margin-bottom: 0.5rem;
+}
+
+
+/* Parágrafo introdutório */
+.sistemas-cards-section .intro-sistemas-texto {
+  position: relative;
+  top: -1.8rem; /* sobe 1.5rem, ajuste conforme quiser */
+  margin-bottom: 1rem; /* pra não ficar grudado no próximo */
+  font-weight: 600; /* semi-bold, menos pesado que 700 (bold) */
+font-family: Arial, Helvetica, sans-serif
+
+}
+
+
+/* Cartão de sistema */
+.sistemas-cards-section .sistema-card-titulo {
+  font-weight: bold;
+  font-size: 1.6rem;
+  color: #1a1a1a;
+  margin-bottom: 0.4rem;
+  
+}
+
+.sistemas-cards-section .sistema-card-intro {
+  font-size: 1rem;
+  color: #444;
+  margin-bottom: 3rem;
+}
+
+.sistemas-cards-section .sistema-card-topicos {
+  list-style-type:disc;
+  padding-left: 1.6rem;
+  color: #000000;
+  margin-bottom: 1rem;
+}
+
+.sistemas-cards-section .sistema-card-topicos li {
+  margin-bottom: 0.5rem;
+}
+
+
+
+
+/* Paginação */
+.sistemas-cards-section .paginacao {
+  margin-top: 1.5rem;
+  text-align: center;
+}
+
+.sistemas-cards-section .pag-btn {
+  background-color: #ddd;
+  border: none;
+  padding: 0.4rem 0.8rem;
+  margin: 0 0.2rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+
+.servico-botao {
+  background-color: #67c51f;
+  border: none;
+  padding: 0.8rem 2rem;
+  border-radius: 8px;
+  color: white;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin: -1rem auto 0; /* top negativo, auto nos lados, 0 embaixo */
+  width: 250px;
+  display: block; /* garante que funcione com margin auto */
+}
+
+.servico-botao:hover {
+  background-color: #4ea115;
+}
+.softwaree-main-title {
+  text-align: left;             /* mantém o texto alinhado à esquerda DENTRO do bloco */
+  font-size: 2.1rem;
+  margin-bottom: 0.5rem;
+  color: #000000;
+  font-weight: 700;
+  margin-top: -1rem;
+  position: relative;
+  display: inline-block;
+  left: 50%;
+  transform: translateX(-90%);  /* centraliza o bloco na tela */
+}
+.servico-titulo::after,
+.softwaree-main-title::after {
+  content: '';
+  display: block;
+  width: 40%;
+  height: 3px;
+  background-color: #bb6400;
+  margin-top: 0rem;
+}
+.btn-ver-mais {
+  margin-top: 2rem;
+  display: block;
+  padding: 1rem 2rem;
+  font-size: 1rem;
+  background-color: #005eff;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: center;
+}
+
+.modal-fundo {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.modal-card {
+  background: #222; /* fundo escuro */
+  border-radius: 12px;
+  padding: 2rem 3rem;
+  max-width: 450px;
+  width: 90%;
+  color: white;
+  text-align: center;
+  position: relative;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.7);
+}
+
+.modal-fechar {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  font-size: 2rem;
+  background: transparent;
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-weight: 700;
+  line-height: 1;
+  user-select: none;
+}
+
+.modal-titulo {
+  font-weight: 700;
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: #ffffff; /* verde próximo ao da imagem */
+}
+
+.modal-conteudo p {
+  margin-bottom: 2rem;
+  font-size: 1rem;
+  line-height: 1.4;
+  color: #d3d3d3;
+}
+
+.btn-vote {
+  background-color: #67c51f; /* verde do botão */
+  border: none;
+  padding: 0.8rem 2rem;
+  border-radius: 8px;
+  color: white;
+  font-weight: 700;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: -1rem;
+}
+
+.btn-vote:hover {
+  background-color: #4ea115;
+}
+
+.btn-contratar {
+  margin-top: 1rem;
+  padding: 0.5rem 1rem;
+  border: none;
+  background-color: #007bff;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-contratar:hover {
+  background-color: #0056b3;
+}
+.btn-contratar {
+display: block;              
+  margin: 0 auto;              
+  padding: 10px 25px;          /* diminuiu um pouco o padding horizontal */
+  font-size: 16px;
+  font-weight: 600;
+  color: #ffffff;              
+  background-color: #129b00;
+  border: 0.5px solid #ffffff; /* borda mais fina */
+  border-radius: 6px;          
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  text-align: left;
+  text-decoration: none;       
+  font-family: inherit;
+  width: fit-content;          /* botão com largura mínima para o conteúdo */
+  min-width: 120px;
+  margin-top: -10px;
+}
+
+
+.btn-contratar:hover {
+background-color: #34ff45;
+}
+/* ===== Seção Sistemas ===== */
+
+.sistemas-cards-section {
+  padding: 4rem 2rem;
+  background-color: #f0f0f0;
+}
+
+.sistemas-titulo {
+  font-size: 2.5rem;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 0.5rem;
+  margin-top: 2rem;
+  margin-left: 15rem;
+color: #000;
+}
+
+.sistemas-subtitulo {
+  font-size: 1.2rem;
+  text-align: center;
+  margin-bottom: 3rem;
+  color: #666;
+  margin-left: 15rem;
+}
+
+.introducao-sistemas {
+  max-width: 900px;
+  margin: 0 auto 3rem;
+  text-align: center;
+}
+
+.intro-sistemas-titulo {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+  color: #1a1a1a;
+  margin-left: 15rem;
+  margin-top: -3rem;
+}
+
+.intro-sistemas-texto {
+  font-size: 1rem;
+  color: #555;
+  margin-left: 15rem;
+}
+
+.sistemas-card-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  max-width: 800px;
+  margin: 0 auto;
+  margin-left: 350px; /* desloca tudo 150px para a direita */
+}
+
+
+.sistema-card {
+  background-color: #fff;
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  transition: transform 0.3s ease;
+  
+  border-left: 4px solid #eb7d00; /* Exemplo: borda azul de 4px na esquerda */
+}
+
+.sistemas-card-titulo,
+.sistemas-card-intro,
+.sistemas-card-topicos {
+  transform: translateX(30rem);
+}
+
+.sistema-card:hover {
+  transform: translateY(-4px);
+}
+
+.sistema-card-titulo {
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: #1a1a1a;
+}
+
+.sistema-card-intro {
+  font-size: 1rem;
+  color: #444;
+  margin-bottom: 1rem;
+}
+
+.sistema-card-topicos {
+  list-style-type: disc;
+  padding-left: 1.5rem;
+  color: #333;
+}
+
+.sistema-card-topicos li {
+  margin-bottom: 0.5rem;
+}
+
 .icone {
   display: inline-block;
   padding: 0;
@@ -654,7 +1093,7 @@ onMounted(() => {
 
 .card-servico {
   width: 270px; /* largura exata */
-  background-color: #865700;
+  background-color: #ff7300;
   color: white;
   padding: 2rem;
   position: relative;
