@@ -1,35 +1,47 @@
-package com.example.CJL.controllers;
+package com.example.CJL.services;
 
 import com.example.CJL.dtos.response.DadosUserResponseDTO;
 import com.example.CJL.dtos.request.UserRequestDTO;
 import com.example.CJL.entities.User;
 import com.example.CJL.repositories.UserRepository;
-import com.example.CJL.services.AdminService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Map;
-
-@RestController
-@RequestMapping("/api/usuarios")
-public class UsuarioController {
+@Service
+public class AdminService {
 
     @Autowired
     private UserRepository userRepository;
+    public DadosUserResponseDTO atualizarUsuario(Long id, UserRequestDTO dto) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado"));
 
-    @Autowired
-    private AdminService adminService;
+        user.setNome(dto.getNome());
+        user.setSobrenome(dto.getSobrenome());
+        user.setApelido(dto.getApelido());
+        user.setEmail(dto.getEmail());
+        user.setGenero(dto.getGenero());
+        user.setCidade(dto.getCidade());
+        user.setEstado(dto.getEstado());
+        user.setCep(dto.getCep());
+        user.setLogradouro(dto.getRua());
+        user.setNumeroResidencia(dto.getNumeroResidencia());
+        user.setBairro(dto.getBairro());
+        user.setCpf(dto.getCpf());
 
-    @GetMapping
-    public List<DadosUserResponseDTO> listarTodos() {
-        return userRepository.findAll().stream()
-                .map(this::fromEntity)
-                .toList();
+        userRepository.save(user);
+        return toDTO(user);
     }
 
-    private DadosUserResponseDTO fromEntity(User user) {
+    public void deletarUsuario(Long id) {
+        if (!userRepository.existsById(id)) {
+            throw new EntityNotFoundException("Usuário não encontrado");
+        }
+        userRepository.deleteById(id);
+    }
+
+    private DadosUserResponseDTO toDTO(User user) {
         return DadosUserResponseDTO.builder()
                 .nome(user.getNome())
                 .sobrenome(user.getSobrenome())
@@ -40,7 +52,7 @@ public class UsuarioController {
                 .estado(user.getEstado())
                 .cep(user.getCep())
                 .logradouro(user.getLogradouro())
-                .numero(user.getTelefone())
+                .numero(user.getNumeroResidencia())
                 .bairro(user.getBairro())
                 .cpf(user.getCpf())
                 .cnpj(user.getEmpresa() != null ? user.getEmpresa().getCnpj() : null)
@@ -50,21 +62,6 @@ public class UsuarioController {
                         .map(role -> role.getNome().name())
                         .toList())
                 .build();
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<DadosUserResponseDTO> atualizarUsuario(
-            @PathVariable Long id,
-            @RequestBody UserRequestDTO dto) {
-
-        DadosUserResponseDTO atualizado = adminService.atualizarUsuario(id, dto);
-        return ResponseEntity.ok(atualizado);
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Map<String, String>> deletarUsuario(@PathVariable Long id) {
-        adminService.deletarUsuario(id);
-        return ResponseEntity.ok(Map.of("message", "Usuário removido com sucesso"));
     }
 
 }

@@ -1,6 +1,6 @@
 package com.example.CJL.services;
 
-import com.example.CJL.dtos.ViaCepResponse;
+import com.example.CJL.dtos.response.ViaCepResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 

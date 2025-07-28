@@ -1,4 +1,4 @@
-package com.example.CJL.dtos;
+package com.example.CJL.dtos.response;
 
 import lombok.Data;
 
