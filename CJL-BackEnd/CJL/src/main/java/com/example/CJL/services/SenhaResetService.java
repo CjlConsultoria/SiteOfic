@@ -37,7 +37,6 @@ public class SenhaResetService {
 
         tokenRepository.save(resetToken);
 
-        // 🔧 Substitua por envio de e-mail real no futuro
         System.out.println("Link de redefinição: http://localhost:8080/api/auth/resetar-senha?token=" + token);
     }
 
