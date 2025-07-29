@@ -8,12 +8,12 @@ section.registro-multi
     )
 
   .form-container
-    small.etapa-titulo(v-if="etapaAtual === 1")
-    small.etapa-titulo(v-else-if="etapaAtual === 2")
-    small.etapa-titulo(v-else-if="etapaAtual === 3")
-    small.etapa-titulo(v-else-if="etapaAtual === 4")
-    small.etapa-titulo(v-else-if="etapaAtual === 5")
-    small.etapa-titulo(v-else-if="etapaAtual === 6")
+    small.etapa-titulo(v-if="etapaAtual === 1") 
+    small.etapa-titulo(v-else-if="etapaAtual === 2") 
+    small.etapa-titulo(v-else-if="etapaAtual === 3") 
+    small.etapa-titulo(v-else-if="etapaAtual === 4") 
+    small.etapa-titulo(v-else-if="etapaAtual === 5") 
+    small.etapa-titulo(v-else-if="etapaAtual === 6") 
 
     form(@submit.prevent="proximaEtapa")
 
@@ -117,7 +117,7 @@ section.registro-multi
             label(for="nomeEmpresa") Nome da empresa
           span.mensagem-erro(v-if="erros.nomeEmpresaInvalido") Nome da empresa é obrigatório.
 
-
+          
 
         section.botoes
           button(type="button", @click="etapaAtual--") Voltar
@@ -578,72 +578,64 @@ const proximaEtapa = () => {
 // Envio final para backend
 const enviarCadastro = async () => {
   try {
-    const ehPJ = form.tipoPessoa === 'pj';
+    const dadosParaEnviar = {
 
-    const user = {
-      nome: form.nome.trim(),
-      sobrenome: form.sobrenome.trim(),
-      apelido: form.apelido.trim(),
-      telefone: form.telefone,
-      pj: ehPJ,
-      cpf: form.cpf.replace(/\D/g, ''),
-      diaNascimento: Number(form.dia),
-      mesNascimento: Number(form.mes),
-      anoNascimento: Number(form.ano),
-      genero: form.genero,
-      cep: form.cep.replace(/\D/g, ''),
-      rua: form.rua,
-      bairro: form.bairro,
-      cidade: form.cidade,
-      estado: form.estado,
-      numeroResidencia: form.numero,
-      complemento: form.complemento,
-      email: form.email.trim(),
-      senha: form.senha
-    };
+  user: {
+    nome: form.nome.trim(),
+    sobrenome: form.sobrenome.trim(),
+    apelido: form.apelido.trim(),
+    pj: form.tipoPessoa === 'pj',
+    cpf: form.cpf.replace(/\D/g, ''),
+    diaNascimento: Number(form.dia),
+    mesNascimento: Number(form.mes),
+    anoNascimento: Number(form.ano),
+    genero: form.genero,
+    cep: form.cep.replace(/\D/g, ''),
+    numeroResidencia: form.numero,
+    complemento: form.complemento,
+    email: form.email.trim(),
+    senha: form.senha
+  },
+  empresa: form.tipoPessoa === 'pj'
+    ? {
+        nome: form.nomeEmpresa.trim(),
+        cnpj: form.cnpj.replace(/\D/g, '')
+      }
+    : null
+}
 
-    const empresa = ehPJ
-  ? {
-      cnpj: form.cnpj.replace(/\D/g, ''),
-      nome: form.nomeEmpresa.trim()
-    }
-  : null;
-
-    const dadosParaEnviar = { user, empresa };
 
     const response = await fetch('http://localhost:8080/api/auth/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(dadosParaEnviar)
-    });
-
-    const contentType = response.headers.get('content-type');
-    let data;
+    })
+    const contentType = response.headers.get('content-type')
+    let data
 
     if (contentType && contentType.includes('application/json')) {
       try {
-        data = await response.json();
+        data = await response.json()
       } catch {
-        data = { message: 'Resposta JSON inválida' };
+        data = { message: 'Resposta JSON inválida' }
       }
     } else {
-      const text = await response.text();
+      const text = await response.text()
       data = text.trim().length === 0
         ? { message: 'Resposta vazia do servidor' }
-        : { message: text };
+        : { message: text }
     }
 
     if (!response.ok) {
-      alert('Erro ao cadastrar: ' + (data.message || 'Erro desconhecido'));
-      return;
+      alert('Erro ao cadastrar: ' + (data.message || 'Erro desconhecido'))
+      return
     }
 
-    router.push('/login');
+    router.push('/login')
   } catch (error) {
-    alert('Erro inesperado: ' + error.message);
+    alert('Erro inesperado: ' + error.message)
   }
-};
-
+}
 
 // Formatação visual de campos
 const mostrarSenha = ref(false)

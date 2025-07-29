@@ -45,16 +45,23 @@ function irParaPagina(label) {
 
 // Controle do modal de sistema
 const modalAberto = ref(false)
-const sistemaSelecionado = ref(null)
+const sistemaSelecionadoIndex = ref(null)
 
-function abrirModal(sistema) {
-  sistemaSelecionado.value = sistema
+function abrirModal(index) {
+  sistemaSelecionadoIndex.value = index
   modalAberto.value = true
+  modalCarregando.value = true
+
+  // Simula carregamento de 10 segundos
+  setTimeout(() => {
+    modalCarregando.value = false
+  }, 3000)
 }
 
 function fecharModal() {
   modalAberto.value = false
-  sistemaSelecionado.value = null
+  sistemaSelecionadoIndex.value = null
+  modalCarregando.value = false
 }
 
 // Menus principais e secundários
@@ -250,40 +257,194 @@ const servicosAvancados = [
 ]
 const sistemass = [
   {
-    nome: 'Sistema de Gestão de Condomínio',
-    descricaoIntro: 'Administre seu condomínio com facilidade e eficiência através de uma plataforma completa que integra moradores, síndicos e administradoras. Ideal para manter a organização, facilitar a comunicação e garantir a transparência na gestão.',
+    nome: 'Starter (MVP Rápido)',
+    descricaoIntro: 'Ideal para startups e empreendedores que desejam validar sua ideia rapidamente com um produto mínimo viável (MVP). Inclui funcionalidades básicas e entrega ágil para testar o mercado e obter feedback dos usuários.',
     descricao: [
-      'Cadastro e controle de moradores e unidades',
-      'Gestão de boletos, inadimplência e pagamentos',
-      'Reservas de áreas comuns com calendário integrado',
-      'Comunicados e avisos internos via plataforma'
+      'Levantamento de requisitos simplificado',
+      'Protótipo funcional (1 tela principal)',
+      'Backend leve (CRUD simples)',
+      'Hospedagem inicial'
     ],
-    preco: 'A partir de R$ 149,00/mês',
-    buttonText: 'Solicitar Demonstração'
+    buttonText: 'Solicitar Orçamento',
   },
   {
-    nome: 'Sistema de Oficina',
-    descricaoIntro: 'Organize os serviços, materiais e ordens da sua oficina com um sistema prático e completo. Ideal para oficinas de marcenaria, pintura, eletrônica e outros segmentos que buscam agilidade no atendimento e controle dos processos internos.',
+    nome: 'Essencial',
+    descricaoIntro: 'Projeto ideal para pequenas empresas que buscam uma solução básica de gestão, com interface personalizada e funcionalidades essenciais para otimizar processos e controlar operações do dia a dia.',
     descricao: [
-      'Emissão e controle de ordens de serviço com status em tempo real',
-      'Cadastro de clientes e histórico de atendimentos',
-      'Gestão de materiais e insumos utilizados nos projetos',
-      'Relatórios de produção, entregas e controle de prazos'
+      'Até 3 módulos funcionais',
+      'Integração com banco de dados',
+      'Painel administrativo simples',
+      'Entrega em 30 a 45 dias'
     ],
-    preco: 'A partir de R$ 129,00/mês',
-    buttonText: 'Solicitar Demonstração'
+    buttonText: 'Solicitar Orçamento',
   },
   {
-    nome: 'Sistema para Escritórios de Contabilidade',
-    descricaoIntro: 'Facilite a rotina contábil com um sistema integrado, desenvolvido especialmente para atender às necessidades de escritórios de contabilidade que lidam com múltiplos clientes, documentos fiscais e obrigações legais diariamente.',
+    nome: 'Profissional',
+    descricaoIntro: 'Solução robusta com foco em controle avançado, segurança e usabilidade, projetada para empresas em crescimento que necessitam de ferramentas completas para gerenciar equipes, processos e indicadores.',
     descricao: [
-      'Cadastro de clientes, empresas e documentos fiscais',
-      'Geração automática de relatórios e declarações',
-      'Painel de obrigações fiscais e calendário tributário',
-      'Upload e armazenamento seguro de documentos'
+      'Autenticação de usuários',
+      'Controle de permissões',
+      'Dashboard com indicadores',
+      'APIs documentadas'
     ],
-    preco: 'A partir de R$ 179,00/mês',
-    buttonText: 'Solicitar Demonstração'
+    buttonText: 'Solicitar Orçamento',
+  },
+  {
+    nome: 'Corporativo',
+    descricaoIntro: 'Plataforma avançada, pensada para empresas que demandam automação e alta escalabilidade, com arquitetura modular e integração a sistemas externos para otimizar fluxos complexos de trabalho.',
+    descricao: [
+      'Arquitetura em microserviços ou modular',
+      'Integrações com sistemas externos (ERP, CRM)',
+      'Testes automatizados'
+    ],
+    buttonText: 'Solicitar Orçamento',
+  },
+  {
+    nome: 'Growth (Expansão)',
+    descricaoIntro: 'Plano focado em acelerar o crescimento do seu negócio, com ferramentas avançadas de análise de dados, performance e integração com sistemas de marketing e business intelligence para decisões estratégicas.',
+    descricao: [
+      'Módulo de relatórios avançados',
+      'Otimização de performance',
+      'Integração com ferramentas de BI e marketing'
+    ],
+    buttonText: 'Solicitar Orçamento',
+  },
+  {
+    nome: 'SaaS (Software como Serviço)',
+    descricaoIntro: 'Desenvolvimento completo de uma plataforma SaaS multiusuário, com gerenciamento de assinaturas, cobrança e hospedagem escalável, ideal para negócios que querem oferecer software como serviço.',
+    descricao: [
+      'Painel de gestão multiempresa',
+      'Billing (assinaturas e pagamentos)',
+      'Hospedagem escalável (AWS, GCP ou Azure)'
+    ],
+    buttonText: 'Solicitar Orçamento',
+  },
+  {
+    nome: 'App + Web',
+    descricaoIntro: 'Entrega integrada de sistema web e aplicativo mobile (Android/iOS), garantindo experiência unificada, backend compartilhado e publicação nas principais lojas para ampliar seu alcance.',
+    descricao: [
+      'Backend unificado',
+      'App híbrido com design responsivo',
+      'Publicação nas lojas'
+    ],
+    buttonText: 'Solicitar Orçamento',
+  },
+  {
+    nome: 'Integrações Corporativas',
+    descricaoIntro: 'Plano dedicado a empresas que precisam conectar seu sistema a diversos softwares, ERPs e gateways de pagamento, com APIs, webhooks e monitoramento para integração confiável e eficiente.',
+    descricao: [
+      'Integração com ERPs (SAP, TOTVS, Bling, etc.)',
+      'Integrações com Correios, PagSeguro, MercadoPago...',
+      'APIs REST, Webhooks e filas (Kafka/RabbitMQ)',
+      'Monitoramento e logs das integrações'
+    ],
+    buttonText: 'Solicitar Orçamento',
+  },
+  {
+    nome: 'Full Outsourcing',
+    descricaoIntro: 'Equipe dedicada e completa para desenvolvimento contínuo de projetos personalizados, com gestão profissional e processos ágeis para atender demandas complexas e constantes do seu negócio.',
+    descricao: [
+      'Equipe alocada (PO, Devs, QA, UX)',
+      'Sprints quinzenais',
+      'Gestão via Jira ou ClickUp'
+    ],
+    buttonText: 'Solicitar Orçamento',
+  },
+  {
+    nome: 'Elite / CTO Estratégico',
+    descricaoIntro: 'Serviço premium com desenvolvimento contínuo aliado à liderança estratégica de tecnologia, oferecendo inovação, segurança avançada e análise de dados para decisões executivas e crescimento sustentável.',
+    descricao: [
+      'Acompanhamento direto de um CTO',
+      'Inovação, AI, análise de dados, cibersegurança',
+      'Relatórios executivos e decisões técnicas'
+    ],
+    buttonText: 'Solicitar Orçamento',
+  }
+]
+
+
+
+// Array com os textos diferentes para o modal, mesma estrutura:
+const modaisCustomizados = [
+  {
+    nome: 'Plano Starter (MVP Rápido)',
+    descricaoIntro: 'Parabéns! Você acaba de desbloquear um desconto especial de 10% exclusivo para este plano...',
+    descricao: [],
+    precoAntigo: 'R$ 1.497,00/mês (3 meses) | R$ 4.990,00 total',
+    precoDesconto: 'R$ 1.347,30/mês (3 meses) | R$ 4.490,00 total',
+    buttonText: 'Solicitar Orçamento',
+  },
+  {
+    nome: 'Plano Essencial',
+    descricaoIntro: 'Parabéns! Você acaba de desbloquear um desconto especial de 10% exclusivo para este plano...',
+    descricao: [],
+    precoAntigo: 'R$ 2.497,00/mês | R$ 27.740,00/ano',
+    precoDesconto: 'R$ 2.247,30/mês | R$ 24.970,00/ano',
+    buttonText: 'Solicitar Orçamento',
+  },
+  {
+    nome: 'Plano Profissional',
+    descricaoIntro: 'Parabéns! Você acaba de desbloquear um desconto especial de 10% exclusivo para este plano...',
+    descricao: [],
+    precoAntigo: 'R$ 3.497,00/mês | R$ 38.850,00/ano',
+    precoDesconto: 'R$ 3.147,30/mês | R$ 34.970,00/ano',
+    buttonText: 'Solicitar Orçamento',
+  },
+  {
+    nome: 'Plano Corporativo',
+    descricaoIntro: 'Parabéns! Você acaba de desbloquear um desconto especial de 10% exclusivo para este plano...',
+    descricao: [],
+    precoAntigo: 'R$ 5.497,00/mês | R$ 60.970,00/ano',
+    precoDesconto: 'R$ 4.947,30/mês | R$ 54.970,00/ano',
+    buttonText: 'Solicitar Orçamento',
+  },
+  {
+    nome: 'Plano Growth (Expansão)',
+    descricaoIntro: 'Parabéns! Você acaba de desbloquear um desconto especial de 10% exclusivo para este plano...',
+    descricao: [],
+    precoAntigo: 'R$ 6.997,00/mês | R$ 77.740,00/ano',
+    precoDesconto: 'R$ 6.297,30/mês | R$ 69.970,00/ano',
+    buttonText: 'Solicitar Orçamento',
+  },
+  {
+    nome: 'Plano SaaS (Software como Serviço)',
+    descricaoIntro: 'Parabéns! Você acaba de desbloquear um desconto especial de 10% exclusivo para este plano...',
+    descricao: [],
+    precoAntigo: 'R$ 8.997,00/mês | R$ 99.970,00/ano',
+    precoDesconto: 'R$ 8.097,30/mês | R$ 89.970,00/ano',
+    buttonText: 'Solicitar Orçamento',
+  },
+  {
+    nome: 'Plano App + Web',
+    descricaoIntro: 'Parabéns! Você acaba de desbloquear um desconto especial de 10% exclusivo para este plano...',
+    descricao: [],
+    precoAntigo: 'R$ 9.997,00/mês | R$ 111.070,00/ano',
+    precoDesconto: 'R$ 8.997,30/mês | R$ 99.970,00/ano',
+    buttonText: 'Solicitar Orçamento',
+  },
+  {
+    nome: 'Plano Integrações Corporativas',
+    descricaoIntro: 'Parabéns! Você acaba de desbloquear um desconto especial de 10% exclusivo para este plano...',
+    descricao: [],
+    precoAntigo: 'R$ 11.997,00/mês | R$ 133.300,00/ano',
+    precoDesconto: 'R$ 10.797,30/mês | R$ 119.970,00/ano',
+    buttonText: 'Solicitar Orçamento',
+  },
+  {
+    nome: 'Plano Full Outsourcing',
+    descricaoIntro: 'Parabéns! Você acaba de desbloquear um desconto especial de 10% exclusivo para este plano...',
+    descricao: [],
+    precoAntigo: 'R$ 14.997,00/mês | R$ 166.630,00/ano',
+    precoDesconto: 'R$ 13.497,30/mês | R$ 149.970,00/ano',
+    buttonText: 'Solicitar Orçamento',
+  },
+  {
+    nome: 'Plano Elite / CTO Estratégico',
+    descricaoIntro: 'Parabéns! Você acaba de desbloquear um desconto especial de 10% exclusivo para este plano...',
+    descricao: [],
+    precoAntigo: 'R$ 19.997,00/mês | R$ 222.180,00/ano',
+    precoDesconto: 'R$ 17.997,30/mês | R$ 199.970,00/ano',
+    buttonText: 'Solicitar Orçamento',
   }
 ]
 
@@ -456,6 +617,7 @@ const mostrarTodos = ref(false)
 const sistemasVisiveis = computed(() => {
   return mostrarTodos.value ? sistemass : sistemass.slice(0, 4)
 })
+const modalCarregando = ref(false)
 
 // onMounted para buscar dados se estiver na página perfil
 onMounted(() => {
@@ -615,7 +777,9 @@ onMounted(() => {
         ul.sistema-card-topicos
           li(v-for="(item, idx) in sistema.descricao" :key="idx") {{ item }}
         p.preco {{ sistema.preco }}
-        button.btn-contratar(@click="abrirModal(sistema)") {{ sistema.buttonText }}
+        button.btn-contratar(@click="abrirModal(index + (paginaAtualSistema - 1) * sistemasPorPagina)") {{ sistema.buttonText }}
+
+
 
     // Paginação com botões numerados
     .paginacao
@@ -630,13 +794,26 @@ onMounted(() => {
   .modal-fundo(v-if="modalAberto")
     .modal-card
       button.modal-fechar(@click="fecharModal") ✕
-      h3.modal-titulo {{ sistemaSelecionado?.nome }}
-      .modal-conteudo
-        p {{ sistemaSelecionado?.descricaoIntro }}
-        //-ul
-          li(v-for="(item, idx) in sistemaSelecionado?.descricao" :key="idx") {{ item }}
-        p.modal-preco {{ sistemaSelecionado?.preco }}
-      button.btn-vote(@click="fecharModal") Contratar
+
+      // Área do card e loading
+      .modal-card-conteudo
+        // Se estiver carregando mostra card + loader
+        .loading-area(v-if="modalCarregando")
+          h3.modal-titulo {{ modaisCustomizados[sistemaSelecionadoIndex]?.nome }}
+          .loader
+
+        // Se não estiver carregando, mostra conteúdo completo
+        .conteudo-completo(v-else)
+          h3.modal-titulo {{ modaisCustomizados[sistemaSelecionadoIndex]?.nome }}
+          p {{ modaisCustomizados[sistemaSelecionadoIndex]?.descricaoIntro }}
+          ul
+            li(v-for="(item, idx) in modaisCustomizados[sistemaSelecionadoIndex]?.descricao" :key="idx") {{ item }}
+          p.modal-preco {{ modaisCustomizados[sistemaSelecionadoIndex]?.preco }}
+
+          // Só aparece se não estiver carregando
+          button.btn-vote(@click="fecharModal") {{ modaisCustomizados[sistemaSelecionadoIndex]?.buttonText }}
+
+
 
 
   // Seção AJUDA
@@ -724,6 +901,101 @@ onMounted(() => {
 
 
 <style scoped>
+.modal-preco {
+  color: #28a745;
+  font-weight: bold;
+  font-size: 1.2rem;
+  margin-top: 2rem; /* distância do texto acima */
+  text-align: center;
+}
+.conteudo-completo {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem; /* espaçamento entre os elementos */
+}
+
+.modal-preco {
+  margin-top: 1rem;
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #28a745; /* verde visível */
+  text-align: center;
+  display: block; /* garante que aparece */
+  opacity: 1;     /* visível */
+}
+
+
+.btn-vote {
+  margin-top: 1rem; /* separa o botão do preço */
+  align-self: center;
+  padding: 0.8rem 2rem;
+  border-radius: 8px;
+  background-color: #67c51f;
+  color: white;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.btn-vote {
+  margin-top: 2rem; /* empurra o botão mais pra baixo */
+  background-color: #67c51f;
+  color: white;
+  font-weight: bold;
+  padding: 0.8rem 2rem;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.loader {
+  border: 4px solid #f3f3f3; /* cor do fundo */
+  border-top: 4px solid #3498db; /* cor da borda animada */
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  animation: spin 1s linear infinite;
+  margin: 1rem auto;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.modal-loading {
+  text-align: center;
+  padding: 2rem;
+}
+
+.spinner {
+  margin: 1rem auto;
+  border: 5px solid #f3f3f3;
+  border-top: 5px solid #3498db;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+::v-deep .modal-preco {
+  color: #ffffff;
+  font-size: 1.1rem;
+  margin-top: 3rem; /* empurra o preço para baixo */
+  display: block;
+  margin-bottom: 2rem;
+}
+
 /* Título principal da seção */
 .sistemas-cards-section .softwaree-main-title {
   position: relative;
@@ -865,6 +1137,7 @@ font-family: Arial, Helvetica, sans-serif
   text-align: center;
   position: relative;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.7);
+  margin-left: 17rem; /* ou 10%, ajuste como quiser */
 }
 
 .modal-fechar {
@@ -896,7 +1169,7 @@ font-family: Arial, Helvetica, sans-serif
 }
 
 .btn-vote {
-  background-color: #67c51f; /* verde do botão */
+  background-color: #008600; /* verde do botão */
   border: none;
   padding: 0.8rem 2rem;
   border-radius: 8px;
@@ -1174,7 +1447,7 @@ color: #000;
 }
 
 .paginacao button.ativo {
-  background-color: #d87300;
+  background-color: #242424;
   color: rgb(255, 255, 255);
 }
 
