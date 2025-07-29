@@ -2,6 +2,12 @@
 import { ref, reactive, onMounted, computed } from 'vue'
 import axios from 'axios'
 import LogoNexdom from '@/assets/cjl.jpg'
+import InicioPng from '@/assets/inicio2.png'
+import MoradoresPng from '@/assets/moradores.png'
+import ReclamacoesPng from '@/assets/reclamacoes.png'
+import DenunciaPng from '@/assets/denuncia.png'
+import RelatoriosPng from '@/assets/relatorios.png'
+
 
 // Controle do menu lateral e página atual
 const menuAberto = ref(false)
@@ -21,25 +27,36 @@ async function irParaPerfil() {
 }
 
 // Função para controlar a navegação pelas páginas
-function irParaPagina(label) {
-  const labelLower = label.toLowerCase()
+function normalizarLabel(label) {
+  return label
+    .normalize('NFD')               // separa acento da letra
+    .replace(/[\u0300-\u036f]/g, '') // remove acento
+    .toLowerCase()                 // tudo minúsculo
+}
 
-  if (labelLower === 'sair') {
+function irParaPagina(label) {
+  const labelNormalizado = normalizarLabel(label)
+
+  if (labelNormalizado === 'sair') {
     localStorage.clear()
     window.location.href = '/login'
     return
   }
 
-  if (labelLower === 'serviços' || labelLower === 'servicos') {
+  if (labelNormalizado === 'dashboard') {
+    paginaAtual.value = 'dashboard'
+  } else if (labelNormalizado === 'servicos') {
     paginaAtual.value = 'servicos'
-  } else if (labelLower === 'sistemas') {
+  } else if (labelNormalizado === 'sistemas') {
     paginaAtual.value = 'sistemas'
-  } else if (labelLower === 'perfil') {
+  } else if (labelNormalizado === 'perfil') {
     irParaPerfil()
-  } else if (labelLower === 'ajuda') {
+    paginaAtual.value = 'perfil'
+  } else if (labelNormalizado === 'ajuda') {
     paginaAtual.value = 'ajuda'
   } else {
-    paginaAtual.value = 'home'
+    // Se não for nenhum desses, define o valor normalizado mesmo
+    paginaAtual.value = labelNormalizado
   }
 }
 
@@ -370,80 +387,80 @@ const modaisCustomizados = [
     nome: 'Plano Starter (MVP Rápido)',
     descricaoIntro: 'Parabéns! Você acaba de desbloquear um desconto especial de 10% exclusivo para este plano...',
     descricao: [],
-    precoAntigo: 'R$ 1.497,00/mês (3 meses) | R$ 4.990,00 total',
-    precoDesconto: 'R$ 1.347,30/mês (3 meses) | R$ 4.490,00 total',
+    precoAntigo: 'R$1.497,00/mês (3 meses) | R$4.990,00 total',
+    precoDesconto: 'R$1.347,30/mês (3 meses) | R$4.490,00 total',
     buttonText: 'Solicitar Orçamento',
   },
   {
     nome: 'Plano Essencial',
     descricaoIntro: 'Parabéns! Você acaba de desbloquear um desconto especial de 10% exclusivo para este plano...',
     descricao: [],
-    precoAntigo: 'R$ 2.497,00/mês | R$ 27.740,00/ano',
-    precoDesconto: 'R$ 2.247,30/mês | R$ 24.970,00/ano',
+    precoAntigo: 'R$2.497,00/mês | R$27.740,00/ano',
+    precoDesconto: 'R$2.247,30/mês | R$24.970,00/ano',
     buttonText: 'Solicitar Orçamento',
   },
   {
     nome: 'Plano Profissional',
     descricaoIntro: 'Parabéns! Você acaba de desbloquear um desconto especial de 10% exclusivo para este plano...',
     descricao: [],
-    precoAntigo: 'R$ 3.497,00/mês | R$ 38.850,00/ano',
-    precoDesconto: 'R$ 3.147,30/mês | R$ 34.970,00/ano',
+    precoAntigo: 'R$3.497,00/mês | R$38.850,00/ano',
+    precoDesconto: 'R$3.147,30/mês | R$34.970,00/ano',
     buttonText: 'Solicitar Orçamento',
   },
   {
     nome: 'Plano Corporativo',
     descricaoIntro: 'Parabéns! Você acaba de desbloquear um desconto especial de 10% exclusivo para este plano...',
     descricao: [],
-    precoAntigo: 'R$ 5.497,00/mês | R$ 60.970,00/ano',
-    precoDesconto: 'R$ 4.947,30/mês | R$ 54.970,00/ano',
+    precoAntigo: 'R$5.497,00/mês | R$60.970,00/ano',
+    precoDesconto: 'R$4.947,30/mês | R$54.970,00/ano',
     buttonText: 'Solicitar Orçamento',
   },
   {
     nome: 'Plano Growth (Expansão)',
     descricaoIntro: 'Parabéns! Você acaba de desbloquear um desconto especial de 10% exclusivo para este plano...',
     descricao: [],
-    precoAntigo: 'R$ 6.997,00/mês | R$ 77.740,00/ano',
-    precoDesconto: 'R$ 6.297,30/mês | R$ 69.970,00/ano',
+    precoAntigo: 'R$6.997,00/mês | R$77.740,00/ano',
+    precoDesconto: 'R$6.297,30/mês | R$69.970,00/ano',
     buttonText: 'Solicitar Orçamento',
   },
   {
     nome: 'Plano SaaS (Software como Serviço)',
     descricaoIntro: 'Parabéns! Você acaba de desbloquear um desconto especial de 10% exclusivo para este plano...',
     descricao: [],
-    precoAntigo: 'R$ 8.997,00/mês | R$ 99.970,00/ano',
-    precoDesconto: 'R$ 8.097,30/mês | R$ 89.970,00/ano',
+    precoAntigo: 'R$8.997,00/mês | R$99.970,00/ano',
+    precoDesconto: 'R$8.097,30/mês | R$89.970,00/ano',
     buttonText: 'Solicitar Orçamento',
   },
   {
     nome: 'Plano App + Web',
     descricaoIntro: 'Parabéns! Você acaba de desbloquear um desconto especial de 10% exclusivo para este plano...',
     descricao: [],
-    precoAntigo: 'R$ 9.997,00/mês | R$ 111.070,00/ano',
-    precoDesconto: 'R$ 8.997,30/mês | R$ 99.970,00/ano',
+    precoAntigo: 'R$9.997,00/mês | R$111.070,00/ano',
+    precoDesconto: 'R$8.997,30/mês | R$99.970,00/ano',
     buttonText: 'Solicitar Orçamento',
   },
   {
     nome: 'Plano Integrações Corporativas',
     descricaoIntro: 'Parabéns! Você acaba de desbloquear um desconto especial de 10% exclusivo para este plano...',
     descricao: [],
-    precoAntigo: 'R$ 11.997,00/mês | R$ 133.300,00/ano',
-    precoDesconto: 'R$ 10.797,30/mês | R$ 119.970,00/ano',
+    precoAntigo: 'R$11.997,00/mês | R$133.300,00/ano',
+    precoDesconto: 'R$10.797,30/mês | R$119.970,00/ano',
     buttonText: 'Solicitar Orçamento',
   },
   {
     nome: 'Plano Full Outsourcing',
     descricaoIntro: 'Parabéns! Você acaba de desbloquear um desconto especial de 10% exclusivo para este plano...',
     descricao: [],
-    precoAntigo: 'R$ 14.997,00/mês | R$ 166.630,00/ano',
-    precoDesconto: 'R$ 13.497,30/mês | R$ 149.970,00/ano',
+    precoAntigo: 'R$14.997,00/mês | R$166.630,00/ano',
+    precoDesconto: 'R$13.497,30/mês | R$149.970,00/ano',
     buttonText: 'Solicitar Orçamento',
   },
   {
     nome: 'Plano Elite / CTO Estratégico',
     descricaoIntro: 'Parabéns! Você acaba de desbloquear um desconto especial de 10% exclusivo para este plano...',
     descricao: [],
-    precoAntigo: 'R$ 19.997,00/mês | R$ 222.180,00/ano',
-    precoDesconto: 'R$ 17.997,30/mês | R$ 199.970,00/ano',
+    precoAntigo: 'R$19.997,00/mês | R$222.180,00/ano',
+    precoDesconto: 'R$17.997,30/mês | R$199.970,00/ano',
     buttonText: 'Solicitar Orçamento',
   }
 ]
@@ -593,25 +610,42 @@ function mudarPaginaSistema(pagina) {
 // FAQs
 const faqs = ref([
   {
-    pergunta: 'Como posso alterar meus dados pessoais?',
-    resposta: 'Você pode alterar seus dados acessando a aba "Editar Perfil" no topo da página.',
+    pergunta: 'Quais serviços de consultoria de TI vocês oferecem?',
+    resposta: 'Oferecemos análise de infraestrutura, otimização de processos, implantação de sistemas e suporte técnico personalizado.',
     aberto: false,
   },
   {
-    pergunta: 'É possível excluir minha conta?',
-    resposta: 'Sim, vá até Configurações > Conta > Excluir Conta.',
+    pergunta: 'Como funciona o processo de diagnóstico da minha empresa?',
+    resposta: 'Realizamos uma avaliação detalhada do ambiente atual para identificar pontos fortes, fraquezas e oportunidades de melhoria.',
     aberto: false,
   },
   {
-    pergunta: 'Como redefinir minha senha?',
-    resposta: 'Use a opção "Esqueci minha senha" na tela de login para redefinir.',
+    pergunta: 'Vocês oferecem suporte remoto ou presencial?',
+    resposta: 'Nosso atendimento é exclusivamente remoto, garantindo agilidade e segurança em todas as interações.',
+    aberto: false,
+  },
+  {
+    pergunta: 'Qual o prazo médio para implementação de um projeto?',
+    resposta: 'O prazo varia conforme a complexidade, mas geralmente entregamos projetos em 30 a 90 dias após o diagnóstico.',
+    aberto: false,
+  },
+  {
+    pergunta: 'Vocês ajudam na migração para a nuvem?',
+    resposta: 'Sim, auxiliamos em toda a migração, desde o planejamento até a execução e suporte pós-migração.',
+    aberto: false,
+  },
+  {
+    pergunta: 'Como posso solicitar um orçamento personalizado?',
+    resposta: 'Basta entrar em contato conosco pelo formulário no site ou pelo telefone para agendar uma consulta gratuita.',
     aberto: false,
   }
 ])
 
+
 const toggleFAQ = (index) => {
   faqs.value[index].aberto = !faqs.value[index].aberto
 }
+
 const mostrarTodos = ref(false)
 
 const sistemasVisiveis = computed(() => {
@@ -636,25 +670,33 @@ onMounted(() => {
     .logo 
     nav.menu
       ul.menu-principal
-        li(v-for="item in menuPrincipal" :key="item.label")
+        li(
+          v-for="item in menuPrincipal"
+          :key="item.label"
+          :class="{ ativo: paginaAtual === normalizarLabel(item.label) }"
+        )
+
           a(href="#" @click.prevent="irParaPagina(item.label)")
             span.icon {{ item.icon }}&nbsp;
             | {{ item.label }}
+
       ul.menu-secundaria
         li(
-          v-for="item in menuSecundaria" 
-          :key="item.label" 
-          :class="{ 'btn-sair': item.label === 'Sair' }"
+          v-for="item in menuSecundaria"
+          :key="item.label"
+          :class="{ 'btn-sair': item.label === 'Sair', ativo: paginaAtual === normalizarLabel(item.label) }"
         )
+
           a(href="#" @click.prevent="irParaPagina(item.label)")
             span.icon {{ item.icon }}&nbsp;
-            | {{ item.label }}
+              | {{ item.label }}
+  
 
   // Botão para abrir/fechar menu lateral
   button.btn-menu(@click="toggleMenu") ☰
 
   // Seção HOME
-  section.software-list-container(v-if="paginaAtual === 'home'")
+  section.software-list-container(v-if="paginaAtual === 'home' || paginaAtual === 'dashboard'")
     h1.software-main-title Sistemas para Testes
     h2.software-title Lista de Softwares Disponíveis
 
@@ -808,7 +850,18 @@ onMounted(() => {
           p {{ modaisCustomizados[sistemaSelecionadoIndex]?.descricaoIntro }}
           ul
             li(v-for="(item, idx) in modaisCustomizados[sistemaSelecionadoIndex]?.descricao" :key="idx") {{ item }}
-          p.modal-preco {{ modaisCustomizados[sistemaSelecionadoIndex]?.preco }}
+
+          // Frase chamativa — AGORA está dentro do conteúdo
+          p.pulsando(style="color: #e63946; font-weight: bold; margin-top: 1rem; font-size:1.5rem;")
+            | VOCÊ GANHOU 10% OFF!
+
+          // Preço com e sem desconto (se existirem)
+          .modal-preco-wrapper
+            p.modal-preco-antigo(v-if="modaisCustomizados[sistemaSelecionadoIndex]?.precoAntigo")
+              span.preco-riscado {{ modaisCustomizados[sistemaSelecionadoIndex]?.precoAntigo }}
+
+            p.modal-preco-desconto(v-if="modaisCustomizados[sistemaSelecionadoIndex]?.precoDesconto")
+              span.preco-verde {{ modaisCustomizados[sistemaSelecionadoIndex]?.precoDesconto }}
 
           // Só aparece se não estiver carregando
           button.btn-vote(@click="fecharModal") {{ modaisCustomizados[sistemaSelecionadoIndex]?.buttonText }}
@@ -818,82 +871,87 @@ onMounted(() => {
 
   // Seção AJUDA
   section.ajuda-section(v-if="paginaAtual === 'ajuda'")
-    h1.titulo-ajuda Ajuda e Suporte
+    h1.titulo-ajuda Conheça o Sistema de Condomínio CJL
 
     .ajuda-bloco
       .ajuda-coluna-img
-        img(:src="LogoNexdom", alt="Consultoria Estratégica")
+        img(:src="InicioPng", alt="Tela inicial do sistema")
       .ajuda-coluna-texto
-        h2.ajuda-titulo Consultoria Estratégica em TI
+        h2.ajuda-titulo Tela Inicial e Visão Geral
         p
-          | A Consultoria CJL oferece orientação especializada para alavancar seu negócio com soluções tecnológicas sob medida. 
-          strong Alinhamos a TI aos objetivos da sua empresa 
-          | com análise de processos, planejamento estratégico e inovação digital.
+          | A tela inicial do sistema oferece acesso rápido às principais funcionalidades. 
+          strong Com uma interface intuitiva e moderna, 
+          | os moradores e administradores podem navegar de forma eficiente.
 
     .ajuda-bloco
       .ajuda-coluna-texto
-        h2.ajuda-titulo Gestão de Infraestrutura e Segurança
+        h2.ajuda-titulo Cadastro de Moradores
         p
-          | Monitoramos, protegemos e mantemos sua infraestrutura com foco em 
-          strong performance, escalabilidade e segurança.
-          |  Garanta disponibilidade total e proteção contra ameaças digitais.
-
+          | A plataforma permite o registro completo de moradores com dados de contato, unidade, dependentes e veículos. 
+          strong Facilita a organização e o controle do condomínio 
+          | de maneira centralizada.
       .ajuda-coluna-img
-        img(:src="LogoNexdom", alt="Segurança de Dados")
+        img(:src="MoradoresPng", alt="Cadastro de Moradores")
 
     .ajuda-bloco
       .ajuda-coluna-img
-        img(:src="LogoNexdom", alt="Transformação Digital")
+        img(:src="ReclamacoesPng", alt="Envio de Reclamações")
       .ajuda-coluna-texto
-        h2.ajuda-titulo Transformação Digital para Empresas
+        h2.ajuda-titulo Reclamações e Ocorrências
         p
-          | Digitalizamos operações e modernizamos processos internos para aumentar produtividade e competitividade. 
-          strong A Consultoria CJL utiliza tecnologias como cloud, automação e IA 
-          | para transformar seu negócio.
+          | Os moradores podem registrar reclamações diretamente na plataforma, garantindo agilidade na comunicação com a administração. 
+          strong Acompanhe o andamento das solicitações 
+          | em tempo real.
 
     .ajuda-bloco
       .ajuda-coluna-texto
-        h2.ajuda-titulo Suporte Técnico Proativo
+        h2.ajuda-titulo Canal de Denúncias
         p
-          | Oferecemos suporte técnico contínuo, ágil e eficiente. 
-          strong Nossos especialistas atuam de forma preventiva 
-          | para evitar falhas e garantir a estabilidade dos sistemas.
-
+          | O sistema permite que moradores registrem denúncias diretamente pela plataforma. 
+          strong As denúncias não são anônimas, 
+          | garantindo responsabilidade e facilitando o acompanhamento pela administração.
       .ajuda-coluna-img
-        img(:src="LogoNexdom", alt="Suporte Técnico")
+        img(:src="DenunciaPng", alt="Canal de Denúncias")
+
 
     .ajuda-bloco
       .ajuda-coluna-img
-        img(:src="LogoNexdom", alt="DevOps e Integração Contínua")
+        img(:src="RelatoriosPng", alt="Geração de Relatórios")
       .ajuda-coluna-texto
-        h2.ajuda-titulo DevOps e Integração Contínua
+        h2.ajuda-titulo Relatórios e Estatísticas
         p
-          | Aplicamos práticas modernas de desenvolvimento com pipelines automatizados, testes contínuos e integração entre times. 
-          strong Reduza erros, acelere entregas 
-          | e melhore a qualidade dos seus softwares com a CJL.
+          | A administração pode gerar relatórios detalhados sobre moradores, ocorrências e uso do sistema. 
+          strong Acompanhe indicadores importantes 
+          | para tomar decisões com base em dados.
 
-    .ajuda-bloco
-      .ajuda-coluna-texto
-        h2.ajuda-titulo Business Intelligence e Dados
-        p
-          | Transforme dados em decisões estratégicas com dashboards personalizados e relatórios inteligentes. 
-          strong A Consultoria CJL ajuda sua empresa 
-          | a extrair valor real das suas informações.
 
-      .ajuda-coluna-img
-        img(:src="LogoNexdom", alt="Business Intelligence")
 
+
+
+  // Seção FAQ
   section.faq-container(v-if="paginaAtual === 'ajuda'")
     h2.faq-title Perguntas Frequentes
     ul.faq-list
       li.faq-item(v-for="(faq, index) in faqs" :key="index")
         div.faq-header(@click="toggleFAQ(index)")
           span.faq-question {{ faq.pergunta }}
-          span.faq-icon(:class="{ aberto: faq.aberto }")
-            svg(xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round")
+          span.faq-icon
+            svg(
+              :class="{ aberto: faq.aberto }"
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="white"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            )
               polyline(points="6 9 12 15 18 9")
         transition(name="fade")
           p.faq-resposta(v-if="faq.aberto") {{ faq.resposta }}
+
 
 </template>
 
@@ -901,6 +959,114 @@ onMounted(() => {
 
 
 <style scoped>
+.ativo {
+  background-color: rgba(92, 92, 92, 0.63); /* cinza muito claro com transparência */
+  box-shadow: 0 0 8px rgba(184, 184, 184, 0.08); /* sombra leve */
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+
+.servico-botao {
+display: block;              
+  margin: 0 auto;              
+  padding: 10px 25px;          /* diminuiu um pouco o padding horizontal */
+  font-size: 16px;
+  font-weight: 600;
+  color: #ffffff;              
+  background-color: #1fb900;
+  border: 0.5px solid #ffffff; /* borda mais fina */
+  border-radius: 6px;          
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  text-align: left;
+  text-decoration: none;       
+  font-family: inherit;
+  width: fit-content;          /* botão com largura mínima para o conteúdo */
+  min-width: 120px;
+  margin-top: -30px;
+}
+.menu a,
+.menu-secundaria a,
+.menu-secundaria button,
+.menu-secundaria span {
+  color: #ffffff;
+}
+
+
+.servico-botao:hover {
+background-color: #2e7400;
+}
+.faq-icon svg {
+  transition: transform 0.3s ease;
+}
+
+.faq-icon svg.aberto {
+  transform: rotate(180deg);
+}
+
+/* Transição suave da resposta */
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+.fade-enter-from, .fade-leave-to {
+  opacity: 0;
+}
+
+.faq-icon {
+  display: inline-block;
+  transition: transform 0.3s ease;
+}
+
+.faq-icon.aberto {
+  transform: rotate(180deg);
+}
+
+.servico-subtitulo {
+  font-size: 17px;
+  font-weight: 600;
+  margin-bottom: 2rem;
+  margin-top: -40px;
+  color: #474747;
+  text-align: center;
+  margin-left: 20px;
+}
+
+.intro-sistemas-texto {
+  font-size: 17px;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  margin-top: 0px;
+  color: #474747;
+  text-align: center;
+  margin-left: 240px;
+}
+
+
+
+.sistemas-cards-section .sistemas-card-wrapper {
+  margin-top: -3rem; /* ajuste o valor conforme necessário */
+}
+
+.pulsando {
+  animation: pulsar 1.2s infinite;
+}
+
+@keyframes pulsar {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.08);
+    opacity: 0.7;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
 .modal-preco {
   color: #28a745;
   font-weight: bold;
@@ -924,13 +1090,37 @@ onMounted(() => {
   opacity: 1;     /* visível */
 }
 
+.modal-preco-wrapper {
+  margin-top: 1rem;
+}
+
+.modal-preco-antigo {
+  color: #888;
+  font-size: 1rem;
+}
+
+.preco-riscado {
+  text-decoration: line-through;
+  margin-left: 0.3rem;
+}
+
+.modal-preco-desconto {
+  color: #ffffff;
+  font-weight: bold;
+  font-size: 1.2rem;
+
+}
+
+.preco-verde {
+  margin-left: 0.3rem;
+}
 
 .btn-vote {
   margin-top: 1rem; /* separa o botão do preço */
   align-self: center;
   padding: 0.8rem 2rem;
   border-radius: 8px;
-  background-color: #67c51f;
+  background-color: #1fc5a1;
   color: white;
   font-weight: 700;
   border: none;
@@ -940,7 +1130,7 @@ onMounted(() => {
 
 .btn-vote {
   margin-top: 2rem; /* empurra o botão mais pra baixo */
-  background-color: #67c51f;
+  background-color: #a1c51f;
   color: white;
   font-weight: bold;
   padding: 0.8rem 2rem;
@@ -1001,7 +1191,7 @@ onMounted(() => {
   position: relative;
   top: -2rem; /* sobe 5rem para cima */
   font-size: 2rem;
-  font-weight: 700;
+  
   color: #000;
   margin-bottom: 0.5rem;
 }
@@ -1013,7 +1203,7 @@ onMounted(() => {
   top: -1.8rem; /* sobe 1.5rem, ajuste conforme quiser */
   margin-bottom: 1rem; /* pra não ficar grudado no próximo */
   font-weight: 600; /* semi-bold, menos pesado que 700 (bold) */
-font-family: Arial, Helvetica, sans-serif
+  font-family: Arial, Helvetica, sans-serif;
 
 }
 
@@ -1064,24 +1254,7 @@ font-family: Arial, Helvetica, sans-serif
 }
 
 
-.servico-botao {
-  background-color: #67c51f;
-  border: none;
-  padding: 0.8rem 2rem;
-  border-radius: 8px;
-  color: white;
-  font-weight: 700;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  margin: -1rem auto 0; /* top negativo, auto nos lados, 0 embaixo */
-  width: 250px;
-  display: block; /* garante que funcione com margin auto */
-}
 
-.servico-botao:hover {
-  background-color: #4ea115;
-}
 .softwaree-main-title {
   text-align: left;             /* mantém o texto alinhado à esquerda DENTRO do bloco */
   font-size: 2.1rem;
@@ -1178,7 +1351,7 @@ font-family: Arial, Helvetica, sans-serif
   font-size: 1.2rem;
   cursor: pointer;
   transition: background-color 0.3s ease;
-  margin-top: -1rem;
+  margin-top: 0rem;
 }
 
 .btn-vote:hover {
@@ -1206,7 +1379,7 @@ display: block;
   font-size: 16px;
   font-weight: 600;
   color: #ffffff;              
-  background-color: #129b00;
+  background-color: #1fb900;
   border: 0.5px solid #ffffff; /* borda mais fina */
   border-radius: 6px;          
   cursor: pointer;
@@ -1221,13 +1394,17 @@ display: block;
 
 
 .btn-contratar:hover {
-background-color: #34ff45;
+background-color: #2e7400;
 }
 /* ===== Seção Sistemas ===== */
 
 .sistemas-cards-section {
   padding: 4rem 2rem;
   background-color: #f0f0f0;
+  
+}
+.sistemas-cards-wrapper {
+  margin-top: -2rem; /* ou ajuste como quiser */
 }
 
 .sistemas-titulo {
@@ -1252,6 +1429,7 @@ color: #000;
   max-width: 900px;
   margin: 0 auto 3rem;
   text-align: center;
+  
 }
 
 .intro-sistemas-titulo {
@@ -1262,11 +1440,6 @@ color: #000;
   margin-top: -3rem;
 }
 
-.intro-sistemas-texto {
-  font-size: 1rem;
-  color: #555;
-  margin-left: 15rem;
-}
 
 .sistemas-card-wrapper {
   display: flex;
@@ -1283,9 +1456,9 @@ color: #000;
   border-radius: 16px;
   padding: 2rem;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  transition: transform 0.3s ease;
   
-  border-left: 4px solid #eb7d00; /* Exemplo: borda azul de 4px na esquerda */
+  
+  border-left: 4px solid #bb6400; /* Exemplo: borda azul de 4px na esquerda */
 }
 
 .sistemas-card-titulo,
@@ -1294,9 +1467,6 @@ color: #000;
   transform: translateX(30rem);
 }
 
-.sistema-card:hover {
-  transform: translateY(-4px);
-}
 
 .sistema-card-titulo {
   font-size: 1.4rem;
@@ -1477,7 +1647,7 @@ color: #000;
   text-align: center;
 
   /* Borda lateral */
-  border-left: 4px solid #bb6400;
+  border-left: 4px solid #2e2e2e;
 }
 
 
@@ -1506,7 +1676,7 @@ color: #000;
   cursor: pointer;
   font-weight: 800 !important;
   color: #ffffff;
-  background-color: #bb6400;
+  background-color: #2e2e2e;
 
   /* Aumenta largura do card */
   padding: 1.2rem 2rem;
@@ -1517,21 +1687,12 @@ color: #000;
 
 
 
-.faq-icon {
-  margin-left: 1rem;
-  display: flex;
-  align-items: center;
-}
-
-.faq-icon.aberto {
-  transform: rotate(180deg);
-}
 
 .faq-resposta {
   margin-top: 0.5rem;
   padding: 1rem 1.5rem;
   background: #fff4ea;
-  border-left: 4px solid #bb6400;
+  border-right: 4px solid #2e2e2e;
   border-radius: 0.5rem;
   color: #272727;
   font-weight: bold;
@@ -1558,9 +1719,10 @@ color: #000;
 }
 
 .ajuda-coluna-img img {
-  width: 360px;         /* Aumenta a largura */
-  height: 240px;        /* Mantém a altura anterior (ajuste conforme necessário) */
-  object-fit: cover;    /* Garante que a imagem preencha sem deformar muito */
+  width: 100%;
+  max-width: 440px;
+  height: auto; /* melhor que height fixa */
+  object-fit: cover;
   border-radius: 12px;
   box-shadow: 0 4px 18px rgba(0, 0, 0, 0.1);
 }
@@ -1571,7 +1733,7 @@ color: #000;
 }
 
 .ajuda-titulo {
-  font-size: 1.8rem;
+  font-size: 1.5rem;
   font-weight: 700;
   color: #bb6400;
   margin-bottom: 1rem;
@@ -1628,14 +1790,6 @@ color: #000;
   text-align: left;
 }
 
-.servico-subtitulo {
-  color: #1a1a1a;        /* cinza escuro */
-  font-size: 1.1rem;
-  text-align: justify;   /* justifica o texto */
-  max-width: 800px;      /* define uma largura máxima para o parágrafo */
-  margin: -2rem auto 4rem auto; /* aumentada a margem inferior */
-  font-style: italic;
-}
 
 
 .servico-card-topicos {
@@ -2164,11 +2318,8 @@ input[type="email"] {
   font-size: 2rem;
   color: #000000;
   margin-bottom: -30px;
+  font-family: Arial, Helvetica, sans-serif;
 
-}
-.software-title {
-  text-align: center;
-  margin-left: 240px;
 }
 /* Mantém todo o seu CSS como estava, sem alterações */
 .software-list-container {
@@ -2181,7 +2332,9 @@ input[type="email"] {
   font-weight: 600;
   margin-bottom: 1rem;
   margin-top: 20px;
-  color: #505050;
+  color: #474747;
+  text-align: center;
+  margin-left: 240px;
 }
 
 .software-filters {
@@ -2203,14 +2356,14 @@ input[type="email"] {
   display: flex;
   flex-direction: column;
   border: 1px solid #ddd;
+  border-left: 4px solid #bb6400;
   border-radius: 12px;
   padding: 1.5rem;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
   background: #fff;
   position: relative;
-  margin-top: 20px;
+  margin-top: 10px;
   min-height: 220px;
-
 }
 
 .software-card-logo img {
@@ -2333,10 +2486,20 @@ nav.menu ul {
 }
 
 .menu-secundaria {
-  margin-top: 3rem !important;
-  border-top: 1px solid rgba(255,255,255,0.2);
-  padding-top: 1rem;
+  position: relative;
+  padding-top: 1rem; /* mantém espaçamento interno */
 }
+
+.menu-secundaria::before {
+  content: '';
+  position: absolute;
+  top: -1.5rem; /* sobe a linha */
+  left: 0;
+  right: 0;
+  height: 1px;
+  background-color: rgba(170, 170, 170, 0.75);
+}
+
 
 .app {
   display: flex;

@@ -246,7 +246,7 @@ section.sessao-cjl(id="sessao")
     p.description
       | A Consultoria Estratégica de TI é fundamental para alinhar a tecnologia aos objetivos de negócio, transformando investimentos em inovação, eficiência e competitividade. Nosso trabalho vai além da simples implementação de soluções; ajudamos sua empresa a definir prioridades.
     a.btn-contato(
-      href="https://wa.me/5511940090003?text=Olá,%20gostaria%20de%20solicitar%20um%20orçamento."
+      href="https://wa.me/551151997454?text=Olá,%20gostaria%20de%20solicitar%20um%20orçamento."
       target="_blank"
       rel="noopener noreferrer"
       ) CONTATE-NOS
@@ -290,7 +290,7 @@ section.sessao-consultoria
     p.descricao-consultoria
       | Garantir a qualidade de um sistema vai muito além de desenvolver funcionalidades: é preciso validá-las de forma estratégica. Com testes rigorosos, identificamos falhas antes que elas afetem o ambiente produtivo, evitando prejuízos e retrabalhos. Simulamos diferentes cenários de uso, avaliando desempenho, segurança, integração e estabilidade. Nossa abordagem inclui testes funcionais, automatizados, de carga e segurança, todos adaptados às necessidades do projeto. Ao integrar esses testes ao ciclo de desenvolvimento, promovemos entregas mais ágeis, confiáveis e alinhadas com os objetivos do cliente. O resultado são soluções sólidas, prontas para operar com excelência desde o primeiro dia.
     a.btn-contato(
-      href="https://wa.me/5511940090003?text=Olá,%20gostaria%20de%20solicitar%20um%20orçamento."
+      href="https://wa.me/551151997454?text=Olá,%20gostaria%20de%20solicitar%20um%20orçamento."
       target="_blank"
       rel="noopener noreferrer"
       ) CONTATE-NOS

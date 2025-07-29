@@ -39,13 +39,32 @@ section.registro-multi
         input(type="checkbox", id="mostrarSenha", v-model="mostrarSenha")
         label(for="mostrarSenha") Mostrar senha
 
-      section.botoes
+      section.botoes(style="display: flex; align-items: center; gap: 1rem; width: 100%;")
+        a.esqueci-senha(href="#", @click.prevent="abrirModalEsqueci", style="margin-right: auto; cursor: pointer;") Esqueci a senha
         button(type="submit") Entrar
         span.mensagem-erro(v-if="mensagemErro")= mensagemErro
+
+
+  // Modal Esqueci a senha
+  .modal-esqueci(v-if="mostrarModalEsqueci")
+    .modal-conteudo
+      button.close(@click="fecharModalEsqueci") ×
+      .icone-lock
+        .circulo-icone
+          svg(width="48" height="48" fill="none" stroke="white" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round")
+            rect(x="3" y="11" width="18" height="11" rx="2" ry="2")
+            path(d="M7 11V7a5 5 0 0 1 10 0v4")
+
+      p.titulo Problemas ao iniciar sessão?
+      p.descricao Insira o seu CPF ou E-mail.
+      input.input-recuperar(type="text", placeholder="CPF ou E-mail", v-model="emailRecuperar")
+      button.btn-enviar(@click="enviarLigacao") Enviar
+      hr
+
 </template>
 
 <script setup>
-import { ref, watch, onMounted } from 'vue'
+import { ref } from 'vue'
 import { login } from '@/services/authServices'
 import { useRouter } from 'vue-router'
 
@@ -57,6 +76,10 @@ const mostrarSenha = ref(false)
 
 const erroEmail = ref(false)
 const erroSenha = ref(false)
+
+const mostrarModalEsqueci = ref(false)
+const emailRecuperar = ref('')
+
 const logarUsuario = async () => {
   erroEmail.value = email.value.trim() === ''
   erroSenha.value = senha.value.trim() === ''
@@ -65,7 +88,7 @@ const logarUsuario = async () => {
   if (erroEmail.value || erroSenha.value) return
 
   try {
-    localStorage.removeItem('token') // 🔥 Remove antes de tudo
+    localStorage.removeItem('token')
 
     const response = await login(email.value, senha.value)
 
@@ -74,13 +97,11 @@ const logarUsuario = async () => {
       return
     }
 
-    console.log("Token recebido:", response.token)
     localStorage.setItem('token', response.token)
     window.dispatchEvent(new Event('atualizarUsuario'))
     router.push('/plataforma')
 
   } catch (error) {
-    console.error("Erro no login:", error)
     if (error.response?.status === 401) {
       mensagemErro.value = 'E-mail ou senha incorretos.'
     } else {
@@ -89,10 +110,194 @@ const logarUsuario = async () => {
   }
 }
 
+function abrirModalEsqueci() {
+  mostrarModalEsqueci.value = true
+}
 
+function fecharModalEsqueci() {
+  mostrarModalEsqueci.value = false
+  emailRecuperar.value = ''
+}
 
+function enviarLigacao() {
+  // Aqui você pode implementar a lógica para enviar o e-mail/telefone para recuperação.
+  alert(`Enviado link de recuperação para: ${emailRecuperar.value}`)
+  fecharModalEsqueci()
+}
 </script>
 <style>
+.circulo-icone {
+  border: 2px solid white;     /* Borda branca */
+  border-radius: 50%;          /* Formato de círculo */
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 1rem auto;
+  background-color: transparent; /* Sem fundo */
+}
+
+.circulo-icone svg {
+  stroke: white;
+  width: 48px;
+  height: 48px;
+}
+
+
+section.registro-multi {
+  /* seu estilo normal aqui */
+}
+
+/* Estilos do modal */
+.modal-esqueci {
+  position: fixed;
+  inset: 0;
+  background: rgba(36, 36, 36, 0.849);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  color: white;
+  font-family: Arial, sans-serif;
+}
+
+.modal-conteudo {
+  background: #000;
+  padding: 2rem 3rem;
+  width: 400px;
+  border-radius: 6px;
+  position: relative;
+  text-align: center;
+  box-shadow: 0 0 15px rgba(20,20,20,0.9);
+}
+
+button.close {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  background: none;
+  border: none;
+  font-size: 1.8rem;
+  color: #ccc;
+  cursor: pointer;
+}
+
+.icone-lock {
+  margin-bottom: 1rem;
+}
+
+.titulo {
+  font-weight: 700;
+  font-size: 1.1rem;
+  margin-bottom: 0.3rem;
+}
+
+.descricao {
+  font-size: 0.85rem;
+  margin-bottom: 1rem;
+  color: #ddd;
+  line-height: 1.3;
+}
+
+.input-recuperar {
+  width: 100%;
+  padding: 0.65rem 1rem;
+  border-radius: 6px;
+  border: none;
+  background: #222;
+  color: #ccc;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+}
+
+.input-recuperar::placeholder {
+  color: #666;
+}
+
+.btn-enviar {
+  width: 100%;
+  background-color: #fffda2; /* azul forte */
+  border: none;
+  padding: 0.7rem;
+  color: rgb(0, 0, 0);
+  font-weight: 700;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-bottom: 0.8rem;
+  transition: background-color 0.3s ease;
+}
+
+.btn-enviar:hover {
+  background-color: #ffffff;
+}
+
+.link-aux {
+  font-size: 0.8rem;
+  color: #1a56db;
+  cursor: pointer;
+  text-decoration: underline;
+  display: inline-block;
+  margin-bottom: 1rem;
+}
+
+hr {
+  border: 0;
+  height: 1px;
+  background: #222;
+  margin: 1rem 0;
+}
+
+.ou {
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.criar-conta {
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.btn-voltar {
+  background: #222;
+  border: none;
+  padding: 0.5rem 1rem;
+  width: 100%;
+  border-radius: 6px;
+  color: #ccc;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.btn-voltar:hover {
+  background: #444;
+}
+a.esqueci-senha {
+  color: rgb(218, 218, 218);
+  text-decoration: none;
+  transition: color 0.3s ease;
+  text-shadow: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  border: none !important;
+  background: none !important;
+}
+
+a.esqueci-senha:hover,
+a.esqueci-senha:focus {
+  color: #a8a8a8;
+  cursor: pointer;
+  text-shadow: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  border: none !important;
+  background: none !important;
+}
+
+
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,

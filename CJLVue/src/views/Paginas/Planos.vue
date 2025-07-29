@@ -324,7 +324,7 @@ main.planos
                     span {{ item }}
                 span.preco {{ card.preco }}
                 a.btn-contato(
-                  href="https://wa.me/5511940090003?text=Olá,%20gostaria%20de%20solicitar%20um%20orçamento."
+                  href="https://wa.me/551151997454?text=Olá,%20gostaria%20de%20solicitar%20um%20orçamento."
                   target="_blank"
                   rel="noopener noreferrer"
                 ) CONTATE-NOS
@@ -352,7 +352,7 @@ main.planos
                     span {{ item }}
                 span.preco {{ card.preco }}
                 a.btn-contato(
-                  href="https://wa.me/5511940090003?text=Olá,%20gostaria%20de%20solicitar%20um%20orçamento."
+                  href="https://wa.me/551151997454?text=Olá,%20gostaria%20de%20solicitar%20um%20orçamento."
                   target="_blank"
                   rel="noopener noreferrer"
                 ) CONTATE-NOS

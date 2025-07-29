@@ -292,7 +292,7 @@ section.sessao-consultoria
     p.descricao-consultoria
       |Na nossa consultoria, entendemos que cada projeto de tecnologia exige atenção única e detalhada. Por isso, acompanhamos nossos clientes em todas as fases do processo — desde a análise inicial até a implementação e o suporte contínuo — garantindo que cada solução seja personalizada para atender às necessidades específicas e entregue com máxima eficiência. Ao combinar conhecimento técnico aprofundado com metodologias ágeis, conseguimos adaptar rapidamente nossas abordagens conforme os desafios evoluem, otimizando recursos e tempo. Essa dedicação faz toda a diferença para que as soluções não sejam apenas funcionais, mas também escaláveis e alinhadas aos objetivos estratégicos do negócio.
     a.btn-contato(
-        href="https://wa.me/5511940090003?text=Olá,%20gostaria%20de%20solicitar%20um%20orçamento."
+        href="https://wa.me/551151997454?text=Olá,%20gostaria%20de%20solicitar%20um%20orçamento."
         target="_blank"
         rel="noopener noreferrer"
       ) CONTATE-NOS
@@ -327,7 +327,7 @@ section.bloco-recursos-tec
             .conteudo-card-tec(v-show="item.aberto")
               p {{ item.conteudo }}
               a.btn-contato(
-                href="https://wa.me/5511940090003?text=Olá,%20gostaria%20de%20solicitar%20um%20orçamento."
+                href="https://wa.me/551151997454?text=Olá,%20gostaria%20de%20solicitar%20um%20orçamento."
                 target="_blank"
                 rel="noopener noreferrer"
               ) SAIBA MAIS

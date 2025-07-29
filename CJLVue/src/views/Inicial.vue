@@ -408,7 +408,7 @@ main.home
       p.description
         | Oferecemos um grupo de profissionais especializados, prontos para atendê-lo de forma excepcional e eliminar definitivamente os seus problemas tecnológicos.
       a.btn-contato(
-        href="https://wa.me/5511940090003?text=Olá,%20gostaria%20de%20solicitar%20um%20orçamento."
+        href="https://wa.me/551151997454?text=Olá,%20gostaria%20de%20solicitar%20um%20orçamento."
         target="_blank"
         rel="noopener noreferrer"
       ) CONTATE-NOS
@@ -890,6 +890,7 @@ html, body {
 section.formulario-contato {
   margin-top: -300px;
   padding-top: 300px; /* se necessário, para afastar do conteúdo anterior */
+  margin-bottom: 20px;
 
 }
 /* Tamanho base para telas grandes */
