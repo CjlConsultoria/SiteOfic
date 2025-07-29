@@ -3,24 +3,24 @@ import { ref, reactive, onMounted, computed } from 'vue'
 import axios from 'axios'
 import LogoNexdom from '@/assets/cjl.jpg'
 
-// Controle do menu lateral e página atual
+
 const menuAberto = ref(false)
 const paginaAtual = ref('home')
 
-// Alternar menu lateral
+
 const toggleMenu = () => {
   menuAberto.value = !menuAberto.value
   console.log('toggleMenu chamado, menuAberto:', menuAberto.value)
 }
 
-// Ir para página de perfil e carregar dados do usuário
+
 async function irParaPerfil() {
   console.log('irParaPerfil chamado')
   paginaAtual.value = 'perfil'
   await buscarUsuarioLogado()
 }
 
-// Função para controlar a navegação pelas páginas
+
 function irParaPagina(label) {
   const labelLower = label.toLowerCase()
 
@@ -43,7 +43,7 @@ function irParaPagina(label) {
   }
 }
 
-// Controle do modal de sistema
+
 const modalAberto = ref(false)
 const sistemaSelecionado = ref(null)
 
@@ -57,7 +57,7 @@ function fecharModal() {
   sistemaSelecionado.value = null
 }
 
-// Menus principais e secundários
+
 const menuPrincipal = [
   { label: 'Dashboard', url: '#', icon: '📊' },
   { label: 'Sistemas', url: '#', icon: '🛠️' },
@@ -70,7 +70,7 @@ const menuSecundaria = [
   { label: 'Sair', url: '#', icon: '🔒' }
 ]
 
-// Cards para a home
+
 const cards = ref([
   {
     id: 1,
@@ -155,7 +155,7 @@ const cards = ref([
   }
 ])
 
-// Paginação dos cards da home
+
 const paginaAtualCard = ref(1)
 const cardsPorPagina = 4
 
@@ -169,7 +169,7 @@ function mudarPaginaCard(pagina) {
   paginaAtualCard.value = pagina
 }
 
-// Dados do usuário
+
 const usuario = reactive({
   tipoPessoa: '',
   nome: '',
@@ -226,7 +226,7 @@ async function buscarUsuarioLogado() {
   }
 }
 
-// Serviços avançados
+
 const servicosAvancados = [
   {
     id: 1,
@@ -287,7 +287,7 @@ const sistemass = [
 ]
 
 
-// Array de sistemas (renomeado para 'sistemas' para consistência)
+
 const sistemas = [
   {
     nome: 'Essencial',
@@ -412,7 +412,7 @@ const sistemas = [
 
 
 
-// Controle da paginação dos sistemas
+
 const paginaAtualSistema = ref(1)
 const sistemasPorPagina = 4
 
@@ -428,7 +428,6 @@ function mudarPaginaSistema(pagina) {
   paginaAtualSistema.value = pagina
 }
 
-// FAQs
 const faqs = ref([
   {
     pergunta: 'Como posso alterar meus dados pessoais?',
@@ -456,7 +455,6 @@ const sistemasVisiveis = computed(() => {
   return mostrarTodos.value ? sistemass : sistemass.slice(0, 4)
 })
 
-// onMounted para buscar dados se estiver na página perfil
 onMounted(() => {
   if (paginaAtual.value === 'perfil') {
     buscarUsuarioLogado()
@@ -723,10 +721,9 @@ onMounted(() => {
 
 
 <style scoped>
-/* Título principal da seção */
 .sistemas-cards-section .softwaree-main-title {
   position: relative;
-  top: -2rem; /* sobe 5rem para cima */
+  top: -2rem; 
   font-size: 2rem;
   font-weight: 700;
   color: #000;
@@ -734,18 +731,18 @@ onMounted(() => {
 }
 
 
-/* Parágrafo introdutório */
+
 .sistemas-cards-section .intro-sistemas-texto {
   position: relative;
-  top: -1.8rem; /* sobe 1.5rem, ajuste conforme quiser */
-  margin-bottom: 1rem; /* pra não ficar grudado no próximo */
-  font-weight: 600; /* semi-bold, menos pesado que 700 (bold) */
+  top: -1.8rem; 
+  margin-bottom: 1rem; 
+  font-weight: 600; 
 font-family: Arial, Helvetica, sans-serif
 
 }
 
 
-/* Cartão de sistema */
+
 .sistemas-cards-section .sistema-card-titulo {
   font-weight: bold;
   font-size: 1.6rem;
@@ -773,8 +770,6 @@ font-family: Arial, Helvetica, sans-serif
 
 
 
-
-/* Paginação */
 .sistemas-cards-section .paginacao {
   margin-top: 1.5rem;
   text-align: center;
@@ -801,16 +796,16 @@ font-family: Arial, Helvetica, sans-serif
   font-size: 1rem;
   cursor: pointer;
   transition: background-color 0.3s ease;
-  margin: -1rem auto 0; /* top negativo, auto nos lados, 0 embaixo */
+  margin: -1rem auto 0;
   width: 250px;
-  display: block; /* garante que funcione com margin auto */
+  display: block; 
 }
 
 .servico-botao:hover {
   background-color: #4ea115;
 }
 .softwaree-main-title {
-  text-align: left;             /* mantém o texto alinhado à esquerda DENTRO do bloco */
+  text-align: left;      
   font-size: 2.1rem;
   margin-bottom: 0.5rem;
   color: #000000;
@@ -819,7 +814,7 @@ font-family: Arial, Helvetica, sans-serif
   position: relative;
   display: inline-block;
   left: 50%;
-  transform: translateX(-90%);  /* centraliza o bloco na tela */
+  transform: translateX(-90%);  
 }
 .servico-titulo::after,
 .softwaree-main-title::after {
@@ -855,7 +850,7 @@ font-family: Arial, Helvetica, sans-serif
 }
 
 .modal-card {
-  background: #222; /* fundo escuro */
+  background: #222; 
   border-radius: 12px;
   padding: 2rem 3rem;
   max-width: 450px;
@@ -884,7 +879,7 @@ font-family: Arial, Helvetica, sans-serif
   font-weight: 700;
   font-size: 1.5rem;
   margin-bottom: 1rem;
-  color: #ffffff; /* verde próximo ao da imagem */
+  color: #ffffff; 
 }
 
 .modal-conteudo p {
@@ -895,7 +890,7 @@ font-family: Arial, Helvetica, sans-serif
 }
 
 .btn-vote {
-  background-color: #67c51f; /* verde do botão */
+  background-color: #67c51f; 
   border: none;
   padding: 0.8rem 2rem;
   border-radius: 8px;
@@ -928,19 +923,19 @@ font-family: Arial, Helvetica, sans-serif
 .btn-contratar {
 display: block;              
   margin: 0 auto;              
-  padding: 10px 25px;          /* diminuiu um pouco o padding horizontal */
+  padding: 10px 25px;
   font-size: 16px;
   font-weight: 600;
   color: #ffffff;              
   background-color: #129b00;
-  border: 0.5px solid #ffffff; /* borda mais fina */
+  border: 0.5px solid #ffffff; 
   border-radius: 6px;          
   cursor: pointer;
   transition: background-color 0.3s ease, color 0.3s ease;
   text-align: left;
   text-decoration: none;       
   font-family: inherit;
-  width: fit-content;          /* botão com largura mínima para o conteúdo */
+  width: fit-content;        
   min-width: 120px;
   margin-top: -10px;
 }
@@ -949,7 +944,7 @@ display: block;
 .btn-contratar:hover {
 background-color: #34ff45;
 }
-/* ===== Seção Sistemas ===== */
+
 
 .sistemas-cards-section {
   padding: 4rem 2rem;
@@ -1000,7 +995,7 @@ color: #000;
   gap: 2rem;
   max-width: 800px;
   margin: 0 auto;
-  margin-left: 350px; /* desloca tudo 150px para a direita */
+  margin-left: 350px; 
 }
 
 
@@ -1011,7 +1006,7 @@ color: #000;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
   transition: transform 0.3s ease;
   
-  border-left: 4px solid #eb7d00; /* Exemplo: borda azul de 4px na esquerda */
+  border-left: 4px solid #eb7d00; 
 }
 
 .sistemas-card-titulo,
@@ -1067,7 +1062,7 @@ color: #000;
 
 
 .servicos-premium {
-  padding-top: 30px; /* ou um valor bem pequeno, tipo 0.5rem */
+  padding-top: 30px; 
   margin-top: 0;
 }
 
@@ -1078,20 +1073,20 @@ color: #000;
   font-size: 2rem;
   font-weight: 100;
   margin-bottom: 2rem;
-  /* Para centralizar verticalmente a altura da seção, depende do layout, mas geralmente acima basta */
+
 }
 
 
 .container-cards {
   display: grid;
-  grid-template-columns: repeat(3, 250px); /* mesmo tamanho dos cards */
-  column-gap: 2.5rem; /* pequeno espaço horizontal entre os cards */
-  row-gap: 1.6rem; /* opcional, espaço vertical */
-  justify-content: center; /* centraliza o grid inteiro */
+  grid-template-columns: repeat(3, 250px); 
+  column-gap: 2.5rem; 
+  row-gap: 1.6rem; 
+  justify-content: center; 
 }
 
 .card-servico {
-  width: 270px; /* largura exata */
+  width: 270px; 
   background-color: #ff7300;
   color: white;
   padding: 2rem;
@@ -1106,13 +1101,13 @@ color: #000;
 
 @media (max-width: 900px) {
   .container-cards {
-    grid-template-columns: repeat(2, 1fr); /* 2 colunas no tablet */
+    grid-template-columns: repeat(2, 1fr); 
   }
 }
 
 @media (max-width: 600px) {
   .container-cards {
-    grid-template-columns: 1fr; /* 1 por linha no mobile */
+    grid-template-columns: 1fr; 
   }
 }
 .card-servico {
@@ -1120,8 +1115,8 @@ color: #000;
 }
 
 .card-servico:hover {
-  transform: translateY(-10px); /* sobe 10px ao passar o mouse */
-  cursor: pointer; /* opcional, muda o cursor para indicar interatividade */
+  transform: translateY(-10px); 
+  cursor: pointer; 
 }
 
 .icone {
@@ -1179,11 +1174,11 @@ color: #000;
 
 .faq-icon svg {
   transition: transform 0.3s ease;
-  transform: rotate(0deg); /* seta padrão pra baixo */
+  transform: rotate(0deg);
 }
 
 .faq-icon.aberto svg {
-  transform: rotate(180deg); /* seta pra cima */
+  transform: rotate(180deg); 
 }
 
 .faq-container {
@@ -1198,11 +1193,11 @@ color: #000;
   margin-right: 8%;
   margin-bottom: 100px;
 
-  /* Visual */
+  
   background-color: #ffffff;
   text-align: center;
 
-  /* Borda lateral */
+ 
   border-left: 4px solid #bb6400;
 }
 
@@ -1234,7 +1229,6 @@ color: #000;
   color: #ffffff;
   background-color: #bb6400;
 
-  /* Aumenta largura do card */
   padding: 1.2rem 2rem;
   border-radius: 0.7rem;
   transition: background 0.2s ease;
@@ -1275,7 +1269,7 @@ color: #000;
 
 .ajuda-bloco {
   display: flex;
-   align-items: flex-start; /* <-- Alinha o conteúdo verticalmente no topo */
+   align-items: flex-start; 
  
   justify-content: center;
   gap: 6rem;
@@ -1284,9 +1278,9 @@ color: #000;
 }
 
 .ajuda-coluna-img img {
-  width: 360px;         /* Aumenta a largura */
-  height: 240px;        /* Mantém a altura anterior (ajuste conforme necessário) */
-  object-fit: cover;    /* Garante que a imagem preencha sem deformar muito */
+  width: 360px;        
+  height: 240px;        
+  object-fit: cover;    
   border-radius: 12px;
   box-shadow: 0 4px 18px rgba(0, 0, 0, 0.1);
 }
@@ -1317,9 +1311,9 @@ color: #000;
 }
 
 .ajuda-section {
-  text-align: center; /* centraliza elementos inline-block */
+  text-align: center; 
   padding: 2rem;
-   padding-left: 23vw; /* Move tudo para a direita */
+   padding-left: 23vw; 
 }
 
 .titulo-ajuda {
@@ -1328,16 +1322,16 @@ color: #000;
   margin-bottom: 1.5rem;
   color: #000;
   margin-top: -3rem;
-  display: inline-block; /* necessário para o ::after ter base apenas no texto */
+  display: inline-block;
   position: relative;
   margin-left: 0px;
 }
 
 .titulo-ajuda::after {
   content: '';
-  position: absolute; /* permite posicionar dentro do título */
-  left: 0; /* alinha à esquerda */
-  bottom: -5px; /* opcional: controla a distância do sublinhado */
+  position: absolute; 
+  left: 0; 
+  bottom: -5px; 
   width: 40%;
   height: 3px;
   background-color: #bb6400;
@@ -1355,41 +1349,41 @@ color: #000;
 }
 
 .servico-subtitulo {
-  color: #1a1a1a;        /* cinza escuro */
+  color: #1a1a1a;       
   font-size: 1.1rem;
-  text-align: justify;   /* justifica o texto */
-  max-width: 800px;      /* define uma largura máxima para o parágrafo */
-  margin: -2rem auto 4rem auto; /* aumentada a margem inferior */
+  text-align: justify;  
+  max-width: 800px;      
+  margin: -2rem auto 4rem auto; 
   font-style: italic;
 }
 
 
 .servico-card-topicos {
   list-style-type: disc;
-  list-style-position: inside; /* bolinhas ficam dentro do bloco de texto */
+  list-style-position: inside; 
   padding-left: 0;
-  margin: 40px auto;       /* centraliza horizontalmente a UL */
-  text-align: center;      /* centraliza texto e bolinhas */
+  margin: 40px auto;       
+  text-align: center;      
   max-width: 100%;
   display: block;
   margin-left: 0;
 }
 
 .servico-card-topicos li::marker {
-  color: rgb(0, 0, 0);                    /* Bolinha branca */
+  color: rgb(0, 0, 0);                   
 }
 
 .servico-card-topicos li {
-  color: #333333;                  /* Garante que os <li> fiquem azuis */
+  color: #333333;                  
 }
 
 
 .servico-card-topicos li::before {
-  /* content: '*'; */
-  content: ''; /* ou remova essa regra */
+ 
+  content: ''; 
 }
 .servico-card-topicos li::before {
-  content: none !important;      /* remove qualquer pseudo-elemento */
+  content: none !important;      
 }
 
 .servico-cards-section {
@@ -1405,11 +1399,11 @@ color: #000;
   font-weight: 700;
   margin-top: -1rem;
   position: relative;
-  display: inline-block; /* mantém o ::after só no conteúdo */
+  display: inline-block; 
   
 }
 
-/* Linha sublinhada alinhada à esquerda */
+
 .servico-titulo::after {
   content: '';
   display: block;
@@ -1419,7 +1413,7 @@ color: #000;
   margin-top: 0rem;
 }
 .software-main-title {
-  text-align: left;             /* mantém o texto alinhado à esquerda DENTRO do bloco */
+  text-align: left;            
   font-size: 2.3rem;
   margin-bottom: 3rem;
   color: #000000;
@@ -1428,7 +1422,7 @@ color: #000;
   position: relative;
   display: inline-block;
   left: 50%;
-  transform: translateX(-70%);  /* centraliza o bloco na tela */
+  transform: translateX(-70%);  
 }
 .servico-titulo::after,
 .software-main-title::after {
@@ -1446,7 +1440,7 @@ color: #000;
 }
 
 .servico-card {
-  background: #ffffff; /* fundo branco do card */
+  background: #ffffff; 
   padding: 1.5rem 1.8rem;
   border-radius: 12px;
   box-shadow: 0 4px 10px rgb(0 0 0 / 0.1);
@@ -1454,11 +1448,11 @@ color: #000;
   flex-direction: column;
   transition: transform 0.3s ease;
   border-left: 4px solid #bb6400;
-  padding-left: 1rem; /* opcional, para afastar o conteúdo da borda */
+  padding-left: 1rem; 
 }
 
 
-/* Título do card em branco */
+
 .servico-card-titulo {
   font-weight: 700;
   font-size: 1.6rem;
@@ -1466,14 +1460,14 @@ color: #000;
   color: #000000;
 }
 
-/* Descrição introdutória cinza claro */
+
 .servico-card-intro {
   font-style: italic;
   margin-bottom: 1rem;
-  color: #1f1f1f; /* cinza claro */
+  color: #1f1f1f; 
 }
 
-/* Lista dos tópicos em branco */
+
 .servico-card-topicos {
   padding-left: 0;
   color: #ffffff;
@@ -1481,7 +1475,7 @@ color: #000;
   line-height: 1.5;
 }
 
-/* Itens da lista com asterisco em branco */
+
 .servico-card-topicos li {
   margin-bottom: 0.5rem;
   position: relative;
@@ -1492,7 +1486,7 @@ color: #000;
   content: '*';
   position: absolute;
   left: 0;
-  color: #ffffff; /* asterisco branco */
+  color: #ffffff; 
   font-weight: bold;
 }
 
@@ -1592,7 +1586,7 @@ button.software-card-button.disabled,
 label.software-card-checkbox.disabled {
   opacity: 0.6;
   cursor: not-allowed;
-  pointer-events: none; /* impede interação */
+  pointer-events: none; 
 }
 
 
@@ -1614,13 +1608,13 @@ label.software-card-checkbox.disabled {
   
 }
 
-/* Cobre o card com fundo transparente */
+
 .overlay-desenvolvimento {
   position: absolute;
   inset: 0;
   background: rgba(255, 255, 255, 0.418);
   border-radius: 8px;
-  pointer-events: none; /* para deixar passar eventos */
+  pointer-events: none; 
   padding: 8px;
   display: flex;
   justify-content: flex-end;
@@ -1629,17 +1623,17 @@ label.software-card-checkbox.disabled {
 }
 
 
-/* Cadeado por baixo do fundo */
+
 .cadeado-wrapper {
   position: absolute;
   top: 8px;
   right: 8px;
   cursor: pointer;
   pointer-events: auto;
-  z-index: 0; /* por baixo do overlay */
+  z-index: 0; 
 }
 
-/* Estiliza o cadeado */
+
 .cadeado-icone {
   width: 24px;
   height: 24px;
@@ -1647,12 +1641,12 @@ label.software-card-checkbox.disabled {
   transition: transform 0.2s;
 }
 
-/* Efeito ao passar o mouse */
+
 .cadeado-wrapper:hover .cadeado-icone {
   transform: scale(1.1);
 }
 
-/* Tooltip */
+
 .cadeado-wrapper::after {
   position: absolute;
   top: -30px;
@@ -1674,7 +1668,7 @@ label.software-card-checkbox.disabled {
 }
 
 input[disabled] {
-  color: #222 !important; /* ou qualquer tom escuro que desejar */
+  color: #222 !important; 
 }
 .card input[disabled] {
   color: #222;
@@ -1683,12 +1677,12 @@ input[disabled] {
 .field label,
 .campo label,
 .form-group label {
-  margin-bottom: 5rem; /* ajuste conforme desejado */
+  margin-bottom: 5rem; 
 }
 .field input,
 .field select,
 .field textarea {
-  margin-bottom: 0.6rem; /* ou ajuste conforme o espaçamento desejado */
+  margin-bottom: 0.6rem; 
 }
 
 input[type="text"],
@@ -1703,45 +1697,40 @@ input[type="email"] {
 
 .form-row > * {
   flex: 0 0 400px;
-  /* NÃO coloque margem aqui! Senão acumula com gap e vira confusão */
+
 }
 
-
-
 .field {
-  flex: 1;                  /* ocupa metade do espaço (2 colunas) */
+  flex: 1;                
   display: flex;
-  flex-direction: column;   /* label em cima, input embaixo */
+  flex-direction: column;   
 }
 
 .field label {
   margin-bottom: 3px;
   font-weight: 600;
   color: #854000;
-  line-height: 1; /* evita espaçamento extra da linha */
+  line-height: 1; 
 }
 
 .field input {
-  margin-top: 0 !important;      /* elimina margem superior */
-  padding: 6px 10px !important;  /* mantém padding confortável */
-  height: 32px !important;       /* altura fixa */
+  margin-top: 0 !important;     
+  padding: 6px 10px !important;  
+  height: 32px !important;      
   font-size: 14px !important;
   border: 1px solid #6d2800 !important;
   border-radius: 6px !important;
   box-sizing: border-box !important;
-  line-height: 1 !important;     /* evita espaçamento extra */
-  vertical-align: top !important; /* força alinhamento no topo */
-  display: block !important;     /* remove inline gap */
+  line-height: 1 !important;   
+  display: block !important;    
 }
-
-
 
 .card {
   background: white;
   padding: 1.5rem;
   border-radius: 10px;
-  width: 140%;       /* força a largura a 90% do container pai */
-  max-width: none;  /* remove o limite máximo */
+  width: 140%;      
+  max-width: none;  
   margin: 0 auto;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
@@ -1766,10 +1755,10 @@ input[type="email"] {
 }
 
 .campo input {
-  height: 90px;         /* aumenta a altura */
-  min-width: 250px;     /* largura mínima maior */
-  padding: 8px 12px;    /* deixa o padding proporcional */
-  font-size: 16px;      /* fonte maior para combinar */
+  height: 90px;         
+  min-width: 250px;     
+  padding: 8px 12px;    
+  font-size: 16px;      
   border: 1px solid #ccc;
   border-radius: 6px;
   box-sizing: border-box;
@@ -1799,7 +1788,7 @@ input[type="email"] {
   padding: 0.5rem;
 }
 
-/* Estilo da seção de perfil */
+
 .perfil-usuario {
   padding: 2rem;
   margin-left: 250px;
@@ -1810,10 +1799,10 @@ input[type="email"] {
   font-size: 2rem;
   font-weight: 700;
   margin-bottom: 2rem;
-  text-align: Center;     /* alinha o texto à esquerda */
+  text-align: Center;     
   color: #000000;
-  position: relative;   /* necessário para o ::after */
-  display: inline-block; /* limita o sublinhado ao tamanho do texto */
+  position: relative;   
+  display: inline-block; 
   margin-left: 380px;
   margin-top: -2rem;
 }
@@ -1824,7 +1813,7 @@ input[type="email"] {
   width: 40%;
   height: 3px;
   background-color: #bb6400;
-  margin-top: 0rem; /* aproxima a linha do texto */
+  margin-top: 0rem; 
 }
 
 
@@ -1833,9 +1822,9 @@ input[type="email"] {
   padding: 1.5rem;
   margin-bottom: 2rem;
   border-radius: 10px;
-  border-left: 4px solid #bb6400; /* borda esquerda mais grossa */
+  border-left: 4px solid #bb6400; 
   margin-left: 90px;
-   max-width: 770px; /* ou o tamanho que desejar */
+   max-width: 770px; 
 }
 
 
@@ -1850,8 +1839,8 @@ input[type="email"] {
 .form-row {
   display: flex;
   flex-wrap: wrap;
-  row-gap: 1rem;      /* espaçamento vertical */
-  column-gap: 4rem;   /* espaçamento lateral maior */
+  row-gap: 1rem;      
+  column-gap: 4rem;   
   margin-bottom: 1rem;
 }
 
@@ -1861,7 +1850,7 @@ input[type="email"] {
   border-radius: 6px;
   padding: 0.5rem;
   min-width: 250px;
-  height: 120px; /* altura maior */
+  height: 120px; 
   font-size: 16px;
   box-sizing: border-box;
   border: 1px solid #ccc;
@@ -1871,8 +1860,8 @@ input[type="email"] {
   padding-bottom: 20px !important;
   line-height: 1.5 !important;
   font-size: 16px !important;
-  height: auto !important; /* deixa o height automático */
-  min-height: 40px !important; /* define um mínimo maior */
+  height: auto !important;
+  min-height: 40px !important; 
   box-sizing: border-box !important;
   background-color: #fffef1 !important;
   border-radius: 6px !important;
@@ -1880,7 +1869,7 @@ input[type="email"] {
   flex: 1 1 auto !important;
 }
 .software-main-title {
-  font-weight: bold; /* ou um valor numérico como 700 */
+  font-weight: bold; 
 }
 
 .software-main-title,
@@ -1896,7 +1885,7 @@ input[type="email"] {
   text-align: center;
   margin-left: 240px;
 }
-/* Mantém todo o seu CSS como estava, sem alterações */
+
 .software-list-container {
   padding: 2rem;
   font-family: 'Segoe UI', sans-serif;
