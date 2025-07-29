@@ -551,7 +551,9 @@ button.external-btn:hover {
   border: none;
   transition: box-shadow 0.3s ease;
 }
-
+* {
+  font-family: Arial, sans-serif !important;
+}
 
 .layout-plataforma .user-photo:hover,
 .layout-plataforma .user-photo:focus {

@@ -675,7 +675,9 @@ const formatarCNPJ = () => {
   gap: 0.75rem;           /* espaçamento entre os dois */
   margin-bottom: 1.5rem;
 }
-
+* {
+  font-family: Arial, sans-serif !important;
+}
 .radio-option {
   display: flex;
   align-items: center;

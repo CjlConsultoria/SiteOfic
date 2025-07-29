@@ -471,7 +471,9 @@ body, * {
     padding-top: 60px;
   }
 }
-
+* {
+  font-family: Arial, sans-serif !important;
+}
 html, body {
   margin: 0;
   padding: 0;

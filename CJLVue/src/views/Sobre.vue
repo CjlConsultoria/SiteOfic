@@ -335,8 +335,8 @@ section.bloco-recursos-tec
 </template>
 
 <style scoped>
-body, * {
-  font-family: 'SuaFonteEscolhida', sans-serif !important;
+* {
+  font-family: Arial, sans-serif !important;
 }
 @media (max-width: 768px) {
   section.bloco-sys .estrutura-sys .area-imagens-sys img.figura-esq-ti {

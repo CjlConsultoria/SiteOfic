@@ -1649,6 +1649,9 @@ color: #000;
   /* Borda lateral */
   border-left: 4px solid #2e2e2e;
 }
+* {
+  font-family: Arial, sans-serif !important;
+}
 
 
 .faq-title {

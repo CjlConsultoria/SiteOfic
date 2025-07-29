@@ -327,8 +327,8 @@ html, body {
   padding: 0;
   overflow-x: hidden; /* para evitar scroll horizontal */
 }
-body, * {
-  font-family: 'SuaFonteEscolhida', sans-serif !important;
+* {
+  font-family: Arial, sans-serif !important;
 }
 
 .btn-centralizado {

@@ -126,6 +126,22 @@ function enviarLigacao() {
 }
 </script>
 <style>
+@media (max-width: 768px) {
+  .registro-multi {
+    flex-direction: column;
+    padding: 32px 24px;
+    max-width: 100%;
+    height: auto;
+    min-height: 430px;
+    margin-top: 50px !important; /* força a margem no mobile */
+  }
+
+  .imagem-container {
+    display: none;
+  }
+}
+
+
 .circulo-icone {
   border: 2px solid white;     /* Borda branca */
   border-radius: 50%;          /* Formato de círculo */
@@ -232,7 +248,9 @@ button.close {
 .btn-enviar:hover {
   background-color: #ffffff;
 }
-
+* {
+  font-family: Arial, sans-serif !important;
+}
 .link-aux {
   font-size: 0.8rem;
   color: #1a56db;
