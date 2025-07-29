@@ -240,7 +240,7 @@ async function buscarUsuarioLogado() {
     usuario.numero = dados.numero || ''
     usuario.complemento = dados.complemento || ''
     usuario.bairro = dados.bairro || ''
-    usuario.nomeEmpresa = dados.nomeEmpresa || ''
+    usuario.nomeEmpresa = dados.empresaNome || ''
     usuario.codigoPublico = dados.codigoPublico || ''
 
   } catch (erro) {

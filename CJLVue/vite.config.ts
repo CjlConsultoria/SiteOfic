@@ -5,17 +5,21 @@ import vueDevTools from 'vite-plugin-vue-devtools'
 import { fileURLToPath, URL } from 'node:url'
 
 export default defineConfig({
-  plugins: [
-    vue(),
-    vueJsx(),
-    vueDevTools(),
-  ],
+  plugins: [vue(), vueJsx(), vueDevTools()],
   resolve: {
     alias: {
-      '@': fileURLToPath(new URL('./src', import.meta.url))
+      '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
   },
   server: {
-    port: 3000, // troca aqui para a porta que quiser testar
+    host: '0.0.0.0',
+    port: 3000,
+    strictPort: true,
+  },
+  preview: {
+    host: '0.0.0.0',
+    port: parseInt(process.env.PORT || '4173'),
+    strictPort: true,
+    allowedHosts: ['www.cjlconsultoria.com', 'cjlconsultoria.com', 'localhost', '127.0.0.1'],
   },
 })
