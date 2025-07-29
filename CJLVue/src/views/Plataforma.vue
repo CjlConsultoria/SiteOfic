@@ -216,8 +216,7 @@ async function buscarUsuarioLogado() {
     usuario.numero = dados.numero || ''
     usuario.complemento = dados.complemento || ''
     usuario.bairro = dados.bairro || ''
-    usuario.nomeEmpresa = dados.nomeEmpresa || ''
-    usuario.codigoPublico = dados.codigoPublico || ''
+    usuario.nomeEmpresa = dados.empresaNome || ''
 
   } catch (erro) {
     console.error('Erro ao buscar usuário logado:', erro)

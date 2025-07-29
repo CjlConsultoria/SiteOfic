@@ -578,14 +578,15 @@ const proximaEtapa = () => {
 // Envio final para backend
 const enviarCadastro = async () => {
   try {
-    const ehPJ = form.tipoPessoa === 'pj';
+    const ehPJ = form.ehPessoaJuridica === true;
+
 
     const user = {
       nome: form.nome.trim(),
       sobrenome: form.sobrenome.trim(),
       apelido: form.apelido.trim(),
       telefone: form.telefone,
-      pj: ehPJ,
+      pj: form.ehPessoaJuridica,
       cpf: form.cpf.replace(/\D/g, ''),
       diaNascimento: Number(form.dia),
       mesNascimento: Number(form.mes),

@@ -27,6 +27,7 @@ public class DadosUserService {
         DadosUserResponseDTO.DadosUserResponseDTOBuilder builder = DadosUserResponseDTO.builder()
                 .nome(dadosUser.getNome())
                 .sobrenome(dadosUser.getSobrenome())
+                .cpf(dadosUser.getCpf())
                 .apelido(dadosUser.getApelido())
                 .email(dadosUser.getEmail())
                 .genero(dadosUser.getGenero())
