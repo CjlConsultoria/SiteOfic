@@ -161,11 +161,6 @@ function enviarLigacao() {
   height: 48px;
 }
 
-
-section.registro-multi {
-  /* seu estilo normal aqui */
-}
-
 /* Estilos do modal */
 .modal-esqueci {
   position: fixed;
