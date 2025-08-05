@@ -23,6 +23,9 @@ public class SenhaResetService {
     @Autowired
     private SenhaResetRepository tokenRepository;
 
+    @Autowired
+    private EmailService emailService;
+
 
     public void solicitarRedefinicaoSenha(String email) {
         User user = userRepository.findByEmail(email)
@@ -38,6 +41,10 @@ public class SenhaResetService {
         tokenRepository.save(resetToken);
 
         System.out.println("Link de redefinição: http://localhost:8080/api/auth/resetar-senha?token=" + token);
+
+        String link = "http://localhost:8080/convivium/api/auth/resetar-senha?token=" + token;
+
+        emailService.enviarEmailRedefinicaoSenha(user.getEmail(), link);
     }
 
     public void redefinirSenha(String token, String novaSenha) {

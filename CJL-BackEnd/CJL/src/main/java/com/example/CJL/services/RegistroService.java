@@ -25,7 +25,7 @@ public class RegistroService {
     private final RoleRepository roleRepository;
     private final ViaCepService viaCepService;
     private final PasswordEncoder passwordEncoder;
-    private final VerificationService verificationService;
+    private final EmailService verificationService;
 
     public Map<String, String> registrarUsuario(RegistroCompletoDTO registro) {
 
