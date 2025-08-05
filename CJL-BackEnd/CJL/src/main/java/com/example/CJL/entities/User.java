@@ -24,7 +24,8 @@ public class User {
 
     @Column(unique = true)
     private String email;
-
+    @Column(nullable = false)
+    private boolean enabled = false;
     private String senha;
     private int diaNascimento;
     private int mesNascimento;

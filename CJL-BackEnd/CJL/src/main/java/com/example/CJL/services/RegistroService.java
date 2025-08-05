@@ -25,6 +25,7 @@ public class RegistroService {
     private final RoleRepository roleRepository;
     private final ViaCepService viaCepService;
     private final PasswordEncoder passwordEncoder;
+    private final VerificationService verificationService;
 
     public Map<String, String> registrarUsuario(RegistroCompletoDTO registro) {
 
@@ -78,7 +79,7 @@ public class RegistroService {
         user.getRoles().add(defaultRole);
 
         userRepository.save(user);
-
+        verificationService.enviarEmailConfirmacao(user);
         return Map.of("message", "Usuário registrado com sucesso");
     }
 }
