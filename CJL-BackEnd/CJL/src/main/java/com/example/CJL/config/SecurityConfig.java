@@ -1,5 +1,6 @@
 package com.example.CJL.config;
 
+import com.example.CJL.exception.ApiException;
 import com.example.CJL.security.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -37,6 +38,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/usuarios/**").permitAll()
                         .anyRequest().authenticated()
                 )
+
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         http.headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()));

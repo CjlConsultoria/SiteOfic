@@ -3,6 +3,7 @@ package com.example.CJL.services;
 import com.example.CJL.dtos.response.DadosUserResponseDTO;
 import com.example.CJL.dtos.request.UserRequestDTO;
 import com.example.CJL.entities.User;
+import com.example.CJL.exception.ApiException;
 import com.example.CJL.repositories.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +16,7 @@ public class AdminService {
     private UserRepository userRepository;
     public DadosUserResponseDTO atualizarUsuario(Long id, UserRequestDTO dto) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado"));
+                .orElseThrow(() -> new ApiException.NotFoundException("Usuário não encontrado: "));
 
         user.setNome(dto.getNome());
         user.setSobrenome(dto.getSobrenome());
@@ -36,7 +37,7 @@ public class AdminService {
 
     public void deletarUsuario(Long id) {
         if (!userRepository.existsById(id)) {
-            throw new EntityNotFoundException("Usuário não encontrado");
+            throw new ApiException.NotFoundException("Usuário não encontrado" + id);
         }
         userRepository.deleteById(id);
     }
@@ -63,5 +64,4 @@ public class AdminService {
                         .toList())
                 .build();
     }
-
 }

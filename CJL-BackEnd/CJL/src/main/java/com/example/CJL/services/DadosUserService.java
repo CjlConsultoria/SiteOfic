@@ -2,10 +2,10 @@ package com.example.CJL.services;
 
 import com.example.CJL.dtos.response.DadosUserResponseDTO;
 import com.example.CJL.entities.Empresa;
+import com.example.CJL.exception.ApiException;
 import com.example.CJL.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -20,7 +20,7 @@ public class DadosUserService {
         var optionalUser = userRepository.findByEmail(email);
 
         if (optionalUser.isEmpty()) {
-            throw new UsernameNotFoundException("Usuário não encontrado");
+            throw new ApiException.NotFoundException("Usuário não encontrado");
         }
 
         var dadosUser = optionalUser.get();

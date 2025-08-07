@@ -1,6 +1,7 @@
 package com.example.CJL.services;
 
 import com.example.CJL.entities.User;
+import com.example.CJL.exception.ApiException;
 import com.example.CJL.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
@@ -20,12 +21,12 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("Usuário com e-mail " + email + " não encontrado."));
+                .orElseThrow(() -> new ApiException.NotFoundException("Usuário com e-mail " + email + " não encontrado."));
 
 
 
         if (user.getRoles() == null || user.getRoles().isEmpty()) {
-            throw new InsufficientAuthenticationException("Usuário não possui permissões (roles) atribuídas.");
+            throw new ApiException.UnauthorizedException("Usuário não possui permissões (roles) atribuídas.");
         }
 
         List<SimpleGrantedAuthority> authorities = user.getRoles().stream()

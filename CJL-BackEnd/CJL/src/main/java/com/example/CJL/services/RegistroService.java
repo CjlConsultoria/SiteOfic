@@ -7,10 +7,12 @@ import com.example.CJL.dtos.enums.RoleName;
 import com.example.CJL.entities.Empresa;
 import com.example.CJL.entities.Role;
 import com.example.CJL.entities.User;
+import com.example.CJL.exception.ApiException;
 import com.example.CJL.repositories.EmpresaRepository;
 import com.example.CJL.repositories.RoleRepository;
 import com.example.CJL.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -33,11 +35,13 @@ public class RegistroService {
         String email = dto.getEmail();
         EmpresaRequestDTO empresaDto = registro.getEmpresa();
 
-        if (userRepository.existsByEmail(dto.getEmail())) {
-            return Map.of("message", "Email já utilizado");
-        }
-
-        User user = new User();
+        if (userRepository.existsByEmail(email)) {
+            throw new ApiException(
+                    HttpStatus.BAD_REQUEST.value(),
+                    "Email já utilizado",
+                    "O email fornecido já está em uso."
+            );
+        }       User user = new User();
         user.setNome(dto.getNome());
         user.setSobrenome(dto.getSobrenome());
         user.setApelido(dto.getApelido());
