@@ -428,7 +428,7 @@ section.cards-container
 /* Celulares até 767px */
 @media (max-width: 767px) {
   .shape-left {
-    padding-left: 40px; /* aumenta recuo da esquerda para aproximar o texto da borda */
+    padding-left: 10px; /* aumenta recuo da esquerda para aproximar o texto da borda */
     text-align: left;    /* garante alinhamento à esquerda */
   }
 }
