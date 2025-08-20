@@ -1146,6 +1146,8 @@ section.cards-container
   gap: 4px;                /* pequeno espaço entre os botões */
   margin-top: 2rem;
   padding: 0;
+  margin-bottom: 5rem;
+
 }
 
 .paginacao button {

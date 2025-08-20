@@ -408,9 +408,7 @@ section.cards-container
 
       .card-right
         .card-rating
-          i.icon-star ★
-          span.rating {{ card.rating }}
-        p.card-reviews {{ card.reviews }} avaliações
+   
         button.software-card-button Contratar
   
   
@@ -427,6 +425,21 @@ section.cards-container
 </template>
 
 <style scoped>
+/* Celulares até 767px */
+@media (max-width: 767px) {
+  .shape-left {
+    padding-left: 40px; /* aumenta recuo da esquerda para aproximar o texto da borda */
+    text-align: left;    /* garante alinhamento à esquerda */
+  }
+}
+
+/* Tablets 768px até 1024px */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .shape-left {
+    padding-left: 40px; /* ajusta para tablet */
+    text-align: left;
+  }
+}
 
 .cookie-banner-wrapper p {
   color: #000;
@@ -595,6 +608,9 @@ section.cards-container
     min-width: 120px;      /* largura mínima para não ficar muito pequeno */
   }
 }
+
+
+
 
 .loading-overlay {
   position: fixed;
@@ -1058,6 +1074,7 @@ section.cards-container
   gap: 4px;                /* pequeno espaço entre os botões */
   margin-top: 2rem;
   padding: 0;
+  margin-bottom: 5rem;
 }
 
 .paginacao button {
@@ -1184,11 +1201,11 @@ label.software-card-checkbox.disabled {
   display: flex;
   flex-direction: column;
   border: 1px solid #ddd;
-  border-left: 4px solid #ff5100;
+  border-left: 4px solid #ffa600;
   border-radius: 12px;
   height: 390px; /* define altura fixa */
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-  background: #141414;
+  background: #202020;
   position: relative;
   margin-top: 10px;
   min-height: 100px; /* diminui a altura mínima */
@@ -1419,6 +1436,8 @@ h2 {
     transform: translateY(-50%) translateX(0px) !important; /* corrige a seta */
   }
 }
+/* Celulares até 767px */
+
 
 @media (max-width: 992px) {
   .banner-with-text {
@@ -1429,14 +1448,15 @@ h2 {
   }
 
   .shape-left {
-    width: 70% !important;
-    padding: 1rem 2rem !important;
+    width: 90% !important;
+    padding: 1rem 0rem !important;
   }
 
   .shape-left h1.title {
     font-size: 2rem !important;
     line-height: 2.5rem !important;
     text-align: center;
+    
   }
 
   .shape-left p.description {

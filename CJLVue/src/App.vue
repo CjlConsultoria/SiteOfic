@@ -246,8 +246,8 @@ div.layout-wrapper(:class="{ 'layout-plataforma': ehPlataforma }")
           RouterLink(to="/blog") Blog
           //-RouterLink(to="/plataforma") Plataforma
           .mobile-auth-buttons
-            //-a.external-btn.link-btn(href="/login") Login
-            //-RouterLink.external-btn.link-btn(to="/registre") Registre-se
+            a.external-btn.link-btn(href="/login") Login
+            RouterLink.external-btn.link-btn(to="/registre") Registre-se
             button.external-btn(@click="irParaURLExterna") Convivium
 
         //- Menu desktop - visível apenas em telas maiores via CSS
@@ -262,8 +262,8 @@ div.layout-wrapper(:class="{ 'layout-plataforma': ehPlataforma }")
 
         //- Botões de login/registro
         .auth-buttons
-          //-a.external-btn.link-btn(href="/login") Login
-          //-RouterLink.external-btn.link-btn(to="/registre") Registre-se
+          a.external-btn.link-btn(href="/login") Login
+          RouterLink.external-btn.link-btn(to="/registre") Registre-se
           button.external-btn(@click="irParaURLExterna") Convivium
   
   //- Conteúdo principal
