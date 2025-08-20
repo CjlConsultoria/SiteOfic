@@ -24,6 +24,7 @@ const enviarFormulario = () => {
   mensagem.value = ''
 }
 
+
 // Cards do slider (exemplo com 2 por página)
 const cards = [
   {
@@ -113,6 +114,7 @@ onUnmounted(() => {
   if (slideInterval) clearInterval(slideInterval)
 })
 
+
 // Contadores animados na seção clientes
 const counter1 = ref(0)
 const counter2 = ref(0)
@@ -200,6 +202,7 @@ onUnmounted(() => {
   intervals = []
 })
 
+
 // Scroll suave para seção Sobre
 const sobre = ref<HTMLElement | null>(null)
 function scrollToSobre() {
@@ -228,6 +231,7 @@ onUnmounted(() => {
   window.removeEventListener('scroll', onScroll)
 })
 
+
 // Frases rotativas no hero
 const frases = [
   'Controle completo para oficinas',
@@ -249,6 +253,8 @@ onUnmounted(() => {
   clearInterval(intervalo)
 })
 
+
+// Cards flip
 const cartoes = ref([
   {
     titulo: 'Sistema de Gestão para Condomínios',
@@ -257,11 +263,11 @@ const cartoes = ref([
     flip: false
   },
   {
-  titulo: 'Sistema para Oficinas Mecânicas',
-  icon: 'https://cdn.jsdelivr.net/npm/lucide-static/icons/wrench.svg',
-  textoTraseiro: 'Tenha total controle sobre ordens de serviço, estoque de peças, histórico de clientes, controle financeiro e gestão de agendamentos.',
-  flip: false
-},
+    titulo: 'Sistema para Oficinas Mecânicas',
+    icon: 'https://cdn.jsdelivr.net/npm/lucide-static/icons/wrench.svg',
+    textoTraseiro: 'Tenha total controle sobre ordens de serviço, estoque de peças, histórico de clientes, controle financeiro e gestão de agendamentos.',
+    flip: false
+  },
   {
     titulo: 'Gestão de Folha de Pagamento',
     icon: 'https://cdn.jsdelivr.net/npm/lucide-static/icons/file-text.svg',
@@ -288,9 +294,7 @@ const cartoes = ref([
   }
 ])
 
-
 function toggleFlip(index: number) {
-  // Faz um deep clone do array para forçar reatividade completa
   cartoes.value = cartoes.value.map((card, i) => {
     if (i === index) {
       return { ...card, flip: !card.flip }
@@ -299,14 +303,64 @@ function toggleFlip(index: number) {
     }
   })
 }
+const cookieAceito = ref(false)
 
+onMounted(() => {
+  cookieAceito.value = localStorage.getItem('cookieAceito') === 'true'
+})
 
+function aceitarCookie() {
+  localStorage.setItem('cookieAceito', 'true')
+  cookieAceito.value = true
+}
 
+// Novo método para rejeitar cookies
+function rejeitarCookie() {
+  localStorage.setItem('cookieAceito', 'true') // fecha o banner
+  cookieAceito.value = true
+  // aqui você pode limpar cookies indesejados se houver
+}
+const loading = ref(true)
+const showLoader = ref(true)
 
+onMounted(() => {
+  // Spinner aparece imediatamente
+  showLoader.value = true
+
+  // Aguarda 10 segundos antes de começar a abrir a tela preta
+  setTimeout(() => {
+    showLoader.value = false // esconde spinner
+
+    const topHalf = document.querySelector('.top-half')
+    const bottomHalf = document.querySelector('.bottom-half')
+
+    if (topHalf && bottomHalf) {
+      topHalf.classList.add('slide-up')
+      bottomHalf.classList.add('slide-down')
+    }
+
+    // Remove overlay depois da animação (mesma duração da animação)
+    setTimeout(() => {
+      loading.value = false
+    }, 50000) // duração da animação das metades
+  }, 10000) // espera 10s antes de abrir
+})
 </script>
 
 
 <template lang="pug">
+
+//- Overlay de pré-carregamento
+.loading-overlay(v-if="loading")
+  .top-half
+  .bottom-half
+  .loader-container(v-if="showLoader")
+    
+
+
+
+
+
 main.home
   //- HERO
   section.hero
@@ -318,7 +372,16 @@ main.home
         span.frase-atual {{ frases[indiceFrase] }}
       .seta(@click="scrollToSobre")
         svg(xmlns="http://www.w3.org/2000/svg" width="36" height="36" fill="white" viewBox="0 0 24 24")
-          path(d="M12 16.5l-8-8L5.5 7l6.5 6.5L18.5 7 20 8.5z")
+          path(d="M12 16.5l-8-8L5.5 7l6.5 6.5L18.5 7 20 8.5z")  
+
+  //- Banner de Cookies
+  .cookie-banner-wrapper(v-if="!cookieAceito")
+    p Clicando em "Aceito todos os Cookies", você concorda com o armazenamento de cookies no seu dispositivo para melhorar a experiência e navegação no site.
+    .botoes-cookie
+      button(@click="aceitarCookie") Aceitar Todos
+      button(@click="rejeitarCookie") Rejeitar Todos
+
+
 
   //- SOBRE
   section.sobre(ref="sobre")
@@ -455,6 +518,493 @@ section.formulario-contato
 </template>
 
 <style scoped>
+/* Mobile: telas pequenas até 480px */
+
+/* Celulares pequenos */
+@media (max-width: 480px) {
+  .cookie-banner-wrapper {
+    width: 90% !important;            /* ocupa mais da tela */
+    padding: 0.8rem 1rem;  /* reduz padding */
+    font-size: 0.85rem;    /* fonte menor */
+    flex-direction: column; /* coloca texto e botões em coluna */
+    align-items: center;
+    text-align: center;
+  }
+
+  .cookie-banner-wrapper p {
+    max-width: 100%;       /* não ultrapassa a largura do wrapper */
+    margin-bottom: 0.5rem;
+  }
+
+  .botoes-cookie {
+    flex-direction: column; /* botões empilhados */
+    gap: 8px;
+  }
+
+  .botoes-cookie button {
+    width: 100%;           /* cada botão ocupa toda a largura */
+  }
+}
+
+/* Tablets */
+@media (min-width: 481px) and (max-width: 768px) {
+  .cookie-banner-wrapper {
+    width: 80%;            /* ocupa menos que no celular pequeno */
+    padding: 1rem 1.2rem;
+    font-size: 0.9rem;
+    flex-direction: column; 
+    align-items: center;
+    text-align: center;
+  }
+
+  .cookie-banner-wrapper p {
+    max-width: 100%;
+    margin-bottom: 0.5rem;
+  }
+
+  .botoes-cookie {
+    flex-direction: row;   /* botões lado a lado */
+    justify-content: center;
+    gap: 10px;
+  }
+
+  .botoes-cookie button {
+    width: auto;           /* largura natural do botão */
+    min-width: 120px;      /* largura mínima para não ficar muito pequeno */
+  }
+}
+
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 99999;
+  pointer-events: none;
+}
+
+.top-half,
+.bottom-half {
+  position: absolute;
+  width: 100%;
+  height: 50%;
+  background-color: #000;
+  transform: translateY(0);
+  z-index: 99998;
+  animation-fill-mode: forwards;
+  animation-timing-function: ease-in-out;
+  animation-duration: 5s; /* duração da abertura */
+}
+
+.top-half.slide-up {
+  animation-name: slideUp;
+  top: 0;
+}
+
+.bottom-half.slide-down {
+  animation-name: slideDown;
+  bottom: 0;
+}
+
+@keyframes slideUp {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-100%); }
+}
+
+@keyframes slideDown {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(100%); }
+}
+
+/* Loader */
+.loader-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 100000;
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 5px solid #fff;
+  border-top: 5px solid #ff8c00;
+  border-radius: 50%;
+
+}
+
+
+
+
+.loading-overlay .top-half,
+.loading-overlay .bottom-half {
+  position: absolute;
+  width: 100%;
+  height: 50%;
+  background-color: #000;
+  animation-duration: 1s;
+  animation-fill-mode: forwards;
+}
+
+/* animação da metade de cima subindo */
+.loading-overlay .top-half {
+  top: 0;
+  animation-name: slideUp;
+}
+
+/* animação da metade de baixo descendo */
+.loading-overlay .bottom-half {
+  bottom: 0;
+  animation-name: slideDown;
+}
+
+@keyframes slideUp {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-100%); }
+}
+
+@keyframes slideDown {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(100%); }
+}
+
+.cookie-banner-wrapper p {
+  color: #000;
+  text-align: left;
+  font-family: Arial, Helvetica, sans-serif;
+  max-width: 450px; /* largura máxima do texto */
+  word-wrap: break-word; /* força a quebra de linha se ultrapassar */
+  
+}
+
+.cookie-banner-wrapper {
+  position: fixed;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%) translateY(50px); /* começa 50px abaixo */
+  width: 60%;
+  max-width: 1200px;
+  background-color: white;
+  color: white;
+  padding: 1rem 1.5rem;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+  z-index: 9999;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  opacity: 0; /* começa invisível */
+  animation: mostrarCookie 10s forwards; /* animação de 3s e mantém estado final */
+}
+
+@keyframes mostrarCookie {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(50px); /* começa abaixo */
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0); /* final na posição correta */
+  }
+}
+
+
+.botoes-cookie {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.botoes-cookie button {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.botoes-cookie button:first-child {
+  background-color: #ff8c00; /* Aceitar */
+  color: white;
+}
+
+.botoes-cookie button:last-child {
+  background-color: #555; /* Rejeitar todos */
+  color: white;
+}
+
+.botoes-cookie button:first-child {
+  background-color: #ff8c00; /* Aceitar */
+  color: white;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.botoes-cookie button:first-child:hover {
+  background-color: #ff6600; /* tom mais escuro no hover */
+  transform: scale(1.05);   /* leve aumento ao passar o mouse */
+}
+
+.botoes-cookie button:last-child {
+  background-color: #555; /* Rejeitar todos */
+  color: white;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.botoes-cookie button:last-child:hover {
+  background-color: #333; /* tom mais escuro no hover */
+  transform: scale(1.05); /* leve aumento ao passar o mouse */
+}
+
+
+
+
+
+
+@media (min-width: 768px) and (max-width: 1024px) {
+  /* Wrapper que contém os cards */
+  .cards-wrapper-nx {
+    display: flex !important;
+    justify-content: center;   /* centraliza horizontalmente */
+    align-items: center;       /* centraliza verticalmente */
+    gap: 1.5rem;               /* espaço entre os cards */
+    position: relative;
+    left: 0px;                 /* ajuste de deslocamento */
+  }
+
+  /* Slide track */
+  .slide-track-nx {
+    display: flex !important;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: nowrap;
+    transform: none !important;
+  }
+
+  /* Cada card aumentado */
+
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+  
+  .imagem-cjl {
+    display: flex;
+    align-items: center;     /* centraliza verticalmente */
+    justify-content: flex-start; /* alinha horizontalmente à esquerda */
+    height: 100%;            /* ocupa a altura do container pai */
+    padding-left: 90px;      /* opcional: desloca toda a imagem um pouco para a direita */
+  }
+
+  .imagem-cjl img {
+    max-width: 100%;
+    height: auto;
+    margin-left: 40px;       /* desloca a imagem individualmente para a direita */
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+  /* Aumenta a largura dos cards apenas em tablets */
+  .grid-clientes .card-metrica {
+    flex: 0 0 48%; /* cada card ocupa quase metade da largura do container */
+    max-width: 88%;
+  }
+  
+  /* Se quiser, mantém gap entre os cards */
+  .grid-clientes {
+    gap: 2rem; /* ajusta espaçamento entre cards */
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+  /* Aumenta o título e ajusta margem superior para tablets */
+  section.sobre h2 {
+    font-size: 2.5rem !important;  /* aumenta o tamanho do título */
+    margin-top: -1rem !important;   /* diminui a margem superior */
+  }
+ section.sobre .container {
+    min-height: auto !important;   /* deixa altura depender do conteúdo */
+    padding-bottom: 3rem !important; /* reduz espaço inferior */
+    box-sizing: border-box;
+  }
+  /* Opcional: ajusta margens dos parágrafos se quiser mais compactação */
+  section.sobre .container p {
+    font-size: 1.2rem !important;  /* aumenta a fonte para tablets */
+    line-height: 1.6 !important;   /* melhora legibilidade */
+  }
+}
+@media (min-width: 768px) and (max-width: 768px) and (orientation: portrait) {
+  section.sobre .container h2,
+  section.sobre .container p {
+    margin-top: 2rem !important; /* desloca o texto para baixo */
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+   .cartao-nx .frente .titulo-cartao-frente p {
+    font-size: 1.5rem !important;  /* aumenta o tamanho do texto */
+    line-height: 1.4 !important;   /* melhora espaçamento */
+  }
+  .cartao-nx .tras p {
+    font-size: 1.3rem !important;  /* aumenta o tamanho do texto */
+    line-height: 1.5 !important;   /* melhora espaçamento */
+  }
+    .cartao-nx .botao-nx {
+    padding: 1.3rem 1.3rem !important;  /* aumenta o espaço interno do botão */
+    font-size: 1.2rem !important;   /* aumenta o tamanho da fonte */
+  }
+  .bloco-solucao-nx {
+    padding: 6rem 2rem 8rem 2rem; /* mais espaço superior e inferior */
+    min-height: auto; /* deixa o tamanho depender do conteúdo */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    width: 100%;
+    background-color: #181818; /* se quiser ver o fundo */
+    box-sizing: border-box;
+  }
+  .conteudo-solucao-nx {
+    display: flex;
+    flex-direction: column; /* texto + cards + imagem */
+    align-items: center;
+    gap: 2rem;
+  }
+
+
+  /* Força a grade a usar flex e centralizar cards */
+  .grade-cartoes-nx {
+    display: flex !important;  /* força flex */
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 2rem;
+    width: 100% !important; /* garante largura total da seção */
+  }
+
+  /* Cards mais largos */
+  .cartao-nx {
+    flex: 0 0 60% !important; /* força cada card ocupar 60% da largura da tela do tablet */
+    max-width: 60% !important;
+    min-height: 220px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 1rem;
+  }
+
+  .cartao-nx .frente img.icone-nx {
+    width: 70px;
+    height: 70px;
+  }
+
+  .cartao-nx .titulo-cartao-frente p {
+    font-size: 1.1rem;
+  }
+
+  .cartao-nx .tras p {
+    font-size: 1rem;
+  }
+
+  .botao-nx {
+    padding: 0.6rem 1.2rem;
+    font-size: 1rem;
+  }
+
+  /* Imagem abaixo dos cards */
+  .texto-solucao-nx img.logo-solucao-nx {
+    order: 1; /* coloca a imagem depois dos cards */
+    margin-top: 2rem;
+    width: 250px; /* aumenta tamanho da logo */
+    height: auto;
+    display: block;
+    align-self: center;
+  }
+}
+@media (min-width: 768px) and (max-width: 1024px) {
+  .bloco-solucao-nx {
+    display: flex;
+    flex-direction: column;
+    align-items: center;       /* centraliza horizontalmente */
+    justify-content: center;   /* centraliza verticalmente */
+    min-height: 100vh;         /* ocupa toda a altura da tela do tablet */
+    padding: 0 2rem;           /* espaçamento lateral */
+    background-color: #181818; /* fundo da seção */
+    box-sizing: border-box;
+  }
+
+
+
+  /* Opcional: esconde os cards momentaneamente se quiser que o subtítulo fique totalmente central */
+  .grade-cartoes-nx,
+  .texto-solucao-nx img.logo-solucao-nx {
+    display: none;
+  }
+}
+@media (min-width: 768px) and (max-width: 1024px) {
+  /* Faz a seção ocupar toda a tela do tablet e centralizar verticalmente */
+  .bloco-solucao-nx {
+    display: flex;
+    flex-direction: column;
+    align-items: center;       /* centraliza horizontalmente todo o conteúdo */
+    justify-content: center;   /* centraliza verticalmente */
+    min-height: 100vh;         /* altura total da tela do tablet */
+    padding: 0 2rem;
+    background-color: #181818;
+    box-sizing: border-box;
+    width: 100%;               /* garante largura total da tela */
+  }
+
+  /* Faz o container de texto ocupar 100% da largura e centralizar conteúdo */
+
+}
+@media (min-width: 768px) and (max-width: 1024px) {
+  .texto-solucao-nx {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    /* align-items: center; */  
+    text-align: center;
+    font-size: 7rem;
+  }
+
+  .subtitulo-nx {
+    margin: 0 0 0 80px; /* desloca 80px para a direita */
+    font-size: 3rem !important;
+    text-align: left;   /* mantém alinhamento à esquerda dentro do subtítulo */
+  }
+}
+@media (min-width: 768px) and (max-width: 1024px) {
+  .texto-solucao-nx {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    font-size: 3rem !important; /* aumenta fonte de todos os textos dentro */
+  }
+
+  /* Força todos os filhos diretos a herdar a fonte maior */
+  .texto-solucao-nx * {
+    font-size: inherit !important;
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 body, * {
   font-family: 'SuaFonteEscolhida', sans-serif !important;
 }
@@ -1266,7 +1816,7 @@ textarea:focus {
   background-color: #000000;
   padding: 60px 30px;
   font-family: Arial, sans-serif;
-  max-height: 1500px;
+  max-height: 1900px;
 }
 
 .conteudo-solucao-nx {

@@ -335,24 +335,161 @@ section.bloco-recursos-tec
 </template>
 
 <style scoped>
-* {
-  font-family: Arial, sans-serif !important;
+/* Para todos os tablets (largura entre 768px e 1024px) */
+@media (min-width: 768px) and (max-width: 1024px) {
+
+  /* Sessão Consultoria: empilha texto acima da imagem */
+  .sessao-consultoria {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+    gap: 2rem !important;
+  }
+
+  .texto-lado {
+    order: -1 !important; /* texto acima da imagem */
+    width: 100% !important;
+    flex: 0 0 100% !important;
+    padding: 0 1rem !important;
+    text-align: center !important;
+  }
+
+  .titulo-consultoria {
+    font-size: 1.8rem !important;
+  }
+
+  .descricao-consultoria {
+    font-size: 1rem !important;
+    line-height: 1.5 !important;
+    text-align: justify !important;
+  }
+
+  .imagem-lado {
+    width: 100% !important;
+    flex: 0 0 100% !important;
+    margin-top: 0 !important;
+  }
+
+  .imagem-lado img {
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+    object-fit: cover !important;
+  }
+
+  /* Bloco SYS: empilha imagens e textos */
+
+
+
 }
-@media (max-width: 768px) {
-  section.bloco-sys .estrutura-sys .area-imagens-sys img.figura-esq-ti {
-    margin-left: 30px !important;
-    
+
+
+
+/* Opcional: ajustar fontes e espaçamento do texto */
+@media (max-width: 1180px) and (min-width: 820px) {
+  .texto-lado h2 {
+    font-size: 1.8rem; /* ajusta título */
+  }
+
+  .texto-lado p {
+    font-size: 1rem;   /* ajusta parágrafo */
+    line-height: 1.5;
   }
 }
-@media (max-width: 768px) {
-  section.bloco-sys .estrutura-sys .area-imagens-sys {
-    margin-bottom: 90px;
+
+@media (min-width: 767px) and (max-width: 769px) {
+  .bloco-recursos-tec .estrutura-recursos-tec {
+    position: relative;
+    top: -15rem; /* ajusta o valor conforme necessário para subir o conteúdo */
   }
 }
-@media (max-width: 428px) {
-  .figura-esq-ti {
-    left: 20px !important;
+
+/* Tentativa de afetar apenas o tablet aproximado 768px de largura */
+@media (min-width: 767px) and (max-width: 769px) {
+  .bloco-sys .area-texto-sys {
+    position: relative;
+    top: -15rem; /* sobe o texto apenas nesse intervalo estreito */
   }
+}
+
+/* Aplica apenas em telas entre 768px e 1024px */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .bloco-sys .area-texto-sys {
+    position: relative; /* permite deslocamento */
+  
+  }
+
+  .bloco-sys .titulo-destaque-ti {
+    font-size: 2rem;    /* ajusta tamanho do título */
+  }
+
+  .bloco-sys .descricao-detalhe-ti {
+    font-size: 1rem;    /* ajusta tamanho do texto */
+  }
+}
+
+/* Esconder imagens da seção bloco-sys em tablets */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .bloco-sys .figura-esq-ti,
+  .bloco-sys .figura-dir-ti {
+    display: none !important;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+  /* Centraliza todas as imagens da área de imagens no tablet */
+  :deep(.area-imagens-sys) {
+    display: flex !important;
+    justify-content: center !important; /* centraliza horizontalmente */
+    align-items: center !important;
+    flex-direction: column !important;  /* empilha se houver mais de uma imagem */
+  }
+
+  /* Opcional: limita o tamanho das imagens */
+  :deep(.area-imagens-sys img) {
+    max-width: 80% !important;
+    height: auto !important;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+  /* Banner: ajuste da imagem e shape-left */
+  :deep(.banner-container) {
+    align-items: flex-start;
+  }
+
+  :deep(.banner-image) {
+    height: 560px !important; /* altura intermediária */
+    width: 100% !important;   /* ocupa todo o container */
+    object-fit: cover;
+    flex-shrink: 0;
+  }
+
+  :deep(.shape-left) {
+    width: 70% !important;       /* largura menor */
+    max-width: 500px !important;
+    padding: 2rem 1.5rem !important;
+  }
+
+  /* Sessão consultoria: texto em cima, imagem embaixo */
+  :deep(.sessao-consultoria) {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+    gap: 1.5rem !important;
+  }
+
+  :deep(.texto-lado) {
+    order: -1 !important;   /* texto acima da imagem */
+    max-width: 700px !important;
+    width: 100% !important;
+  }
+
+
+  /* Bloco SYS: esconde imagens */
+ 
 }
 
 
@@ -441,12 +578,14 @@ display: block;
     display: block !important;
     max-width: 90% !important;
     height: auto !important;
-    margin: 13rem 0 0 0 !important; /* aumenta a margem superior pra empurrar pra baixo */
-    transform: translateX(20px) !important; /* mantém o deslocamento pra direita */
-    max-height: 300px !important; /* aumenta altura máxima da imagem */
-    width: auto !important; /* largura automática para manter proporção */
+    margin-top: 10rem !important;   /* margem superior */
+    margin-bottom: 3rem !important; /* margem inferior para espaçamento */
+    transform: translateX(60px) !important;
+    max-height: 300px !important;
+    width: auto !important;
   }
 }
+
 @media (max-width: 768px) {
  
   .etiqueta-sys,
@@ -744,6 +883,7 @@ html {
   align-items: center;
   gap: 2.5rem;
   flex-wrap: wrap;
+  
 }
 
 .area-imagens-sys {

@@ -1,23 +1,37 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from 'vue'
-import contaImg from '@/assets/conta.png'  // ajuste a extensão conforme sua imagem
-import logoImg from '@/assets/logocjl.png'  // ajuste o caminho e nome da logo
+import contaImg from '@/assets/conta.png'
+import logoImg from '@/assets/logocjl.png'
 import ImagemEquipe from '@/assets/consultoria.webp'
 import { useRouter } from 'vue-router'
+import LogoNexdom from '@/assets/cjl.jpg'
 
 // Definição das configurações básicas
-const cardWidthPx = 375 // largura fixa do card em px (ajuste se necessário)
+const cardWidthPx = ref(375) // largura fixa do card em px (ajuste se necessário)
 const visibleCardsDesktop = 3
 const visibleCardsMobile = 1
 
 // Estado para monitorar largura da janela (responsividade)
 const windowWidth = ref(window.innerWidth)
+const windowHeight = ref(window.innerHeight)
 
-// Atualiza o windowWidth ao redimensionar a tela
+// Atualiza o windowWidth e a largura do card ao redimensionar a tela
 function onResize() {
   windowWidth.value = window.innerWidth
+  windowHeight.value = window.innerHeight
+
+  // Apenas para 820x1180
+  if (windowWidth.value === 820 && windowHeight.value === 1180) {
+    cardWidthPx.value = 470
+  } else if (windowWidth.value < 768) {
+    cardWidthPx.value = 375 // celulares
+  } else {
+    cardWidthPx.value = 375 // padrão para desktops ou outros
+  }
 }
+
 onMounted(() => {
+  onResize() // define na inicialização
   window.addEventListener('resize', onResize)
 })
 onUnmounted(() => {
@@ -29,201 +43,282 @@ const visibleCards = computed(() => {
   return windowWidth.value <= 768 ? visibleCardsMobile : visibleCardsDesktop
 })
 
+// Índices dos sliders
+const currentIndexConsultoria = ref(0)
+const currentIndexSoftware = ref(0)
+
+// Máximo índice de cada slider
+const maxIndexConsultoria = computed(() => consultoriaCards.length - visibleCards.value)
+const maxIndexSoftware = computed(() => softwareCards.length - visibleCards.value)
+
+// Corrigido: deslocamento proporcional ao número de cards visíveis
+const translateXConsultoria = computed(() => {
+  return cardWidthPx.value * currentIndexConsultoria.value
+})
+const translateXSoftware = computed(() => {
+  return cardWidthPx.value * currentIndexSoftware.value
+})
+
+// Controles
+function prevConsultoria() {
+  if (currentIndexConsultoria.value > 0) currentIndexConsultoria.value--
+}
+function nextConsultoria() {
+  if (currentIndexConsultoria.value < maxIndexConsultoria.value) currentIndexConsultoria.value++
+}
+function prevSoftware() {
+  if (currentIndexSoftware.value > 0) currentIndexSoftware.value--
+}
+function nextSoftware() {
+  if (currentIndexSoftware.value < maxIndexSoftware.value) currentIndexSoftware.value++
+}
+
+const router = useRouter()
+const contratarPlano = (card: any) => {
+  console.log(`Plano selecionado: ${card.title}`)
+  router.push('/planos')
+}
+
+// Depoimento automático
+const depoimentoAtual = ref(0)
+let intervalo: number
+onMounted(() => {
+  intervalo = setInterval(() => {
+    depoimentoAtual.value = (depoimentoAtual.value + 1) % depoimentos.length
+  }, 5000)
+})
+onUnmounted(() => {
+  clearInterval(intervalo)
+})
+
 // Dados dos cards de consultoria
 const consultoriaCards = [
-  {
-    title: 'Plano Iniciante',
-    desc: 'Ideal para pequenos negócios que precisam de soluções básicas de TI.',
-    items: ['5 licenças de software', 'Suporte técnico via e-mail', 'Atualizações automáticas'],
-    preco: 'R$ 29,90/mês | R$ 299,00/ano',
-    buttonText: 'CONTRATAR'
-  },
-  {
-    title: 'Plano Essencial',
-    desc: 'Perfeito para equipes em crescimento que precisam de estabilidade e suporte.',
-    items: ['10 licenças de software', 'Suporte por chat e e-mail', 'Backups semanais', 'Painel de controle'],
-    preco: 'R$ 49,90/mês | R$ 499,00/ano',
-    buttonText: 'CONTRATAR'
-  },
-  {
-    title: 'Plano Profissional',
-    desc: 'Para empresas que precisam de escalabilidade e segurança avançada.',
-    items: ['20 licenças de software', 'Suporte remoto 24/7', 'Monitoramento de rede', 'Antivírus corporativo'],
-    preco: 'R$ 99,90/mês | R$ 999,00/ano',
-    buttonText: 'CONTRATAR'
-  },
-  {
-    title: 'Plano Corporativo',
-    desc: 'Solução completa para médias empresas com estrutura tecnológica robusta.',
-    items: ['30 licenças de software', 'Suporte dedicado', 'Controle de acesso por usuário', 'Integrações com ERP'],
-    preco: 'R$ 149,90/mês | R$ 1.499,00/ano',
-    buttonText: 'CONTRATAR'
-  },
-  {
-    title: 'Plano Empresarial',
-    desc: 'Consultoria e infraestrutura de TI sob demanda para grandes empresas.',
-    items: ['50 licenças de software', 'Gestão de TI completa', 'Treinamentos mensais', 'Automação de processos'],
-    preco: 'R$ 249,90/mês | R$ 2.499,00/ano',
-    buttonText: 'CONTRATAR'
-  },
-  {
-    title: 'Plano Avançado',
-    desc: 'Recursos avançados para equipes técnicas que precisam de flexibilidade.',
-    items: ['75 licenças de software', 'APIs dedicadas', 'Ambiente de testes', 'Logs em tempo real'],
-    preco: 'R$ 349,90/mês | R$ 3.499,00/ano',
-    buttonText: 'CONTRATAR'
-  },
-  {
-    title: 'Plano Premium',
-    desc: 'Experiência completa de TI com suporte exclusivo e SLA garantido.',
-    items: ['100 licenças de software', 'Suporte SLA 1h', 'Ambiente em nuvem privado', 'Acesso via VPN'],
-    preco: 'R$ 499,90/mês | R$ 4.999,00/ano',
-    buttonText: 'CONTRATAR'
-  },
-  {
-    title: 'Plano Ultra',
-    desc: 'Para empresas que exigem alta disponibilidade e segurança.',
-    items: ['150 licenças de software', 'Alta redundância', 'Auditorias de segurança trimestrais', 'Disaster Recovery'],
-    preco: 'R$ 699,90/mês | R$ 6.999,00/ano',
-    buttonText: 'CONTRATAR'
-  },
-  {
-    title: 'Plano Mega',
-    desc: 'Infraestrutura e consultoria contínua para operações críticas.',
-    items: ['200 licenças de software', 'Equipe dedicada de TI', 'Consultoria mensal personalizada', 'Relatórios de performance'],
-    preco: 'R$ 899,90/mês | R$ 8.999,00/ano',
-    buttonText: 'CONTRATAR'
-  },
-  {
-    title: 'Plano Enterprise',
-    desc: 'Pacote completo com gestão de tecnologia ponta a ponta.',
-    items: ['Licenças ilimitadas', 'TI terceirizada 360º', 'Projetos customizados', 'Integração com sistemas legados'],
-    preco: 'R$ 1.299,90/mês | R$ 12.999,00/ano',
-    buttonText: 'CONTRATAR'
-  }
+  { title: 'Plano Iniciante', desc: 'Ideal para pequenos negócios que precisam de soluções básicas de TI.', items: ['5 licenças de software', 'Suporte técnico via e-mail', 'Atualizações automáticas'], preco: 'R$ 29,90/mês | R$ 299,00/ano', buttonText: 'CONTRATAR' },
+  { title: 'Plano Essencial', desc: 'Perfeito para equipes em crescimento que precisam de estabilidade e suporte.', items: ['10 licenças de software', 'Suporte por chat e e-mail', 'Backups semanais', 'Painel de controle'], preco: 'R$ 49,90/mês | R$ 499,00/ano', buttonText: 'CONTRATAR' },
+  { title: 'Plano Profissional', desc: 'Para empresas que precisam de escalabilidade e segurança avançada.', items: ['20 licenças de software', 'Suporte remoto 24/7', 'Monitoramento de rede', 'Antivírus corporativo'], preco: 'R$ 99,90/mês | R$ 999,00/ano', buttonText: 'CONTRATAR' },
+  { title: 'Plano Corporativo', desc: 'Solução completa para médias empresas com estrutura tecnológica robusta.', items: ['30 licenças de software', 'Suporte dedicado', 'Controle de acesso por usuário', 'Integrações com ERP'], preco: 'R$ 149,90/mês | R$ 1.499,00/ano', buttonText: 'CONTRATAR' },
+  { title: 'Plano Empresarial', desc: 'Consultoria e infraestrutura de TI sob demanda para grandes empresas.', items: ['50 licenças de software', 'Gestão de TI completa', 'Treinamentos mensais', 'Automação de processos'], preco: 'R$ 249,90/mês | R$ 2.499,00/ano', buttonText: 'CONTRATAR' },
+  { title: 'Plano Avançado', desc: 'Recursos avançados para equipes técnicas que precisam de flexibilidade.', items: ['75 licenças de software', 'APIs dedicadas', 'Ambiente de testes', 'Logs em tempo real'], preco: 'R$ 349,90/mês | R$ 3.499,00/ano', buttonText: 'CONTRATAR' },
+  { title: 'Plano Premium', desc: 'Experiência completa de TI com suporte exclusivo e SLA garantido.', items: ['100 licenças de software', 'Suporte SLA 1h', 'Ambiente em nuvem privado', 'Acesso via VPN'], preco: 'R$ 499,90/mês | R$ 4.999,00/ano', buttonText: 'CONTRATAR' },
+  { title: 'Plano Ultra', desc: 'Para empresas que exigem alta disponibilidade e segurança.', items: ['150 licenças de software', 'Alta redundância', 'Auditorias de segurança trimestrais', 'Disaster Recovery'], preco: 'R$ 699,90/mês | R$ 6.999,00/ano', buttonText: 'CONTRATAR' },
+  { title: 'Plano Mega', desc: 'Infraestrutura e consultoria contínua para operações críticas.', items: ['200 licenças de software', 'Equipe dedicada de TI', 'Consultoria mensal personalizada', 'Relatórios de performance'], preco: 'R$ 899,90/mês | R$ 8.999,00/ano', buttonText: 'CONTRATAR' },
+  { title: 'Plano Enterprise', desc: 'Pacote completo com gestão de tecnologia ponta a ponta.', items: ['Licenças ilimitadas', 'TI terceirizada 360º', 'Projetos customizados', 'Integração com sistemas legados'], preco: 'R$ 1.299,90/mês | R$ 12.999,00/ano', buttonText: 'CONTRATAR' }
 ]
-
 
 // Dados dos cards de software
 const softwareCards = [
   { title: 'MVP Rápido', desc: 'Ideal para startups que precisam lançar rápido com baixo custo.', items: ['Até 3 telas principais', 'Backend básico incluso', 'Entrega em até 3 semanas'], preco: 'R$ 3.500', buttonText: 'Solicitar Orçamento' },
   { title: 'Projeto Personalizado', desc: 'Para empresas que precisam de uma solução sob medida.', items: ['Levantamento de requisitos', 'Design de interface personalizado', 'Integração com APIs'], preco: 'A partir de R$ 7.000', buttonText: 'Solicitar Orçamento' },
   { title: 'Software Completo', desc: 'Solução empresarial com painel administrativo e suporte contínuo.', items: ['Dashboard completo', 'Usuários e permissões', 'Suporte e manutenção 6 meses'], preco: 'Sob consulta', buttonText: 'Solicitar Orçamento' },
-  // repetir para ter 10 cards
   { title: 'Extra 1', desc: 'Software extra 1', items: ['Item 1', 'Item 2'], preco: 'R$ 4.000', buttonText: 'Solicitar Orçamento' },
   { title: 'Extra 2', desc: 'Software extra 2', items: ['Item 1', 'Item 2'], preco: 'R$ 5.000', buttonText: 'Solicitar Orçamento' },
   { title: 'Extra 3', desc: 'Software extra 3', items: ['Item 1', 'Item 2'], preco: 'R$ 6.000', buttonText: 'Solicitar Orçamento' },
   { title: 'Extra 4', desc: 'Software extra 4', items: ['Item 1', 'Item 2'], preco: 'R$ 7.000', buttonText: 'Solicitar Orçamento' },
   { title: 'Extra 5', desc: 'Software extra 5', items: ['Item 1', 'Item 2'], preco: 'R$ 8.000', buttonText: 'Solicitar Orçamento' },
   { title: 'Extra 6', desc: 'Software extra 6', items: ['Item 1', 'Item 2'], preco: 'R$ 9.000', buttonText: 'Solicitar Orçamento' },
-  { title: 'Extra 7', desc: 'Software extra 7', items: ['Item 1', 'Item 2'], preco: 'R$ 10.000', buttonText: 'Solicitar Orçamento' },
+  { title: 'Extra 7', desc: 'Software extra 7', items: ['Item 1', 'Item 2'], preco: 'R$ 10.000', buttonText: 'Solicitar Orçamento' }
 ]
 
-// Índices dos sliders
-const currentIndexConsultoria = ref(0)
-const currentIndexSoftware = ref(0)
-
-// Calcula o máximo índice para cada slider considerando quantos cards estão visíveis
-const maxIndexConsultoria = computed(() => consultoriaCards.length - visibleCards.value)
-const maxIndexSoftware = computed(() => softwareCards.length - visibleCards.value)
-
-// Calcula o deslocamento em px para aplicar o transform no slide
-const translateXConsultoria = computed(() => currentIndexConsultoria.value * cardWidthPx)
-const translateXSoftware = computed(() => currentIndexSoftware.value * cardWidthPx)
-
-// Funções para controlar os sliders
-function prevConsultoria() {
-  if (currentIndexConsultoria.value > 0) {
-    currentIndexConsultoria.value--
-  }
-}
-
-function nextConsultoria() {
-  if (currentIndexConsultoria.value < maxIndexConsultoria.value) {
-    currentIndexConsultoria.value++
-  }
-}
-
-function prevSoftware() {
-  if (currentIndexSoftware.value > 0) {
-    currentIndexSoftware.value--
-  }
-}
-
-function nextSoftware() {
-  if (currentIndexSoftware.value < maxIndexSoftware.value) {
-    currentIndexSoftware.value++
-  }
-}
-
-// Depoimentos para o slider de depoimentos
+// Depoimentos
 const depoimentos = [
-  {
-    texto: `“A CJL transformou completamente a forma como gerenciamos nossos processos internos. 
-    Desde a implementação das soluções, nossa equipe está muito mais produtiva e os resultados saltaram significativamente. 
-    O atendimento personalizado faz toda a diferença e a parceria tem sido fundamental para o nosso sucesso. 
-    Recomendo a CJL de olhos fechados para qualquer empresa que queira crescer de forma sustentável.”`,
-    nome: 'Dra. Mirela Rufato',
-    cargo: 'Superintendente – Unimed Penápolis'
-  },
-  {
-    texto: `“O suporte da CJL foi essencial para superar desafios técnicos que enfrentávamos há anos. 
-    Profissionais competentes e atendimento ágil fizeram toda a diferença para o sucesso do nosso projeto. 
-    A equipe está sempre disponível para esclarecer dúvidas e propor melhorias que realmente agregam valor. 
-    Estamos muito satisfeitos com os resultados e com a evolução constante que temos alcançado graças à CJL.”`,
-    nome: 'Fulano da Silva',
-    cargo: 'Diretor – Empresa Exemplo'
-  },
-  {
-    texto: `“Nosso negócio ganhou agilidade e inovação com as soluções personalizadas da CJL. 
-    A parceria tem sido fundamental para alcançarmos nossos objetivos e expandir nossa atuação no mercado. 
-    A CJL entende as necessidades específicas da nossa empresa e oferece suporte de alta qualidade. 
-    Sem dúvida, é um diferencial competitivo contar com uma consultoria tão dedicada e experiente.”`,
-    nome: 'Maria Oliveira',
-    cargo: 'Gerente – Organização XYZ'
-  },
-  {
-    texto: `“A equipe da CJL demonstrou total comprometimento e domínio técnico. 
-    Os resultados superaram as expectativas, com entregas dentro do prazo e suporte contínuo que nos tranquiliza. 
-    Além disso, a comunicação é transparente e sempre buscamos alinhar as estratégias conforme nossas demandas. 
-    Trabalhar com a CJL é garantia de excelência e crescimento sustentável.”`,
-    nome: 'Carlos Menezes',
-    cargo: 'CEO – Tech Solutions'
-  },
-  {
-    texto: `“Com a consultoria da CJL, conseguimos otimizar recursos e melhorar processos internos. 
-    A atenção aos detalhes e o planejamento estratégico fizeram toda a diferença para o nosso crescimento. 
-    Recebemos um atendimento personalizado e soluções que realmente funcionam para a nossa realidade. 
-    A confiança na CJL nos permite focar no que fazemos de melhor enquanto eles cuidam da tecnologia.”`,
-    nome: 'Ana Beatriz Souza',
-    cargo: 'Coordenadora de Projetos – Innovatech'
-  }
+  { texto: '“A CJL transformou completamente a forma como gerenciamos nossos processos internos...”', nome: 'Dra. Mirela Rufato', cargo: 'Superintendente – Unimed Penápolis' },
+  { texto: '“O suporte da CJL foi essencial para superar desafios técnicos que enfrentávamos há anos...”', nome: 'Fulano da Silva', cargo: 'Diretor – Empresa Exemplo' },
+  { texto: '“Nosso negócio ganhou agilidade e inovação com as soluções personalizadas da CJL...”', nome: 'Maria Oliveira', cargo: 'Gerente – Organização XYZ' },
+  { texto: '“A equipe da CJL demonstrou total comprometimento e domínio técnico...”', nome: 'Carlos Menezes', cargo: 'CEO – Tech Solutions' },
+  { texto: '“Com a consultoria da CJL, conseguimos otimizar recursos e melhorar processos internos...”', nome: 'Ana Beatriz Souza', cargo: 'Coordenadora de Projetos – Innovatech' }
 ]
-const router = useRouter()
+function precoComDesconto(preco: string, percentual: number) {
+  // separa mensal e anual
+  const partes = preco.split('|').map(p => p.trim());
 
-// Função de clique no botão
-const contratarPlano = (card: any) => {
-  console.log(`Plano selecionado: ${card.title}`)
-  router.push('/planos') // Rota para a página desejada
+  const resultado = partes.map(p => {
+    const match = p.match(/R\$ (\d+,\d+)/);
+    if (!match) return p;
+
+    // transforma para número
+    const numero = parseFloat(match[1].replace(',', '.'));
+    const valorDescontado = numero * (1 - percentual / 100);
+
+    // retorna no formato R$
+    return 'R$ ' + valorDescontado.toFixed(2).replace('.', ',') + p.slice(match[1].length + 3);
+  });
+
+  return resultado.join(' | ');
 }
 
+const cards = ref([
+  {
+    id: 1,
+    title: "Plano Iniciante",
+    developer: "Consultoria CJL",
+    description: [
+      "Ideal para pequenos negócios que precisam de soluções básicas de TI.",
+      "5 licenças de software",
+      "Suporte técnico via e-mail",
+      "Atualizações automáticas",
+      "Consultoria inicial personalizada" 
+    ],
+    preco: "R$ 32,89/mês | R$ 328,90/ano",
+    buttonText: "CONTRATAR",
+    rating: 4.2,
+    reviews: 15
+  },
+  {
+    id: 2,
+    title: "Plano Essencial",
+    developer: "Consultoria CJL",
+    description: [
+      "Perfeito para equipes em crescimento que precisam de estabilidade e suporte.",
+      "10 licenças de software",
+      "Suporte por chat e e-mail",
+      "Backups semanais",
+      "Painel de controle"
+    ],
+    preco: "R$ 54,89/mês | R$ 548,90/ano",
+    buttonText: "CONTRATAR",
+    rating: 4.3,
+    reviews: 18
+  },
+  {
+    id: 3,
+    title: "Plano Profissional",
+    developer: "Consultoria CJL",
+    description: [
+      "Para empresas que precisam de escalabilidade e segurança avançada.",
+      "20 licenças de software",
+      "Suporte remoto 24/7",
+      "Monitoramento de rede",
+      "Antivírus corporativo"
+    ],
+    preco: "R$ 109,89/mês | R$ 1.098,90/ano",
+    buttonText: "CONTRATAR",
+    rating: 4.5,
+    reviews: 22
+  },
+  {
+    id: 4,
+    title: "Plano Corporativo",
+    developer: "Consultoria CJL",
+    description: [
+      "Solução completa para médias empresas com estrutura tecnológica robusta.",
+      "30 licenças de software",
+      "Suporte dedicado",
+      "Controle de acesso por usuário",
+      "Integrações com ERP"
+    ],
+    preco: "R$ 164,89/mês | R$ 1.648,90/ano",
+    buttonText: "CONTRATAR",
+    rating: 4.6,
+    reviews: 20
+  },
+  {
+    id: 5,
+    title: "Plano Empresarial",
+    developer: "Consultoria CJL",
+    description: [
+      "Consultoria e infraestrutura de TI sob demanda para grandes empresas.",
+      "50 licenças de software",
+      "Gestão de TI completa",
+      "Treinamentos mensais",
+      "Automação de processos"
+    ],
+    preco: "R$ 274,89/mês | R$ 2.748,90/ano",
+    buttonText: "CONTRATAR",
+    rating: 4.7,
+    reviews: 25
+  },
+  {
+    id: 6,
+    title: "Plano Avançado",
+    developer: "Consultoria CJL",
+    description: [
+      "Recursos avançados para equipes técnicas que precisam de flexibilidade.",
+      "75 licenças de software",
+      "APIs dedicadas",
+      "Ambiente de testes",
+      "Logs em tempo real"
+    ],
+    preco: "R$ 384,89/mês | R$ 3.848,90/ano",
+    buttonText: "CONTRATAR",
+    rating: 4.6,
+    reviews: 17
+  },
+  {
+    id: 7,
+    title: "Plano Premium",
+    developer: "Consultoria CJL",
+    description: [
+      "Experiência completa de TI com suporte exclusivo e SLA garantido.",
+      "100 licenças de software",
+      "Suporte SLA 1h",
+      "Ambiente em nuvem privado",
+      "Acesso via VPN"
+    ],
+    preco: "R$ 549,89/mês | R$ 5.498,90/ano",
+    buttonText: "CONTRATAR",
+    rating: 4.8,
+    reviews: 30
+  },
+  {
+    id: 8,
+    title: "Plano Ultra",
+    developer: "Consultoria CJL",
+    description: [
+      "Para empresas que exigem alta disponibilidade e segurança.",
+      "150 licenças de software",
+      "Alta redundância",
+      "Auditorias de segurança trimestrais",
+      "Disaster Recovery"
+    ],
+    preco: "R$ 769,89/mês | R$ 7.698,90/ano",
+    buttonText: "CONTRATAR",
+    rating: 4.7,
+    reviews: 28
+  },
+  {
+    id: 9,
+    title: "Plano Mega",
+    developer: "Consultoria CJL",
+    description: [
+      "Infraestrutura e consultoria contínua para operações críticas.",
+      "200 licenças de software",
+      "Equipe dedicada de TI",
+      "Consultoria mensal personalizada",
+      "Relatórios de performance"
+    ],
+    preco: "R$ 989,89/mês | R$ 9.898,90/ano",
+    buttonText: "CONTRATAR",
+    rating: 4.9,
+    reviews: 35
+  }
+])
 
 
-// Estado atual do depoimento que está sendo mostrado
-const depoimentoAtual = ref(0)
 
-// Intervalo para trocar depoimentos automaticamente
-let intervalo: number
 
-onMounted(() => {
-  intervalo = setInterval(() => {
-    depoimentoAtual.value = (depoimentoAtual.value + 1) % depoimentos.length
-  }, 5000)
+
+const testar = (card: any) => {
+  alert(`Você escolheu testar: ${card.title}`)
+}
+// estado da paginação
+const paginaAtualCard = ref(1)
+const cardsPorPagina = 3
+
+// total de páginas
+const totalPaginas = computed(() => 
+  Math.ceil(cards.value.length / cardsPorPagina)
+)
+
+// fatia os cards para mostrar só os da página atual
+const cardsPaginados = computed(() => {
+  const start = (paginaAtualCard.value - 1) * cardsPorPagina
+  return cards.value.slice(start, start + cardsPorPagina)
 })
 
-onUnmounted(() => {
-  clearInterval(intervalo)
-})
+// trocar página
+function mudarPaginaCard(n: number) {
+  paginaAtualCard.value = n
+}
 </script>
 
 
@@ -295,33 +390,845 @@ section.sessao-consultoria
       rel="noopener noreferrer"
       ) CONTATE-NOS
 
+section.cards-container
+  h1.cards-title O QUE A CJL FAZ POR VOCÊ
+  h3.cards-subtitle Soluções em tecnologia e consultoria que geram resultados reais.
 
+  .cards-list
+    .card1(v-for="card in cardsPaginados" :key="card.id")
 
+      .card-left
+        img.card-image(:src="LogoNexdom" alt="Logo sistema")
+        .card-content
+          h2.card-title {{ card.title }}
+          p.card-subtitle Desenvolvido por {{ card.developer }}
+          ul.card-description
+            li(v-for="(item, index) in card.description" :key="index") {{ item }}
+          p.card-preco
+            s {{ card.preco }}               
+            br
+            span.bold-discount {{ precoComDesconto(card.preco, 10) }}
 
-main.planos
-  section.consultoria
-    .container
-      h2 Sistema para testes
-      .slider
-        button.btn-prev(@click="prevConsultoria" :disabled="currentIndexConsultoria === 0") ‹
-        .cards-wrapper
-          .cards(:style="`transform: translateX(-${translateXConsultoria}px)`")
-            template(v-for="(card, i) in consultoriaCards" :key="i")
-              .card
-                h3 {{ card.title }}
-                p {{ card.desc }}
-                ul
-                  template(v-for="(item, j) in card.items" :key="j")
-                    li {{ item }}
-                span.preco {{ card.preco }}
-                button(@click="contratarPlano") {{ card.buttonText }}
+      .card-right
+        .card-rating
+          i.icon-star ⭐
+          span.rating {{ card.rating }}
+        p.card-reviews {{ card.reviews }} avaliações
+        button.software-card-button Contratar
+  
+  
+  .paginacao
+    button(
+      v-for="n in totalPaginas",
+      :key="n",
+      @click="mudarPaginaCard(n)",
+      :class="{ ativo: paginaAtualCard === n }"
+    ) {{ n }}
 
-
-        button.btn-next(@click="nextConsultoria" :disabled="currentIndexConsultoria >= maxIndexConsultoria") ›
 
   </template>
 
 <style scoped>
+/* Centraliza o botão em tablets e mobile */
+
+
+@media (max-width: 992px) {
+  button.software-card-button {
+            /* necessário para usar transform */
+                   /* posiciona o ponto inicial no meio */
+    transform: translateX(-50%); /* centraliza o botão horizontalmente */
+  }
+}
+
+@media (max-width: 992px) {
+  section.cards-container h1.cards-title {
+    font-size: 1.5rem; /* menor para dispositivos móveis */
+  }
+}
+@media (max-width: 992px) {
+  section.sessao-consultoria .texto-lado h2.titulo-consultoria {
+    margin-bottom: 1.4rem; /* adiciona espaço abaixo do título */
+  }
+
+  section.sessao-consultoria .texto-lado p.descricao-consultoria {
+    margin-top: 0; /* garante que não haja margem extra além do margin-bottom do título */
+  }
+}
+
+@media (max-width: 992px) {
+  section.sessao-consultoria .texto-lado {
+    margin-left: 0rem;     /* aproxima o conteúdo da borda esquerda */
+    padding-left: 0;         /* remove padding extra se houver */
+  }
+
+  section.sessao-consultoria .texto-lado h2.titulo-consultoria {
+    max-width: 95%;           /* limita a largura para que não quebre rápido */
+    white-space: normal;      /* permite quebrar, mas só quando necessário */
+    font-size: 1.5rem;        /* ajuste da fonte para telas menores */
+    line-height: 1.3;         /* deixa o título visualmente equilibrado */
+  }
+
+  section.sessao-consultoria .texto-lado p.descricao-consultoria {
+    margin-left: 0;           /* aproxima o texto da borda esquerda */
+    max-width: 95%;           /* limita a largura para manter boas quebras */
+    line-height: 1.6;         /* mantém boa legibilidade */
+  }
+}
+
+@media (max-width: 992px) {
+  section.depoimento-bloco .titulo-depoimento h2 {
+    white-space: nowrap;       /* força ficar em uma linha */
+    font-size: 1.6rem;         /* reduz o tamanho da fonte para caber */
+    overflow: visible;         /* garante que o texto não seja cortado */
+  }
+}
+
+
+/* Ajuste para telas menores que 992px */
+@media (max-width: 992px) {
+  section.sessao-cjl .card-cjl .description {
+    margin-left: 0 !important; /* remove a margem esquerda */
+    padding-left: 0.5rem;      /* opcional: um pequeno recuo */
+  }
+}
+
+/* Para telas 800px até 884px de largura (aproximando os tablets que você mencionou) */
+/* Apenas para tablets aproximados */
+@media (min-width: 800px) and (max-width: 884px) {
+  .card1 {
+    position: relative; /* torna o card um container para o botão */
+  }
+
+  button.software-card-button {
+    position: absolute;       /* tira o botão do fluxo normal */
+    top: 50%;                 /* ponto de referência vertical */
+    left: 50%;                /* centraliza horizontalmente */
+    transform: translate(-50%, 13rem); /* move 10rem para baixo */
+    width: 60%;               /* mantém proporcional */
+    max-width: 200px;
+    min-width: 120px;
+  }
+}
+
+
+
+/* Para tablets: 768px até 1024px */
+@media (min-width: 768px) and (max-width: 1024px) {
+  button.software-card-button {
+    position: relative; /* permite mover o botão */
+    top: -3rem;         /* ajusta a altura para subir o botão */
+    width: 60%;         /* mantém proporcional */
+    max-width: 200px;
+    min-width: 120px;
+  }
+}
+
+@media (max-width: 768px) {
+  .card-right .card-rating,
+  .card-right p.card-reviews {
+    display: none; /* esconde apenas avaliação e estrelas */
+  }
+}
+
+@media (max-width: 768px) {
+  p.card-preco {
+    font-size: 0.9rem; /* ajuste o valor conforme desejar */
+  }
+}
+
+/* Apenas para telas com largura até 768px (mobile) */
+@media (max-width: 768px) {
+  .card-preco {
+    font-size: 0.10rem; /* diminui o tamanho da fonte do preço original */
+  }
+  .card-preco .bold-discount {
+    font-size: 0.90rem; /* diminui também o preço com desconto */
+  }
+}
+
+/* Oculta avaliações, reviews e botão em celulares */
+
+
+/* --- Celulares --- */
+@media (max-width: 767px) {
+  .cards-list {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+
+  .card-left {
+    flex: 0 0 80px; /* largura fixa da imagem */
+    margin-right: 1rem;
+  }
+
+  .card-left img.card-image {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+  }
+
+  .card-content {
+    flex: 1;
+  }
+
+
+  .software-card-button {
+    padding: 0.4rem 0.6rem;
+    font-size: 0.9rem;
+    
+  }
+
+  .card-preco span.bold-discount {
+    font-weight: bold;
+  }
+}
+
+/* --- Tablets --- */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .cards-list {
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+
+
+
+  .card-left img.card-image {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+  }
+}
+
+.bold-discount {
+  font-weight: bold;
+}
+
+.card-preco {
+  font-weight: bold;
+  font-size: 16px;
+  color: #000000; /* pode usar a cor da marca ou do destaque */
+  margin-top: 2rem; /* separa do conteúdo acima */
+}
+
+.card-description {
+  list-style-type: disc;   /* mantém as bolinhas */
+  padding-left: 20px;      /* espaço para as bolinhas */
+  margin: 10px 0;          /* margem acima/abaixo da lista */
+  color: #555;
+  font-size: 14px;
+}
+
+.card-description li {
+  text-indent: -20px;       /* move só o texto para a esquerda, bolinha permanece */
+}
+
+/* Aumentar levemente o botão do lado direito em tablets e celulares */
+
+
+
+/* BOTÕES MENOR EM TABLET */
+@media (max-width: 1024px) {
+  .software-card-button {
+    width: 60%;           /* ocupa 60% da largura do card */
+    max-width: 200px;     /* nunca maior que 200px */
+    min-width: 120px;     /* nunca menor que 120px */
+    margin: 0 auto;       /* centraliza horizontalmente */
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    display: block;
+    text-align: center;
+    margin-bottom: -5rem;
+  }
+}
+
+/* BOTÕES MENOR EM CELULAR */
+@media (max-width: 768px) {
+  .software-card-button {
+    width: 80%;           /* ocupa 80% da largura do card */
+    max-width: 180px;
+    padding: 0.4rem 0.8rem;
+    font-size: 0.85rem;
+  }
+}
+
+/* BOTÕES EM TELAS MUITO PEQUENAS */
+@media (max-width: 480px) {
+  .software-card-button {
+    width: 90%;           /* quase toda a largura do card */
+    max-width: 160px;
+    font-size: 0.8rem;
+    padding: 0.35rem 0.7rem;
+  }
+}
+
+/* BOTÃO DO TAMANHO DO TEXTO */
+@media (max-width: 1024px) {
+  .software-card-button {
+    width: auto;             /* largura automática conforme o conteúdo */
+    display: inline-block;   /* mantém o botão inline e não quebra linha */
+    padding: 0.4rem 0.8rem;  /* ajuste de padding */
+    font-size: 0.9rem;       /* tamanho da fonte */
+    white-space: nowrap;     /* impede quebra de linha dentro do botão */
+  }
+}
+
+/* Ajuste para celulares menores */
+@media (max-width: 480px) {
+  .software-card-button {
+    padding: 0.35rem 0.7rem;
+    font-size: 0.85rem;
+  }
+}
+
+/* ---------------- TABLET E CELULAR ---------------- */
+@media (max-width: 1024px) {
+  /* Empilha card-left e card-right */
+  .card1 {
+    flex: 1 1 100%;           /* 1 card por linha */
+    display: flex;
+    flex-direction: column;    /* empilha esquerda e direita */
+    gap: 4rem;
+    min-height: 800px; 
+  }
+
+
+
+
+}
+
+/* Para telas menores (celular) */
+@media (max-width: 480px) {
+  .software-card-button {
+    font-size: 0.9rem;
+    padding: 0.5rem 0;
+  }
+}
+
+/* CELULAR E TABLET */
+@media (max-width: 1024px) {
+
+  .software-card-button {
+    width: 100%;            /* botão ocupa toda a largura do card */
+    box-sizing: border-box;
+    text-align: center;     /* centraliza o texto */
+  }
+}
+
+/* Botão responsivo para tablets e celulares */
+@media (max-width: 1024px) {
+  .software-card-button {
+    width: 100%;        /* ocupa toda a largura do card */
+    box-sizing: border-box; /* inclui padding na largura */
+  }
+}
+
+@media (max-width: 768px) {
+  .software-card-button {
+    width: 100%;
+    padding: 0.5rem 1rem; /* ajusta o padding para celular */
+    font-size: 0.9rem;    /* deixa o texto proporcional */
+  }
+}
+
+@media (max-width: 480px) {
+  .software-card-button {
+    font-size: 0.85rem;
+  }
+}
+
+/* ---------------- CELULAR ---------------- */
+@media (max-width: 767px) {
+  .card1 {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start; /* garante que o conteúdo fique no topo */
+    height: auto; /* permite que cresça conforme o conteúdo */
+    min-height: 400px; /* altura mínima do card */
+    padding: 1.5rem 1rem; /* aumenta o espaçamento interno, opcional */
+    box-sizing: border-box;
+  }
+
+
+  .cards-list {
+    gap: 1rem; /* menos espaçamento entre cards */
+  }
+
+@media (max-width: 767px) {
+  .card-right {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    justify-content: flex-start !important;
+    text-align: center !important;
+    position: relative; /* garante que top funcione sem afetar outros elementos */
+    top: -3rem; /* aumenta o deslocamento para cima */
+  }
+
+}
+
+}
+
+/* Ajustes extras para mobile */
+@media (max-width: 480px) {
+  .cards-title {
+    font-size: 1.5rem;
+  }
+
+  .cards-subtitle {
+    font-size: 1rem;
+  }
+
+  .software-card-button {
+    width: 100%;
+  }
+}
+/* Celulares pequenos */
+
+
+/* Notebooks pequenos */
+
+
+.paginacao {
+  display: flex;
+  justify-content: center; /* centraliza horizontalmente */
+  gap: 4px;                /* pequeno espaço entre os botões */
+  margin-top: 2rem;
+  padding: 0;
+}
+
+.paginacao button {
+  background-color: #aaaaaa;
+  border: none;
+  padding: 0.4rem 0.6rem;  /* aumenta altura e largura */
+  font-size: 0.85rem;
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 4px;      /* cantos levemente arredondados */
+  margin: 0;
+  min-width: 35px;         /* largura mínima maior */
+  text-align: center;
+}
+
+.paginacao button.ativo {
+  background-color: #242424;
+  color: #ffffff;
+}
+.paginacao button:hover {
+  background-color: rgb(39, 39, 39); /* muda para vermelho ao passar o mouse */
+  color: #fff;           /* mantém o texto branco */
+}
+
+
+.card-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end; /* alinha todo conteúdo à direita */
+}
+
+
+.software-card-button {
+  position: absolute;
+  bottom: 2rem;
+  right: 1rem;
+}
+
+.software-card-button {
+  margin-left: auto; /* empurra o botão para a direita */
+  align-self: flex-start;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  border: 1px solid #0da100;
+  background: white;
+  color: #0da100;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: 0.3s;
+  text-align: center;
+}
+
+.software-card-button:hover {
+  background: #0da100;
+  color: white;
+}
+
+.software-card-checkbox {
+  margin-top: 1rem;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #5f6368;
+}
+
+button.software-card-button.disabled,
+label.software-card-checkbox.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  pointer-events: none; /* impede interação */
+}
+
+.software-card-checkbox {
+  margin-top: 1rem;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #5f6368;
+}
+.cards-container {
+  width: 100%;
+  max-width: 900px;
+  margin: 20px auto;
+  padding: 10px;
+  text-align: center;
+}
+
+.cards-title {
+  font-size: 29px;
+  font-weight: bold;
+  margin-bottom: 5px;
+  color: #000000;
+  position: relative;
+  display: inline-block; /* garante que o sublinhado ocupe só o texto */
+}
+
+.cards-title::after {
+  content: "";
+  display: block;
+  width: 40%;         /* 30% da largura do texto */
+  height: 3px;        /* espessura da linha */
+  background: #bb6400; /* cor da linha */
+  margin-top: -4px;    /* espaço entre texto e linha */
+  margin-left: -0.7rem;
+  margin-bottom: 1rem;
+}
+
+.cards-subtitle {
+  font-size: 16px;
+  color: #555;
+  margin-bottom: 20px;
+}
+
+.cards-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.card1 {
+  margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #ddd;
+  border-left: 4px solid #bb6400;
+  border-radius: 12px;
+  height: 390px; /* define altura fixa */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  background: #ffffff;
+  position: relative;
+  margin-top: 10px;
+  min-height: 100px; /* diminui a altura mínima */
+  padding: 1rem;     /* reduz o padding para compactar mais */
+}
+
+.card:hover {
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+.card-left {
+  display: flex;
+  gap: 15px;
+  align-items: flex-start;
+}
+
+.card-image {
+  width: 100px;
+  height: 100px;
+  object-fit: contain;
+  margin-bottom: 0.5rem;
+  border-radius: 15px;
+}
+
+.card-content {
+  text-align: left;
+}
+
+.card-title {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.card-subtitle {
+  font-size: 14px;
+  color: #777;
+  margin-bottom: 5px;
+  margin-top: -30px; /* sobe o elemento */
+}
+
+
+.card-description {
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.card-compare {
+  font-size: 13px;
+  color: #555;
+}
+
+
+
+.card-rating {
+  display: flex;
+  flex-direction: column; /* empilha estrela e número verticalmente */
+  align-items: center;    /* centraliza horizontalmente */
+  font-weight: bold;
+  color: #d35400;
+  margin-top: -18rem;    /* mantém seu ajuste pra subir */
+}
+
+.icon-star {
+  font-size: 13px;
+}
+
+.card-reviews {
+  font-size: 13px;
+  color: #d35400;
+  margin-bottom: 10px;
+}
+
+.card-button {
+  border: 1px solid #3498db;
+  background: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  color: #3498db;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.card-button:hover {
+  background: #3498db;
+  color: #fff;
+}
+
+
+
+
+
+
+
+
+
+@media (min-width: 768px) and (max-width: 1024px) {
+  /* Wrapper: define a largura visível e esconde overflow */
+  .consultoria .cards-wrapper {
+    overflow: hidden;   /* esconde o restante dos cards */
+    width: 70%;         /* diminui o container visível */
+    max-width: 700px;   /* limite máximo opcional */
+    margin: 0 auto;     /* centraliza */
+  }
+
+  /* Contêiner de cards: horizontal para slider */
+  .consultoria .cards {
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 1rem;          /* espaço entre cards */
+  }
+
+  /* Cada card ocupa menos que o container: um por vez */
+  .consultoria .card {
+    flex: 0 0 100%;      /* ocupa toda a largura do wrapper visível */
+    max-width: 600px;    /* largura máxima do card */
+    box-sizing: border-box;
+    margin: 0 auto;      /* centraliza o card */
+  }
+
+  /* Ajuste de fontes */
+  .consultoria .card h3 {
+    font-size: 1.6rem;
+  }
+
+  .consultoria .card p,
+  .consultoria .card ul,
+  .consultoria .card span.preco,
+  .consultoria .card button {
+    font-size: 1rem;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+  /* Sessão Consultoria: empilha texto acima da imagem */
+  .sessao-consultoria {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+    gap: 2rem !important;
+  }
+
+  .texto-lado {
+    order: -1 !important; /* texto acima da imagem */
+    width: 100% !important;
+    flex: 0 0 100% !important;
+    padding: 0 1rem !important;
+    text-align: center !important;
+  }
+
+  .titulo-consultoria {
+    font-size: 1.8rem !important;
+  }
+
+  .descricao-consultoria {
+    font-size: 1rem !important;
+    line-height: 1.5 !important;
+    text-align: justify !important;
+  }
+
+  .imagem-lado {
+    width: 100% !important;
+    flex: 0 0 100% !important;
+    margin-top: 5rem !important; /* <-- aumenta esse valor para empurrar a imagem mais para baixo */
+  }
+
+  .imagem-lado img {
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+    object-fit: cover !important;
+  }
+
+  /* Botão: garantir que apareça e centralize */
+  .texto-lado a.btn-contato {
+    display: inline-block !important;
+    margin: 1rem auto 0 auto !important;
+    text-align: center !important;
+  }
+}
+
+/* Opcional: ajustar fontes e espaçamento do texto */
+@media (max-width: 1180px) and (min-width: 820px) {
+  .texto-lado h2 {
+    font-size: 1.8rem; /* ajusta título */
+  }
+
+  .texto-lado p {
+    font-size: 1rem;   /* ajusta parágrafo */
+    line-height: 1.5;
+  }
+}
+@media (min-width: 768px) and (max-width: 1024px) {
+  .imagem-cjl img {
+    position: relative;
+    left: 3rem;   /* ajusta para mover mais para a direita */
+    max-width: 500px;
+    height: auto;
+    display: block;
+  }
+}
+
+@media (min-width: 767px) and (max-width: 769px) {
+  .bloco-recursos-tec .estrutura-recursos-tec {
+    position: relative;
+    top: -15rem; /* ajusta o valor conforme necessário para subir o conteúdo */
+  }
+}
+
+/* Tentativa de afetar apenas o tablet aproximado 768px de largura */
+@media (min-width: 767px) and (max-width: 769px) {
+  .bloco-sys .area-texto-sys {
+    position: relative;
+    top: -15rem; /* sobe o texto apenas nesse intervalo estreito */
+  }
+}
+
+/* Aplica apenas em telas entre 768px e 1024px */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .bloco-sys .area-texto-sys {
+    position: relative; /* permite deslocamento */
+  
+  }
+
+  .bloco-sys .titulo-destaque-ti {
+    font-size: 2rem;    /* ajusta tamanho do título */
+  }
+
+  .bloco-sys .descricao-detalhe-ti {
+    font-size: 1rem;    /* ajusta tamanho do texto */
+  }
+}
+
+/* Esconder imagens da seção bloco-sys em tablets */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .bloco-sys .figura-esq-ti,
+  .bloco-sys .figura-dir-ti {
+    display: none !important;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+  /* Centraliza todas as imagens da área de imagens no tablet */
+  :deep(.area-imagens-sys) {
+    display: flex !important;
+    justify-content: center !important; /* centraliza horizontalmente */
+    align-items: center !important;
+    flex-direction: column !important;  /* empilha se houver mais de uma imagem */
+  }
+
+  /* Opcional: limita o tamanho das imagens */
+  :deep(.area-imagens-sys img) {
+    max-width: 80% !important;
+    height: auto !important;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+  /* Banner: ajuste da imagem e shape-left */
+  :deep(.banner-container) {
+    align-items: flex-start;
+  }
+
+  :deep(.banner-image) {
+    height: 560px !important; /* altura intermediária */
+    width: 100% !important;   /* ocupa todo o container */
+    object-fit: cover;
+    flex-shrink: 0;
+  }
+
+  :deep(.shape-left) {
+    width: 70% !important;       /* largura menor */
+    max-width: 500px !important;
+    padding: 2rem 1.5rem !important;
+  }
+
+  /* Sessão consultoria: texto em cima, imagem embaixo */
+  :deep(.sessao-consultoria) {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+    gap: 1.5rem !important;
+  }
+
+  :deep(.texto-lado) {
+    order: -1 !important;   /* texto acima da imagem */
+    max-width: 700px !important;
+    width: 100% !important;
+  }
+
+  :deep(.imagem-lado img) {
+    order: 1 !important;    /* imagem abaixo */
+    width: 100% !important;
+    max-width: 600px !important;
+    height: auto !important;
+    object-fit: cover !important;
+  }
+
+  /* Bloco SYS: esconde imagens */
+ 
+}
+
 html, body {
   margin: 0;
   padding: 0;
@@ -612,7 +1519,7 @@ button:hover {
   }
 
   .shape-left {
-    width: 100% !important;
+    width: 110% !important;
     padding: 1rem 2rem !important;
   }
 
@@ -638,16 +1545,25 @@ button:hover {
 }
 @media (max-width: 992px) {
   .shape-left h1.title {
-    font-size: 1.6rem !important;      /* diminui o tamanho da fonte */
-    margin-top: 120px !important;    /* empurra o título mais pra baixo */
+    font-size: 1.6rem !important;
+    margin-top: 120px !important;
     text-align: left;
+    margin-left: 0.5rem;
+    max-width: 90%;           /* limita o tamanho horizontal do título */
+    word-wrap: break-word;    /* permite quebra de linha se necessário */
+    overflow-wrap: break-word;
   }
 
   .shape-left p.description {
-    font-size: 0.90rem !important;      /* mantém o texto legível */
+    font-size: 0.80rem !important;
     line-height: 1.6rem !important;
     text-align: left;
+    margin-left: 0.5rem;
+    max-width: 90%;           /* limita o tamanho horizontal da descrição */
+    word-wrap: break-word;    
+    overflow-wrap: break-word;
   }
+
 
   .arrow {
     margin-top: 1.5rem;
@@ -719,8 +1635,9 @@ button:hover {
   .imagem-cjl img {
     width: 100%;
     height: auto;
-    max-width: 400px;
+    max-width: 700px;
     display: block;
+    margin-left: 10rem;
   }
 
   .btn-contato {
@@ -816,7 +1733,7 @@ button:hover {
 }
 
 .depoimento-card-area {
-  width: 50%;
+  width: 70%;
   display: flex;
   flex-direction: column;
   align-items: center;

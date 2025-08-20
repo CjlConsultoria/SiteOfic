@@ -6,6 +6,9 @@ import Servicos from '@/views/Servicos.vue'
 import Login from '@/views/Login.vue'
 import Registre from '@/views/Registre.vue'
 import Plataforma from '@/views/Plataforma.vue'
+import Blog from '@/views/Blog.vue'
+
+
 
 const routes = [
   {
@@ -42,13 +45,23 @@ const routes = [
     path: '/plataforma',
     name: 'Plataforma',
     component: Plataforma,
-    meta: { requiresAuth: true } // Rota protegida
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/blog',
+    name: 'Blog',
+    component: Blog,
+  },
+  {
+    path: '/artigo/:id',
+    name: 'ArtigoDetalhe',
+    component: Blog,
   }
 ]
 
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
-  routes,
+  history: createWebHistory(),
+  routes
 })
 
 // Guard global para verificar autenticação nas rotas protegidas

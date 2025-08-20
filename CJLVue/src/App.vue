@@ -11,6 +11,8 @@ const isMenuOpen = ref(false)
 const ehPlataforma = ref(false)
 const userDropdownOpen = ref(false)
 
+const paginaAtual = ref('dashboard') // <- controla a página atual
+
 const usuario = reactive({
   nomeCompleto: '',
   email: '',
@@ -56,7 +58,7 @@ function logoff() {
   usuario.cep = '-'
   usuario.cidade = '-'
   usuario.estado = '-'
-  usuario.genero = '-'// Remove o token ao fazer logout
+  usuario.genero = '-'
   router.push('/login')
 }
 
@@ -73,11 +75,13 @@ onMounted(() => {
   buscarUsuarioLogado()
 
   window.addEventListener('atualizarUsuario', buscarUsuarioLogado)
+  document.addEventListener('click', handleClickOutside) // << ADICIONADO
 })
 
 onUnmounted(() => {
   window.removeEventListener('scroll', onScroll)
   window.removeEventListener('atualizarUsuario', buscarUsuarioLogado)
+  document.removeEventListener('click', handleClickOutside) // << ADICIONADO
 })
 
 async function buscarUsuarioLogado() {
@@ -116,7 +120,73 @@ async function buscarUsuarioLogado() {
     }
   }
 }
+
+function normalizarLabel(label: string): string {
+  return label.toLowerCase().trim()
+}
+
+function irParaPagina(label: string) {
+  const labelNormalizado = normalizarLabel(label)
+
+  if (labelNormalizado === 'sair') {
+    localStorage.clear()
+    router.push('/login')
+    return
+  }
+
+  paginaAtual.value = labelNormalizado
+
+  // Navega para a rota correspondente
+  switch (labelNormalizado) {
+    case 'dashboard':
+      router.push('/dashboard')
+      break
+    case 'servicos':
+      router.push('/servicos')
+      break
+    case 'sistemas':
+      router.push('/sistemas')
+      break
+    case 'perfil':
+      router.push('/perfil')
+      break
+    case 'ajuda':
+      router.push('/ajuda')
+      break
+    case 'suporte':
+      router.push('/suporte')
+      break
+    default:
+      router.push('/')
+      break
+  }
+
+  // Fecha menu após navegação
+  isMenuOpen.value = false
+}
+
+// FUNÇÃO NOVA: fecha o menu ao clicar fora
+function handleClickOutside(event: MouseEvent) {
+  const menu = document.querySelector('.menu-mobile')
+  const hamburguer = document.querySelector('.hamburguer')
+
+  if (
+    isMenuOpen.value &&
+    menu &&
+    !menu.contains(event.target as Node) &&
+    hamburguer &&
+    !hamburguer.contains(event.target as Node)
+  ) {
+    isMenuOpen.value = false
+  }
+}
+
+defineProps(['pagina'])
+// Banner de cookies
+
 </script>
+
+
 
 
 <template lang="pug">
@@ -173,6 +243,7 @@ div.layout-wrapper(:class="{ 'layout-plataforma': ehPlataforma }")
           RouterLink(to="/sobre") Sobre
           RouterLink(to="/servicos") Serviços
           RouterLink(to="/planos") Planos
+          RouterLink(to="/blog") Blog
           //-RouterLink(to="/plataforma") Plataforma
           .mobile-auth-buttons
             //-a.external-btn.link-btn(href="/login") Login
@@ -185,6 +256,8 @@ div.layout-wrapper(:class="{ 'layout-plataforma': ehPlataforma }")
           RouterLink(to="/sobre") Sobre
           RouterLink(to="/servicos") Serviços
           RouterLink(to="/planos") Planos
+          RouterLink(to="/blog") Blog
+          
           //-RouterLink(to="/plataforma") Plataforma
 
         //- Botões de login/registro
@@ -192,18 +265,158 @@ div.layout-wrapper(:class="{ 'layout-plataforma': ehPlataforma }")
           a.external-btn.link-btn(href="/login") Login
           RouterLink.external-btn.link-btn(to="/registre") Registre-se
           button.external-btn(@click="irParaURLExterna") Convivium
-
+  
   //- Conteúdo principal
   main.main-content
     RouterView
-
+  
   //- Rodapé fixo
   footer.fixed-footer
     p © 2025 - Todos os direitos reservados
+
+  //- Coloque dentro da página inicial (Home.vue)
+  
+
 </template>
 
 
+
 <style scoped>
+
+
+/* TABLET: 768px a 1024px */
+@media (min-width: 768px) and (max-width: 1024px) {
+  /* Mostra o botão hamburguer e oculta menu desktop */
+  .hamburguer {
+    display: block !important;
+    font-size: 2rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: white;
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+  }
+    nav.menu-mobile > a {
+    font-size: 1.5rem !important;
+  }
+  .menu-desktop {
+    display: none !important;
+  }
+
+  .auth-buttons {
+    display: none !important;
+  }
+
+  /* Menu mobile com mesma estilização do celular */
+  .menu-mobile {
+    display: flex !important;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin-top: 20px;
+    padding: 20px 0;
+    width: 100vw;
+    position: fixed;
+    top: 80px;
+    left: 0;
+    right: 0;
+    background-color: rgba(0,0,0,0.692);
+    z-index: 9998;
+  }
+
+  .menu-mobile::after {
+    content: '';
+    display: block;
+    margin: 10px 0;
+  }
+
+  /* Botões dentro do menu mobile */
+  .menu-mobile .mobile-auth-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 20px;
+  }
+
+  .menu-mobile .mobile-auth-buttons button,
+  .menu-mobile .mobile-auth-buttons .external-btn {
+    background-color: transparent;
+    border: 1px solid white;
+    color: white;
+    padding: 0.4rem 1rem;
+    font-size: 1.5rem;
+    border-radius: 4px;
+    font-weight: 600;
+    transition: background-color 0.3s, color 0.3s;
+    cursor: pointer;
+  }
+
+  .menu-mobile .mobile-auth-buttons button:hover,
+  .menu-mobile .mobile-auth-buttons .external-btn:hover {
+    background-color: white;
+    color: #1e1e1e;
+  }
+
+  .menu-mobile .mobile-auth-buttons button:last-child {
+    border: 1px solid #FFD700;
+    color: white;
+  }
+
+  .menu-mobile .mobile-auth-buttons button:last-child:hover {
+    background-color: #FFD700;
+    color: #1e1e1e;
+  }
+}
+
+/* Só para a página Plataforma */
+.layout-plataforma header.fixed-header .logo {
+  transition: opacity 0.3s ease;
+}
+
+/* Esconde a logo] só no responsivo abaixo de 768px */
+@media (max-width: 768px) {
+  .layout-plataforma header.fixed-header .logo {
+    opacity: 0;
+    pointer-events: none; /* para garantir que não interfira */
+    width: 0;
+    height: 0;
+    overflow: hidden;
+  }
+}
+@media (max-width: 768px) {
+  .layout-plataforma button.hamburguer-plataforma {
+    position: fixed; /* para ter controle absoluto */
+    left: 2rem !important; /* mais para esquerda */
+    top: 1rem; /* mantendo posição vertical */
+    z-index: 9999; /* para garantir que fique acima */
+  }
+}
+@media (max-width: 768px) {
+  .layout-plataforma button.hamburguer-plataforma {
+    font-size: 2rem; /* aumenta o tamanho do ícone */
+  }
+}
+
+
+@media (max-width: 768px) {
+  .hamburguer-plataforma {
+    display: block;
+  }
+}
+.menu-plataforma > a:hover,
+.menu-plataforma > button:hover {
+  background-color: #ddd;
+}
+
+/* Para telas maiores (desktop), mantém o padrão ou esconde o menu */
+@media (min-width: 769px) {
+  .menu-plataforma {
+    display: none; /* ou ajusta conforme sua lógica */
+  }
+}
 @media (max-width: 768px) {
   .menu-mobile .mobile-auth-buttons {
     display: flex;
@@ -245,10 +458,7 @@ div.layout-wrapper(:class="{ 'layout-plataforma': ehPlataforma }")
 }
 
 @media (min-width: 768px) {
-  .menu-mobile,
-  .hamburguer {
-    display: none !important;
-  }
+
 
   .menu-desktop {
     display: flex;
@@ -271,11 +481,6 @@ div.layout-wrapper(:class="{ 'layout-plataforma': ehPlataforma }")
 
 /* DESKTOP: mostrar menu-desktop, esconder menu-mobile */
 @media (min-width: 768px) {
-  .menu-mobile,
-  .hamburguer {
-    display: none !important;
-  }
-
   .menu-desktop {
     display: flex;
     gap: 2rem;
@@ -290,11 +495,6 @@ div.layout-wrapper(:class="{ 'layout-plataforma': ehPlataforma }")
 
 
 @media (min-width: 768px) {
-  .menu-mobile,
-  .hamburguer {
-    display: none !important;
-  }
-
   .menu-desktop {
     display: flex;
     gap: 2rem;
@@ -331,10 +531,6 @@ div.layout-wrapper(:class="{ 'layout-plataforma': ehPlataforma }")
 
 /* Tela ≥768px: oculta menu mobile e hamburguer, mostra menu desktop */
 @media (min-width: 768px) {
-  .menu-mobile,
-  .hamburguer {
-    display: none !important;
-  }
 
   .menu-desktop {
     display: flex;
@@ -342,8 +538,81 @@ div.layout-wrapper(:class="{ 'layout-plataforma': ehPlataforma }")
     align-items: center;
   }
 }
+/* Tablets: 769px a 1024px */
+@media (min-width: 769px) and (max-width: 1024px) {
+  /* Esconde menu desktop */
+  .menu-desktop {
+    display: none !important;
+  }
 
+  /* Mostra botão hamburguer */
+  .hamburguer,
+  .hamburguer-plataforma {
+    display: block !important;
+    z-index: 9999; /* garante que fique acima de outros elementos */
+  }
 
+  /* NÃO force display do menu-mobile! O Vue controla via v-if */
+  .menu-mobile {
+    display: none; /* padrão inicial */
+    flex-direction: column;
+    gap: 1.2rem;
+    position: fixed;
+    top: 80px;
+    left: 0;
+    right: 0;
+    width: 100vw;
+    background-color: rgba(0, 0, 0, 0.692);
+    z-index: 9998;
+  }
+
+  /* Esconde botões de login/registro fora do menu mobile */
+  .auth-buttons {
+    display: none !important;
+  }
+}
+
+@media (max-width: 1024px) {
+  .hamburguer,
+  .hamburguer-plataforma {
+    display: block !important;
+    z-index: 9999;
+  }
+
+  .menu-mobile {
+    display: flex; /* o Vue controla o v-if */
+    flex-direction: column;
+    position: fixed;
+    top: 80px;
+    left: 0;
+    right: 0;
+    width: 100vw;
+    background-color: rgba(0,0,0,0.7);
+    z-index: 9998;
+  }
+
+  .menu-desktop,
+  .auth-buttons {
+    display: none !important;
+  }
+}
+
+/* Desktop: acima de 1024px */
+@media (min-width: 1025px) {
+  .menu-desktop {
+    display: flex;
+  }
+
+  .menu-mobile,
+  .hamburguer,
+  .hamburguer-plataforma {
+    display: none !important;
+  }
+
+  .auth-buttons {
+    display: flex !important;
+  }
+}
 
 .nome-completo {
   font-size: 1.1rem;
@@ -430,16 +699,7 @@ a.external-btn.link-btn:hover {
 }
 
 /* Estilo padrão para o botão Convivium */
-button.external-btn {
-  /* Aqui fica o estilo original do seu botão convivium */
-  background-color: #2b8003; /* Exemplo: azul */
-  color: white;
-  border: none;
-  padding: 0.5rem 1.5rem;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
+
 a.external-btn.link-btn,
 button.external-btn {
   padding: 0.25rem 1rem; /* menos altura, mesma largura */
@@ -449,9 +709,15 @@ button.external-btn {
   transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
-button.external-btn:hover {
-  background-color: #0056b3; /* azul mais escuro no hover */
+
+@media (max-width: 768px) {
+  .layout-plataforma .user-dropdown-google {
+    width: 80vw !important;
+    padding: 1rem !important;
+    top: 65px !important;
+  }
 }
+
 
 .layout-plataforma .user-dropdown-google {
   position: absolute;

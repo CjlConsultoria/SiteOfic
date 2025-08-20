@@ -10,14 +10,10 @@ import RelatoriosPng from '@/assets/relatorios.png'
 
 
 // Controle do menu lateral e página atual
-const menuAberto = ref(false)
+
 const paginaAtual = ref('home')
 
-// Alternar menu lateral
-const toggleMenu = () => {
-  menuAberto.value = !menuAberto.value
-  console.log('toggleMenu chamado, menuAberto:', menuAberto.value)
-}
+
 
 // Ir para página de perfil e carregar dados do usuário
 async function irParaPerfil() {
@@ -26,15 +22,17 @@ async function irParaPerfil() {
   await buscarUsuarioLogado()
 }
 
-// Função para controlar a navegação pelas páginas
 function normalizarLabel(label) {
   return label
-    .normalize('NFD')               // separa acento da letra
-    .replace(/[\u0300-\u036f]/g, '') // remove acento
-    .toLowerCase()                 // tudo minúsculo
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/\s+/g, '')  // Remove espaços para normalizar melhor
 }
 
+
 function irParaPagina(label) {
+  console.log('Navegando para:', label)
   const labelNormalizado = normalizarLabel(label)
 
   if (labelNormalizado === 'sair') {
@@ -55,7 +53,6 @@ function irParaPagina(label) {
   } else if (labelNormalizado === 'ajuda') {
     paginaAtual.value = 'ajuda'
   } else {
-    // Se não for nenhum desses, define o valor normalizado mesmo
     paginaAtual.value = labelNormalizado
   }
 }
@@ -69,7 +66,6 @@ function abrirModal(index) {
   modalAberto.value = true
   modalCarregando.value = true
 
-  // Simula carregamento de 10 segundos
   setTimeout(() => {
     modalCarregando.value = false
   }, 3000)
@@ -84,16 +80,15 @@ function fecharModal() {
 // Menus principais e secundários
 const menuPrincipal = [
   { label: 'Dashboard', url: '#', icon: '📊' },
-  { label: 'Sistemas', url: '#', icon: '🛠️' },
-  { label: 'Serviços', url: '#', icon: '📑' },
+  { label: 'Serviços', url: '#', icon: '📑' },  // Corrigido para serviços aqui
+  { label: 'Sistemas', url: '#', icon: '🛠️' }
 ]
 
-const menuSecundaria = [
+const menuSecundaria = [  // corrigido nome da constante para 'menuSecundaria'
   { label: 'Perfil', url: '#', icon: '🙍‍♂️' },
   { label: 'Ajuda', url: '#', icon: '❓' },
   { label: 'Sair', url: '#', icon: '🔒' }
 ]
-
 // Cards para a home
 const cards = ref([
   {
@@ -653,6 +648,8 @@ const sistemasVisiveis = computed(() => {
 })
 const modalCarregando = ref(false)
 
+
+
 // onMounted para buscar dados se estiver na página perfil
 onMounted(() => {
   if (paginaAtual.value === 'perfil') {
@@ -660,12 +657,43 @@ onMounted(() => {
   }
 })
 
+const menuPlataformaAberto = ref(false)
+
+function toggleMenuPlataforma() {
+  menuPlataformaAberto.value = !menuPlataformaAberto.value
+}
+// Controle do menu hamburguer da plataforma
+const menuHamburguerPlataforma = ref(false)
+
+// Página/etapa atual da plataforma
+const etapaAtual = ref('dashboard')
+
+// Alternar exibição do menu
+function toggleHamburguerPlataforma() {
+  menuHamburguerPlataforma.value = !menuHamburguerPlataforma.value
+}
+
+// Mudar de página/etapa e fechar o menu
+function irParaPaginaHamburguer(pagina) {
+  etapaAtual.value = pagina
+  menuHamburguerPlataforma.value = false
+}
+
+
+const menuAberto = ref(false)
+
+function toggleMenu() {
+  menuAberto.value = !menuAberto.value
+}
+
 </script>
 
 
 <template lang="pug">
+  
 .app
-  // Sidebar Lateral
+  // Botão deve estar fora da .fixed-header, mas dentro da .app
+  
   aside.sidebar(:class="{ open: menuAberto }")
     .logo 
     nav.menu
@@ -690,10 +718,7 @@ onMounted(() => {
           a(href="#" @click.prevent="irParaPagina(item.label)")
             span.icon {{ item.icon }}&nbsp;
               | {{ item.label }}
-  
 
-  // Botão para abrir/fechar menu lateral
-  button.btn-menu(@click="toggleMenu") ☰
 
   // Seção HOME
   section.software-list-container(v-if="paginaAtual === 'home' || paginaAtual === 'dashboard'")
@@ -821,8 +846,6 @@ onMounted(() => {
         p.preco {{ sistema.preco }}
         button.btn-contratar(@click="abrirModal(index + (paginaAtualSistema - 1) * sistemasPorPagina)") {{ sistema.buttonText }}
 
-
-
     // Paginação com botões numerados
     .paginacao
       button.pag-btn(
@@ -865,9 +888,6 @@ onMounted(() => {
 
           // Só aparece se não estiver carregando
           button.btn-vote(@click="fecharModal") {{ modaisCustomizados[sistemaSelecionadoIndex]?.buttonText }}
-
-
-
 
   // Seção AJUDA
   section.ajuda-section(v-if="paginaAtual === 'ajuda'")
@@ -913,7 +933,6 @@ onMounted(() => {
       .ajuda-coluna-img
         img(:src="DenunciaPng", alt="Canal de Denúncias")
 
-
     .ajuda-bloco
       .ajuda-coluna-img
         img(:src="RelatoriosPng", alt="Geração de Relatórios")
@@ -923,10 +942,6 @@ onMounted(() => {
           | A administração pode gerar relatórios detalhados sobre moradores, ocorrências e uso do sistema. 
           strong Acompanhe indicadores importantes 
           | para tomar decisões com base em dados.
-
-
-
-
 
   // Seção FAQ
   section.faq-container(v-if="paginaAtual === 'ajuda'")
@@ -951,14 +966,484 @@ onMounted(() => {
               polyline(points="6 9 12 15 18 9")
         transition(name="fade")
           p.faq-resposta(v-if="faq.aberto") {{ faq.resposta }}
-
-
+  teleport(to="body")
+    button.menu-toggle(@click="toggleMenu") ☰
 </template>
 
 
 
 
+
 <style scoped>
+
+@media (max-width: 768px) {
+  section.perfil-usuario .card {
+    margin-left: 0;      /* remove qualquer margem à esquerda */
+    padding-left: 1rem;  /* dá um pouco de padding interno para o conteúdo não grudar na borda */
+    padding-right: 1rem;
+    width: 100%;         /* ocupa toda largura da tela */
+    box-sizing: border-box;
+  }
+
+  section.perfil-usuario .form-row {
+    display: flex;
+    flex-direction: column; /* empilha campos na vertical */
+    gap: 1rem;              /* espaçamento entre campos */
+  }
+
+  section.perfil-usuario .field {
+    width: 100%;            /* ocupa toda largura possível */
+  }
+
+  section.perfil-usuario .field label {
+    font-size: 1rem;
+    margin-bottom: 0.3rem;
+    display: block;
+  }
+
+  section.perfil-usuario .field input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0.5rem;
+    font-size: 1rem;
+  }
+}
+@media (max-width: 768px) {
+  .perfil-titulo {
+    display: block !important;
+    font-size: 1.8rem;
+    margin-left: 0;
+    text-align: left;
+    margin-bottom: 1rem;
+    color: #000;
+  }
+}
+
+@media (max-width: 768px) {
+  .modal-card {
+    width: 95vw !important;       /* força largura a quase toda a tela */
+    max-width: none !important;   /* remove qualquer limite máximo */
+    margin-left: 0 !important;
+    position: relative !important;
+    left: 0 !important;       /* mantém deslocamento para esquerda */
+    padding: 1rem !important;
+    box-sizing: border-box !important;
+  }
+
+  .modal-card-conteudo {
+    padding: 0 1rem !important;
+  }
+
+  @media (max-width: 768px) {
+  /* Título maior */
+  .modal-card-conteudo h3.modal-titulo {
+    font-size: 1.2rem !important;
+    line-height: 1.3 !important;
+  }
+
+  /* Texto "VOCÊ GANHOU 10% OFF!" maior e destacado */
+
+  /* Textos menores para parágrafos, itens de lista e preços */
+  .modal-card-conteudo p,
+  .modal-card-conteudo ul li,
+  .modal-preco-wrapper p {
+    font-size: 0.95rem !important;
+    line-height: 1.2 !important;
+  }
+}
+
+
+  /* Ajustes para texto e botões */
+  .modal-preco-wrapper,
+  .pulsando,
+  button.btn-vote {
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  button.btn-vote {
+    padding: 1rem !important;
+    font-size: 1rem !important;
+    display: block !important;
+    text-align: center !important;
+  }
+}
+@media (max-width: 768px) {
+  /* Forçando o estilo dentro de scoped com ::v-deep */
+  ::v-deep(.pulsando) {
+    font-size: 3.8rem !important;
+    font-weight: bold !important;
+    color: #e63946 !important;
+  }
+}
+
+
+@media (max-width: 768px) {
+  .modal-preco-wrapper {
+    margin-bottom: 0.3rem; /* reduz espaço abaixo do preço */
+  }
+
+  .pulsando {
+    margin-bottom: 0.3rem; /* reduz espaço abaixo do texto de desconto */
+    font-size: 1.3rem;     /* ajusta tamanho pra caber melhor */
+  }
+
+  .btn-vote, .btn-contratar {
+    width: 100% !important;
+    padding: 0.8rem 1rem !important;
+    font-size: 1rem !important;
+    box-sizing: border-box !important;
+    display: block !important;
+    text-align: center !important;
+  }
+}
+@media (max-width: 768px) {
+  .modal-preco-wrapper {
+    position: relative;      /* garante posicionamento normal */
+    margin-bottom: 1rem;     /* dá espaço suficiente abaixo do preço */
+    z-index: auto;           /* remove z-index que possa sobrepor */
+  }
+
+  .btn-vote, .btn-contratar {
+    position: relative;      /* garante que botão esteja no fluxo */
+    z-index: 10;             /* traz o botão para frente */
+    width: 100% !important;
+    padding: 0.8rem 1rem !important;
+    font-size: 1rem !important;
+    box-sizing: border-box !important;
+    display: block !important;
+    text-align: center !important;
+    margin-top: 0 !important;  /* evita margem negativa */
+  }
+}
+
+@media (max-width: 768px) {
+  button.btn-contratar {
+    width: 100% !important;
+    padding: 1rem !important;
+    font-size: 1rem !important;
+    display: block !important;
+    box-sizing: border-box !important;
+    text-align: center !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .sistemas-card-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    transform: translateX(-22rem); /* desloca para esquerda */
+    padding-right: 1rem;
+    gap: 1rem;
+    box-sizing: border-box;
+    width: 100vw;           /* garante largura total da viewport */
+    overflow-x: visible;    /* para evitar cortar os cards */
+  }
+
+  .sistema-card {
+    flex: 0 0 350px;        /* largura fixa de 350px, não encolhe nem cresce */
+    max-width: 350px;       /* max-width igual para fixar largura */
+    box-sizing: border-box;
+  }
+}
+
+@media (max-width: 768px) {
+  .softwaree-main-title {
+    margin-left: 8rem;
+    white-space: nowrap;     /* Impede quebra de linha */
+    overflow: hidden;        /* Esconde o excesso (opcional) */
+    text-overflow: ellipsis; /* Adiciona "..." se passar (opcional) */
+  }
+}
+@media (max-width: 768px) {
+  .introducao-sistemas {
+    padding: 0 1rem;      /* evita o texto colar na borda da tela */
+    box-sizing: border-box;
+    width: 100%;
+    text-align: left;     /* alinhamento padrão */
+  }
+
+
+}
+@media (max-width: 768px) {
+  .intro-sistemas-texto {
+    display: none !important;
+  }
+}
+
+
+
+
+
+
+
+/* Esconde o botão no desktop */
+@media (min-width: 1024px) {
+  .menu-toggle {
+    display: none;
+  }
+}
+
+.sidebar {
+  background-color: #2f2f2f; /* cinza escuro */
+  color: white;              /* texto branco */
+  height: 100vh;             /* ocupa toda altura da tela */
+  width: 250px;              /* largura padrão do menu, ajuste se quiser */
+  padding: 1rem;
+  box-sizing: border-box;
+}
+
+.sidebar nav.menu ul li a {
+  color: white;              /* links em branco */
+  text-decoration: none;     /* remove underline */
+  display: block;            /* para ocupar toda linha */
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+
+.sidebar nav.menu ul li a:hover {
+  background-color: #444444; /* um cinza mais claro ao passar mouse */
+}
+
+.sidebar {
+  position: fixed;
+  left: -260px;
+  top: 0;
+  bottom: 0;
+  width: 260px;
+
+  transition: left 0.3s ease;
+  z-index: 1000;
+}
+
+.sidebar.open {
+  left: 0;
+}
+
+.menu-toggle {
+  position: fixed !important;
+  top: 20px !important;
+  left: 20px !important;
+  z-index: 2147483647 !important; /* maior valor possível */
+  font-size: 28px !important;
+  background: transparent !important;
+  border: none !important;
+  color: white !important;
+  cursor: pointer !important;
+  pointer-events: auto !important;
+}
+
+/* Atenção: Se o botão estiver dentro de algum elemento com z-index menor, pode ser cortado
+   Por isso garantimos o z-index bem alto e posição fixed */
+
+
+@media (max-width: 768px) {
+  .sidebar nav.menu ul.menu-secundaria {
+    margin-top: 1rem; /* diminui o espaçamento superior */
+    /* ou use position para mover pra cima */
+    position: relative;
+    top: -14rem; /* sobe 20px para cima, ajuste o valor */
+  }
+}
+
+
+
+header, .barra, .topo {
+  position: relative; /* ou fixed, conforme o layout */
+  z-index: 1000; /* menor que o botão */
+}
+
+
+@media (max-width: 1024px) {
+  .software-main-title,
+  .software-title {
+    text-align: center !important;
+    margin-left: 0 !important;
+    padding-left: 0 !important;
+  }
+}
+@media (max-width: 1024px) {
+  /* ===== Sidebar ===== */
+  aside.sidebar {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 250px !important;
+    height: 100vh !important;
+    background: #252525 !important;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.2) !important;
+    overflow-y: auto !important;
+    z-index: 9999;
+
+    /* Começa escondida fora da tela esquerda */
+    transform: translateX(-100%) !important;
+    transition: transform 0.3s ease !important;
+  }
+
+  aside.sidebar.open {
+    transform: translateX(0) !important; /* Aparece na tela */
+  }
+
+  /* ===== Conteúdo Principal ===== */
+  /* Limpa margens e define largura total, sem sair da tela */
+  .app > section,
+  .app > main {
+    margin-left: 0 !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    padding-left: 1rem; /* pra não grudar na borda da tela */
+    padding-right: 1rem;
+    overflow-x: hidden !important;
+  }
+
+  /* ===== Botão hamburguer ===== */
+  button.hamburguer-plataforma {
+    position: fixed !important;
+    top: 10px !important;
+    left: 10px !important;
+    z-index: 10000 !important;
+  }
+
+  /* ===== Cards ===== */
+  .software-cards-wrapper {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 1rem !important;
+    justify-content: center !important;
+    overflow-x: hidden !important;
+  }
+
+  .software-card {
+    flex: 1 1 100% !important; /* cards empilhados em tela pequena */
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Ajuste dos textos */
+  .software-main-title {
+    font-size: 1.8rem !important;
+  }
+
+  .software-title {
+    font-size: 1.2rem !important;
+  }
+
+  button.software-card-button {
+    font-size: 0.9rem !important;
+    padding: 0.5rem 1rem !important;
+  }
+}
+@media (max-width: 1024px) {
+  /* Título principal */
+  .software-main-title {
+ 
+    padding-left: 60px !important;   /* desloca o título 30px para a direita */
+    margin-right: auto !important;
+  }
+
+  /* Subtítulo */
+  .software-title {
+    text-align: left !important;
+    padding-left: 0px !important;   /* desloca o subtítulo 50px para a direita */
+    margin-right: auto !important;
+  }
+}
+
+/* Para garantir que não tenha overflow horizontal em nenhuma tela */
+body, html, .app {
+  overflow-x: hidden !important;
+  width: 100vw !important;
+}
+
+@media (max-width: 768px) {
+  /* Oculta o menu lateral por padrão */
+  .sidebar {
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 75vw; /* Ocupa parte da tela no mobile */
+    height: 100vh;
+    background-color: #fff; /* ou o fundo da sua sidebar */
+    z-index: 999;
+    box-shadow: 2px 0 6px rgba(0, 0, 0, 0.15);
+  }
+
+  /* Mostra o menu lateral quando estiver com a classe .open */
+  .sidebar.open {
+    transform: translateX(0);
+  }
+
+  /* Mostra o botão hambúrguer */
+  .btn-menu {
+    display: block;
+    position: fixed;
+    top: 1rem;
+    left: 1rem;
+    z-index: 1000;
+    background: none;
+    border: none;
+    font-size: 2rem;
+    cursor: pointer;
+    color: #333; /* ou a cor que quiser para o ícone */
+  }
+}
+
+/* No desktop, esconde o botão hambúrguer */
+@media (min-width: 769px) {
+  .btn-menu {
+    display: none;
+  }
+}
+@media (max-width: 1024px) {
+  .software-cards-wrapper {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    justify-content: center !important; /* centraliza os cards */
+    margin: 0 auto !important;           /* centraliza o container */
+    padding: 0 1rem !important;          /* espaçamento horizontal */
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .software-card {
+    flex: 1 1 90% !important;   /* cards quase toda largura, com margem */
+    max-width: 600px !important; /* limita largura máxima para não ficar gigante */
+    margin: 0.5rem auto !important; /* centraliza cada card individual */
+    box-sizing: border-box !important;
+  }
+}
+@media (max-width: 1024px) {
+  .paginacao {
+    display: flex !important;
+    justify-content: center !important; /* centraliza horizontalmente */
+    align-items: center !important;     /* centraliza verticalmente, se precisar */
+    gap: 0.5rem !important;              /* espaçamento entre os botões */
+    margin: 1rem 0 !important;           /* espaço em cima e embaixo */
+  }
+}
+@media (min-width: 810px) and (max-width: 830px) {
+  .software-title {
+    text-align: center !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    display: block;
+    width: 100%;
+  }
+}
+@media (min-width: 600px) and (max-width: 900px) {
+  .software-title {
+    text-align: center !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    display: block;
+    width: 100%;
+  }
+}
+
 .ativo {
   background-color: rgba(92, 92, 92, 0.63); /* cinza muito claro com transparência */
   box-shadow: 0 0 8px rgba(184, 184, 184, 0.08); /* sombra leve */
@@ -1766,7 +2251,7 @@ color: #000;
   font-weight: bold;
   margin-bottom: 1.5rem;
   color: #000;
-  margin-top: -3rem;
+  margin-top: -2rem;
   display: inline-block; /* necessário para o ::after ter base apenas no texto */
   position: relative;
   margin-left: 0px;
@@ -2241,10 +2726,10 @@ input[type="email"] {
   font-size: 2rem;
   font-weight: 700;
   margin-bottom: 2rem;
-  text-align: Center;     /* alinha o texto à esquerda */
+  text-align: center;    /* Corrigi para 'center' com c minúsculo */
   color: #000000;
-  position: relative;   /* necessário para o ::after */
-  display: inline-block; /* limita o sublinhado ao tamanho do texto */
+  position: relative;
+  display: inline-block;
   margin-left: 380px;
   margin-top: -2rem;
 }
@@ -2255,7 +2740,22 @@ input[type="email"] {
   width: 40%;
   height: 3px;
   background-color: #bb6400;
-  margin-top: 0rem; /* aproxima a linha do texto */
+  margin-top: 0rem;
+}
+
+/* Ajustes para mobile */
+@media (max-width: 768px) {
+  .perfil-titulo {
+    margin-left: 0 !important;   /* remove margem esquerda enorme */
+    margin-top: 0 !important;    /* remove margem negativa */
+    text-align: center;          /* centraliza o texto */
+    font-size: 1.6rem;           /* reduz um pouco a fonte para mobile */
+  }
+
+  .perfil-titulo::after {
+    width: 20%;                  /* linha mais larga proporcional ao texto menor */
+    margin-left: 90px;
+  }
 }
 
 
@@ -2523,6 +3023,7 @@ nav.menu ul {
   display: flex;
   flex-direction: column;
   padding: 1rem;
+  
 }
 
 .sidebar.open {

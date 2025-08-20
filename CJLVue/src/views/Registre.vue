@@ -19,6 +19,7 @@ section.registro-multi
 
       // Etapa 1 - Nome
       template(v-if="etapaAtual === 1")
+        p.msg-digite-cpf.text-branco.text-left Digite o Nome Completo
         .input-group
           input(
             type="text"
@@ -79,7 +80,8 @@ section.registro-multi
 
       // Etapa 3 - Pessoa Jurídica (opcional)
       template(v-if="etapaAtual === 3")
-        p.titulo-etapa2 Você é uma Pessoa Jurídica?
+        p.msg-digite-cpf.text-branco.text-left Você é uma pessoa Juridica?
+        
 
         .radio-group
           .radio-option
@@ -92,6 +94,7 @@ section.registro-multi
 
         // Campos aparecem somente se for PJ
         template(v-if="form.ehPessoaJuridica === true")
+          
           .input-group
             input(
               type="text"
@@ -177,6 +180,7 @@ section.registro-multi
 
       // Etapa 5 - Endereço
       template(v-if="etapaAtual === 5")
+        p.msg-digite-cpf.text-branco.text-left Digite o Endereço
         section.endereco
           .input-group
             input(
@@ -258,6 +262,7 @@ section.registro-multi
 
       // Etapa 6 - Credenciais
       template(v-if="etapaAtual === 6")
+        p.msg-digite-cpf.text-branco.text-left Digite as Credenciais
         section.credenciais
           .input-group
             input(
@@ -677,7 +682,7 @@ const formatarCNPJ = () => {
 .radio-group {
   display: flex;
   flex-direction: column; /* coloca em coluna (um em cima do outro) */
-  align-items: center;    /* centraliza horizontalmente */
+  align-items: flex-start;
   gap: 0.75rem;           /* espaçamento entre os dois */
   margin-bottom: 1.5rem;
 }
