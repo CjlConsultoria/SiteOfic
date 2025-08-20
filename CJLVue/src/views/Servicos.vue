@@ -319,10 +319,57 @@ const cardsPaginados = computed(() => {
 function mudarPaginaCard(n: number) {
   paginaAtualCard.value = n
 }
+const loading = ref(true)
+const showLoader = ref(true)
+
+onMounted(() => {
+  // Spinner aparece imediatamente
+  showLoader.value = true
+
+  // Aguarda 10 segundos antes de começar a abrir a tela preta
+  setTimeout(() => {
+    showLoader.value = false // esconde spinner
+
+    const topHalf = document.querySelector('.top-half')
+    const bottomHalf = document.querySelector('.bottom-half')
+
+    if (topHalf && bottomHalf) {
+      topHalf.classList.add('slide-up')
+      bottomHalf.classList.add('slide-down')
+    }
+
+    // Remove overlay depois da animação (mesma duração da animação)
+    setTimeout(() => {
+      loading.value = false
+    }, 50000) // duração da animação das metades
+  }, 10000) // espera 10s antes de abrir
+})
+const cookieAceito = ref(false)
+
+onMounted(() => {
+  cookieAceito.value = localStorage.getItem('cookieAceito') === 'true'
+})
+
+function aceitarCookie() {
+  localStorage.setItem('cookieAceito', 'true')
+  cookieAceito.value = true
+}
+
+// Novo método para rejeitar cookies
+function rejeitarCookie() {
+  localStorage.setItem('cookieAceito', 'true') // fecha o banner
+  cookieAceito.value = true
+  // aqui você pode limpar cookies indesejados se houver
+}
 </script>
 
 
 <template lang="pug">
+.loading-overlay(v-if="loading")
+  .top-half
+  .bottom-half
+  .loader-container(v-if="showLoader")
+   
 section.banner-container
   img.banner-image(:src="contaImg" alt="Banner Conta")
   section.banner-with-text
@@ -335,6 +382,11 @@ section.banner-container
         | O GPL executa todos os processos de uma singular (Unimed) para a gestão do plano de saúde, otimizando as atividades de cadastramento, cálculo de comissões, auditoria de contas, faturamento, pagamento, atendimento das obrigações da ANS e Unimed Brasil.
       a.arrow(href="#sessao") ↓
 
+.cookie-banner-wrapper(v-if="!cookieAceito")
+    p Clicando em "Aceito todos os Cookies", você concorda com o armazenamento de cookies no seu dispositivo para melhorar a experiência e navegação no site.
+    .botoes-cookie
+      button(@click="aceitarCookie") Aceitar Todos
+      button(@click="rejeitarCookie") Rejeitar Todos
 section.sessao-cjl(id="sessao")
   .card-cjl
     h2.titulo-cinza Consultoria Estratégica de TI
@@ -429,6 +481,305 @@ section.cards-container
   </template>
 
 <style scoped>
+.cookie-banner-wrapper p {
+  color: #000;
+  text-align: left;
+  font-family: Arial, Helvetica, sans-serif;
+  max-width: 450px; /* largura máxima do texto */
+  word-wrap: break-word; /* força a quebra de linha se ultrapassar */
+  
+}
+
+.cookie-banner-wrapper {
+  position: fixed;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%) translateY(50px); /* começa 50px abaixo */
+  width: 60%;
+  max-width: 1200px;
+  background-color: white;
+  color: white;
+  padding: 1rem 1.5rem;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+  z-index: 9999;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  opacity: 0; /* começa invisível */
+  animation: mostrarCookie 10s forwards; /* animação de 3s e mantém estado final */
+}
+
+@keyframes mostrarCookie {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(50px); /* começa abaixo */
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0); /* final na posição correta */
+  }
+}
+
+
+.botoes-cookie {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.botoes-cookie button {
+  padding: 0.5rem 0.8rem !important; /* menos padding horizontal */
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 0.8rem;   /* texto menor */
+  min-width: 120px !important; /* largura mínima menor */
+  white-space: nowrap;  /* impede quebra de texto */
+  text-align: center;
+}
+
+
+
+
+.botoes-cookie button:first-child {
+  background-color: #ff8c00; /* Aceitar */
+  color: white;
+}
+
+.botoes-cookie button:last-child {
+  background-color: #555; /* Rejeitar todos */
+  color: white;
+}
+
+.botoes-cookie button:first-child {
+  background-color: #ff8c00; /* Aceitar */
+  color: white;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.botoes-cookie button:first-child:hover {
+  background-color: #ff6600; /* tom mais escuro no hover */
+  transform: scale(1.05);   /* leve aumento ao passar o mouse */
+}
+
+.botoes-cookie button:last-child {
+  background-color: #555; /* Rejeitar todos */
+  color: white;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.botoes-cookie button:last-child:hover {
+  background-color: #333; /* tom mais escuro no hover */
+  transform: scale(1.05); /* leve aumento ao passar o mouse */
+}
+
+@media (max-width: 480px) {
+  .cookie-banner-wrapper {
+    width: 90% !important;            /* ocupa mais da tela */
+    padding: 0.8rem 1rem;  /* reduz padding */
+    font-size: 0.85rem;    /* fonte menor */
+    flex-direction: column; /* coloca texto e botões em coluna */
+    align-items: center;
+    text-align: center;
+  }
+
+  .cookie-banner-wrapper p {
+    max-width: 100%;       /* não ultrapassa a largura do wrapper */
+    margin-bottom: 0.5rem;
+  }
+
+  .botoes-cookie {
+    flex-direction: column; /* botões empilhados */
+    gap: 8px;
+  }
+
+  .botoes-cookie button {
+    width: 100%;           /* cada botão ocupa toda a largura */
+  }
+}
+
+/* Tablets */
+@media (min-width: 481px) and (max-width: 768px) {
+  .cookie-banner-wrapper {
+    width: 80%;            /* ocupa menos que no celular pequeno */
+    padding: 1rem 1.2rem;
+    font-size: 0.9rem;
+    flex-direction: column; 
+    align-items: center;
+    text-align: center;
+  }
+
+  .cookie-banner-wrapper p {
+    max-width: 100%;
+    margin-bottom: 0.5rem;
+  }
+
+  .botoes-cookie {
+    flex-direction: row;   /* botões lado a lado */
+    justify-content: center;
+    gap: 10px;
+  }
+
+  .botoes-cookie button {
+    width: auto;           /* largura natural do botão */
+    min-width: 120px;      /* largura mínima para não ficar muito pequeno */
+  }
+}
+@media (min-width: 481px) and (max-width: 768px) {
+  .cookie-banner-wrapper {
+    width: 80%;            /* ocupa menos que no celular pequeno */
+    padding: 1rem 1.2rem;
+    font-size: 0.9rem;
+    flex-direction: column; 
+    align-items: center;
+    text-align: center;
+  }
+
+  .cookie-banner-wrapper p {
+    max-width: 100%;
+    margin-bottom: 0.5rem;
+  }
+
+  .botoes-cookie {
+    flex-direction: row;   /* botões lado a lado */
+    justify-content: center;
+    gap: 10px;
+  }
+
+  .botoes-cookie button {
+    width: auto;           /* largura natural do botão */
+    min-width: 120px;      /* largura mínima para não ficar muito pequeno */
+  }
+}
+
+
+@media (min-width: 481px) and (max-width: 768px) {
+  .cookie-banner-wrapper {
+    width: 80%;            /* ocupa menos que no celular pequeno */
+    padding: 1rem 1.2rem;
+    font-size: 0.9rem;
+    flex-direction: column; 
+    align-items: center;
+    text-align: center;
+  }
+
+  .cookie-banner-wrapper p {
+    max-width: 100%;
+    margin-bottom: 0.5rem;
+  }
+
+  .botoes-cookie {
+    flex-direction: row;   /* botões lado a lado */
+    justify-content: center;
+    gap: 10px;
+  }
+
+  .botoes-cookie button {
+    width: auto;           /* largura natural do botão */
+    min-width: 120px;      /* largura mínima para não ficar muito pequeno */
+  }
+}
+
+
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 99999;
+  pointer-events: none;
+}
+
+.top-half,
+.bottom-half {
+  position: absolute;
+  width: 100%;
+  height: 50%;
+  background-color: #000;
+  transform: translateY(0);
+  z-index: 99998;
+  animation-fill-mode: forwards;
+  animation-timing-function: ease-in-out;
+  animation-duration: 5s; /* duração da abertura */
+}
+
+.top-half.slide-up {
+  animation-name: slideUp;
+  top: 0;
+}
+
+.bottom-half.slide-down {
+  animation-name: slideDown;
+  bottom: 0;
+}
+
+@keyframes slideUp {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-100%); }
+}
+
+@keyframes slideDown {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(100%); }
+}
+
+/* Loader */
+.loader-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 100000;
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 5px solid #fff;
+  border-top: 5px solid #ff8c00;
+  border-radius: 50%;
+
+}
+
+
+
+
+.loading-overlay .top-half,
+.loading-overlay .bottom-half {
+  position: absolute;
+  width: 100%;
+  height: 50%;
+  background-color: #000;
+  animation-duration: 1s;
+  animation-fill-mode: forwards;
+}
+
+/* animação da metade de cima subindo */
+.loading-overlay .top-half {
+  top: 0;
+  animation-name: slideUp;
+}
+
+/* animação da metade de baixo descendo */
+.loading-overlay .bottom-half {
+  bottom: 0;
+  animation-name: slideDown;
+}
+
+@keyframes slideUp {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-100%); }
+}
+
+@keyframes slideDown {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(100%); }
+}
 /* Centraliza o botão em tablets e mobile */
 
 
