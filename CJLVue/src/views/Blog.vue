@@ -642,6 +642,106 @@ section.blog-list(v-else)
 
 
 <style scoped>
+/* Todos os celulares e tablets */
+@media (max-width: 1024px) {
+  .container-top {
+    margin-top: 5rem !important; /* ajuste a distância para baixo */
+    
+  }
+}
+
+/* iPhone X / XS aproximado */
+@media (min-width: 360px) and (max-width: 380px) {
+  button.back-button {
+    margin-top: 35rem !important; /* aumenta a distância só nesse intervalo */
+    display: block;
+    margin-bottom: -2rem;
+  }
+}
+/* Apenas iPhone XR */
+@media (min-width: 413px) and (max-width: 415px) {
+  button.back-button {
+    margin-top: 25rem !important; /* distância para baixo só no iPhone XR */
+    display: block;
+    margin-bottom: -2rem;
+  }
+}
+/* Apenas iPhone 12 Mini */
+@media (min-width: 359px) and (max-width: 361px) {
+  button.back-button {
+    margin-top: 35rem !important; /* distância para baixo só no iPhone 12 Mini */
+    display: block;
+    margin-bottom: -2rem;
+  }
+}
+/* Apenas iPhone 12 */
+@media (min-width: 389px) and (max-width: 391px) {
+  button.back-button {
+    margin-top: 30rem !important; /* distância para baixo só no iPhone 12 */
+    display: block;
+    margin-bottom: -2rem;
+  }
+}
+/* Apenas iPhone 12 Pro Max */
+@media (min-width: 427px) and (max-width: 429px) {
+  button.back-button {
+    margin-top: 25rem !important; /* distância para baixo só no iPhone 12 Pro Max */
+    display: block;
+    margin-bottom: -2rem;
+  }
+}
+/* Apenas tablets */
+@media (min-width: 768px) and (max-width: 1024px) {
+  button.back-button {
+    margin-top: 3rem !important; /* ajusta apenas nos tablets */
+    display: block;
+    margin-bottom: -5rem;
+  }
+}
+@media (min-width: 768px) and (max-width: 1024px) {
+  button.back-button {
+    margin-top: 0rem !important; /* ajusta apenas nos tablets */
+    display: block;
+    margin-bottom: -5rem;
+  }
+}
+
+/* Outros tablets (excluindo iPad Mini) */
+@media (min-width: 781px) and (max-width: 1024px) {
+  button.back-button {
+    margin-top: 2rem !important;
+    display: block;
+    margin-bottom: -5rem;
+  }
+}
+
+/* iPad Mini aproximado */
+@media (min-width: 760px) and (max-width: 780px) {
+  button.back-button {
+    margin-top: 10rem !important; /* ajuste só para iPad Mini */
+    display: block;
+    margin-bottom: -4rem;
+  }
+}
+/* Apenas Google Pixel 5 */
+@media (min-width: 392px) and (max-width: 394px) {
+  button.back-button {
+    margin-top: 35rem !important;
+    display: block;
+    margin-bottom: -2rem;
+  }
+}
+/* Apenas OnePlus Nord 2 */
+@media (min-width: 411px) and (max-width: 413px) {
+  button.back-button {
+    margin-top: 30rem !important;
+    display: block;
+    margin-bottom: -2rem;
+  }
+}
+
+
+
 .cookie-banner-wrapper p {
   color: #000;
   text-align: left;
@@ -1725,7 +1825,7 @@ section.article-detail {
   top: 20rem;
   left: 50%;
   transform: translateX(-50%) translateY(-20px); /* começa 20px acima */
-  background-color: rgb(240, 240, 240);
+  background-color: rgb(230, 230, 230);
   border-radius: 12px;
   padding: 2rem 2rem;
   max-width: 900px;
@@ -1733,7 +1833,7 @@ section.article-detail {
   min-height: auto;
   color: #000000;
   text-align: center;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.9);
   z-index: 10;
 
   opacity: 0; /* invisível no início */
