@@ -425,6 +425,54 @@ section.cards-container
 </template>
 
 <style scoped>
+/* Ajuste exclusivo para tablets */
+@media (min-width: 768px) and (max-width: 1024px) {
+ section.banner-with-text .shape-left {
+  width: 70% !important;
+  max-width: 70% !important;
+  min-height: 50rem !important; /* altura mínima maior */
+  /* height: auto !important; */ /* opcional, deixa crescer com o conteúdo */
+}
+
+  section.banner-with-text .shape-left h1.title {
+    font-size: 2.5rem !important;    
+    line-height: 1.3 !important;
+    margin-top: 15rem !important;
+  }
+
+  section.banner-with-text .shape-left p.description {
+    font-size: 1.1rem !important;  
+    line-height: 1.8 !important;
+  }
+}
+
+
+@media (max-width: 428px) {
+  .shape-left h1.title,
+  .shape-left p.description {
+    display: block;
+    max-width: 70% !important;
+    white-space: normal !important;
+  }
+}
+@media (max-width: 414px) {
+  .shape-left h1.title,
+  .shape-left p.description {
+    display: block;
+    max-width: 70% !important;
+    white-space: normal !important;
+  }
+}
+
+@media (max-width: 400px) {
+.shape-left h1.title,
+  .shape-left p.description {
+    display: block;
+    max-width: 80% !important;
+    white-space: normal !important;
+  }
+}
+
 /* Celulares até 767px */
 @media (max-width: 767px) {
   .shape-left {
