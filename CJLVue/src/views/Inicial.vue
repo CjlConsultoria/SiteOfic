@@ -516,6 +516,99 @@ section.formulario-contato
 </template>
 
 <style scoped>
+.tras .botao-nx {
+  background-color: rgb(26, 26, 26);
+  color: white;
+  border: none;
+  margin-left: 20px;
+}
+.tras {
+  position: relative;
+}
+
+.tras .botao-nx {
+  position: absolute;
+  right: -3px; /* distância da borda direita do card */
+  bottom: 15px; /* ou top: 1rem; se quiser subir */
+}
+
+.cartao-nx .tras {
+  position: relative;
+  border-radius: 8px;
+  
+  box-sizing: border-box;
+  min-height: 130px;     /* altura mínima igual para todos */
+
+}
+/* Celulares */
+/* Celulares: todos os tamanhos até 767px */
+@media (max-width: 767px) {
+  .grade-cartoes-nx .cartao-nx .tras,
+  .cartao-nx .tras {
+    min-height: 200px !important; /* ajusta altura para celular */
+    padding: 1rem !important;     /* mantém o conteúdo afastado da borda */
+    position: relative !important;
+    border-radius: 8px !important;
+    box-sizing: border-box !important;
+    overflow: visible !important;  /* garante que a borda apareça */
+  }
+
+  .grade-cartoes-nx .cartao-nx .tras::before,
+  .cartao-nx .tras::before {
+    content: "";
+    position: absolute !important;
+    top: -2px !important;
+    left: -3px !important;
+    right: -3px !important;
+    bottom: 72px !important;
+    border: 1px solid #001aff !important;
+    border-radius: 6px !important;
+    pointer-events: none !important;
+    box-shadow: 0 0 12px rgba(0, 26, 255, 0.9) !important;
+  }
+}
+
+
+/* Tablets e celulares */
+@media (max-width: 1024px) {
+  .cartao-nx .tras {
+    position: relative;
+    border-radius: 8px;
+    box-sizing: border-box;
+    min-height: 200px;
+    overflow: visible; /* garante que borda externa apareça */
+  }
+
+  .cartao-nx .tras::before {
+    content: "";
+    position: absolute;
+    top: 0;       /* sempre começa no topo do card */
+    left: 0;      /* sempre começa na esquerda do card */
+    right: 0;
+    bottom: 0;
+    border: 1px solid #001aff;
+    border-radius: 6px;
+    pointer-events: none;
+    box-shadow: 0 0 12px rgba(0, 26, 255, 0.9);
+  }
+}
+
+.cartao-nx .tras::before {
+  content: "";
+  position: absolute;
+  top: -9px;
+  left: -9px;
+  right: -9px;
+  bottom: 9px;
+  border: 1px solid #001aff;
+  border-radius: 6px;
+  pointer-events: none;
+
+  /* sombra mais intensa */
+  box-shadow: 0 0 12px rgba(0, 26, 255, 0.9); 
+}
+
+
 /* Mobile: telas pequenas até 480px */
 
 /* Celulares pequenos */
@@ -1077,7 +1170,7 @@ html, body {
 .cartao-nx.vermelho {
   /* Altura expandida quando o card está aberto */
   height: 150px;
-  background-color: #fdff9b;
+  background-color: #ffffff;
 }
 
 /* Parte da frente sempre visível quando fechado */
@@ -1361,6 +1454,10 @@ html, body {
     width: 180px;
   }
 }
+/* iPhone 12 Mini - mobile específico */
+/* Celulares aproximados (inclui iPhone 12 Mini) */
+
+
 @media (max-width: 768px) {
     .bloco-solucao-nx {
     height: auto;
@@ -1439,13 +1536,20 @@ html, body {
   }
 
   .cartao-nx {
-    width: 140px;
+    width: 300px;
     padding: 0.6rem;
   }
 
   .botao-nx {
     font-size: 0.9rem;
     padding: 0.1rem 0.4rem;
+  }
+}
+/* Aproximado para telas próximas a 1114x705 */
+@media (min-width: 1110px) and (max-width: 1120px) {
+  .grade-cartoes-nx {
+    
+    right: -3rem;       /* ajuste a distância desejada */
   }
 }
 
@@ -1508,6 +1612,7 @@ section.formulario-contato {
   color: rgb(0, 0, 0); /* texto branco no verso */
   font-size: 1rem;
   text-align:left;
+  
 }
 
 .tras p {
@@ -1532,12 +1637,15 @@ section.formulario-contato {
   background-color: rgb(20, 20, 20) !important; /* ou a cor preta que estiver usando */
   color: rgb(172, 172, 172); /* para o texto ficar visível */
 }
-
+.frente .botao-nx:hover {
+  background-color: #bebebe; /* escurece levemente ao passar o mouse */
+  border: none;
+}
 .tras .botao-nx:hover {
-  background-color: #222; /* escurece levemente ao passar o mouse */
+  background-color: #3425ff; /* escurece levemente ao passar o mouse */
 }
 .tras .botao-nx {
-  background-color: #2c2c2c; /* escurece levemente ao passar o mouse */
+  background-color: #000986; /* escurece levemente ao passar o mouse */
 }
 .espaco-rolagem {
  
@@ -1554,11 +1662,7 @@ section.sobre h2 {
   display: inline-block; /* pra que o pseudo fique alinhado ao texto */
   padding-left: 10px; /* espaço para a linha */
 }
-.tras .botao-nx {
-  background-color: rgb(26, 26, 26);
-  color: white;
-  border: none;
-}
+
 section.sobre h2::before {
   content: "";
   position: absolute;

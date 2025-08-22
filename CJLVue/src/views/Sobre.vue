@@ -386,6 +386,12 @@ section.bloco-recursos-tec
 </template>
 
 <style scoped>
+@media (min-width: 768px) and (max-width: 1024px) {
+  .lista-acordeao-tec .card-tec:last-child {
+    margin-bottom: 7rem; /* ajuste o valor */
+  }
+}
+
 .cookie-banner-wrapper p {
   color: #000;
   text-align: left;
