@@ -642,6 +642,19 @@ section.blog-list(v-else)
 
 
 <style scoped>
+/* Mobile: telas até 767px */
+
+/* iPhone 12 / 12 Pro */
+@media (max-width: 767px) and (min-width: 390px) and (max-width: 390px) {
+  .content-limited {
+    transform: translateY(0rem);
+  }
+}
+
+
+
+
+
 /* Todos os celulares e tablets */
 @media (max-width: 1024px) {
   .container-top {
@@ -1878,7 +1891,7 @@ section.article-detail {
 }
 
 .content-limited {
-  width: 70%;
+  width: 90%;
   max-width: 1000px;         /* opcional, para limitar largura em telas grandes */
   margin: 0 auto;            /* centraliza horizontalmente */
   text-align: left;          /* alinha o conteúdo interno à esquerda */

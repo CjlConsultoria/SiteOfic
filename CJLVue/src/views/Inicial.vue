@@ -357,10 +357,6 @@ onMounted(() => {
   .loader-container(v-if="showLoader")
     
 
-
-
-
-
 main.home
   //- HERO
   section.hero
@@ -412,12 +408,14 @@ main.home
             img.icone-nx(:src="card.icon" alt="Ícone")
             .titulo-cartao-frente
               p {{ card.titulo }}
-            button.botao-nx(@click="toggleFlip(index)") +
+            button.botao-nx(@click="toggleFlip(index)")
+              span.sinal +
 
           //- Verso do card
           .tras(v-else)
             p {{ card.textoTraseiro }}
-            button.botao-nx(@click="toggleFlip(index)") -
+            button.botao-nx(@click="toggleFlip(index)")
+               span.sinal -
 
   //- CLIENTES
   section.clientes-satisfeitos(ref="clientesRef")
@@ -809,7 +807,8 @@ section.formulario-contato
   /* Aumenta a largura dos cards apenas em tablets */
   .grid-clientes .card-metrica {
     flex: 0 0 48%; /* cada card ocupa quase metade da largura do container */
-    max-width: 88%;
+    max-width: 108%;
+    
   }
   
   /* Se quiser, mantém gap entre os cards */
@@ -884,15 +883,20 @@ section.formulario-contato
   }
 
   /* Cards mais largos */
-  .cartao-nx {
-    flex: 0 0 60% !important; /* força cada card ocupar 60% da largura da tela do tablet */
-    max-width: 60% !important;
-    min-height: 220px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    padding: 1rem;
-  }
+ .cartao-nx {
+  flex: 0 0 90% !important; /* ocupa 90% do container */
+  max-width: 90% !important; /* garante que não ultrapasse */
+  min-height: 220px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 1rem;
+  left: -1rem;
+}
+.botao-nx .sinal {
+  font-size: 2.4rem;  /* aumenta só o + ou - */
+  line-height: 1;
+}
 
   .cartao-nx .frente img.icone-nx {
     width: 70px;
@@ -1237,6 +1241,11 @@ html, body {
     margin-top: 1rem;
   }
 }
+@media (min-width: 768px) and (max-width: 1024px) {
+  .grid-direita {
+    margin-left: -9rem;
+  }
+}
 
 /* Tablets e telas médias */
 @media (max-width: 992px) {
@@ -1254,6 +1263,7 @@ html, body {
   .grid-esquerda, .grid-direita {
     width: 100%;
     max-width: 600px;
+    
   }
 
   .grid-esquerda {

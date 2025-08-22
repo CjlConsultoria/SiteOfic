@@ -813,7 +813,7 @@ section.cards-container
   }
 
   section.sessao-consultoria .texto-lado h2.titulo-consultoria {
-    max-width: 95%;           /* limita a largura para que não quebre rápido */
+    max-width: 100%;           /* limita a largura para que não quebre rápido */
     white-space: normal;      /* permite quebrar, mas só quando necessário */
     font-size: 1.5rem;        /* ajuste da fonte para telas menores */
     line-height: 1.3;         /* deixa o título visualmente equilibrado */
@@ -821,8 +821,9 @@ section.cards-container
 
   section.sessao-consultoria .texto-lado p.descricao-consultoria {
     margin-left: 0;           /* aproxima o texto da borda esquerda */
-    max-width: 95%;           /* limita a largura para manter boas quebras */
+    max-width: 100%;           /* limita a largura para manter boas quebras */
     line-height: 1.6;         /* mantém boa legibilidade */
+    font-size: 14px;
   }
 }
 
@@ -839,7 +840,8 @@ section.cards-container
 @media (max-width: 992px) {
   section.sessao-cjl .card-cjl .description {
     margin-left: 0 !important; /* remove a margem esquerda */
-    padding-left: 0.5rem;      /* opcional: um pequeno recuo */
+    padding-left: 0rem;      /* opcional: um pequeno recuo */
+    text-align: center;
   }
 }
 
@@ -1146,8 +1148,6 @@ section.cards-container
   gap: 4px;                /* pequeno espaço entre os botões */
   margin-top: 2rem;
   padding: 0;
-  margin-bottom: 5rem;
-
 }
 
 .paginacao button {
@@ -1434,7 +1434,7 @@ label.software-card-checkbox.disabled {
   }
 
   .descricao-consultoria {
-    font-size: 1rem !important;
+    font-size: 14px !important;
     line-height: 1.5 !important;
     text-align: justify !important;
   }
@@ -1704,7 +1704,7 @@ button:hover {
     text-align: left !important;
     padding-left: 15px !important;
     padding-right: 15px !important;
-    width: 100% !important;
+    width: 95% !important;
     margin: 0 auto !important;
   }
 }
@@ -2610,8 +2610,8 @@ html, body {
   line-height: 1.5;
   max-width: 400px;
   margin-bottom: 3rem;
-  text-align: left;
-  margin-left: 40px;
+  text-align: center;
+  
   font-family: inherit;
   font-family: 'Times New Roman', Times, serif;
 }
