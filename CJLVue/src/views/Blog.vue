@@ -539,12 +539,15 @@ section.article-detail(v-if="currentArticle")
     img.article-banner(:src="currentArticle.image", alt="Imagem do artigo")
 
     // Botão logo abaixo da imagem, alinhado à esquerda
-    button.back-button(@click="router.push('/blog')")
-      span.arrow ←
-      span.voltar-text(style="display: inline-block; margin-top: 4px;") Voltar
+    .back-button-wrapper(:class="{ 'highlight-mobile-offset-btn': currentArticle.id === 99 }")
+      button.back-button(@click="router.push('/blog')")
+        span.arrow ←
+        span.voltar-text(style="display: inline-block; margin-top: 4px;") Voltar
+
+
 
   // Conteúdo principal
-  .content-limited
+  .content-limited(:class="{ 'highlight-mobile-offset': currentArticle.id === 99 }")
     .article-body(v-for="(section, index) in currentArticle.sections" :key="index")
 
       // Texto adicional acima do título
@@ -638,10 +641,76 @@ section.blog-list(v-else)
             span.card-date {{ post.date }}
           h3.title1(v-html="post.title1")
           button.card-button(@click="openArticle(post.id)") Leia o artigo
+  section.article-page(
+    v-if="isArticleOpen" 
+    :class="{'featured-article-page': currentArticle && currentArticle.id === featuredPost.id}"
+  )
+    h1 {{ currentArticle.title1 }}
+    p {{ currentArticle.description }}
+
+
 </template>
 
 
 <style scoped>
+
+@media (max-width: 767px) {
+  /* Apenas para o artigo destaque */
+  .highlight-mobile-offset {
+    margin-top: 0rem !important; /* empurra o conteúdo para baixo no fluxo normal */
+  }
+
+.highlight-mobile-offset-btn {
+    display: block;    /* garante que não fique inline */
+    margin-top: 20rem;  /* ajusta a distância do botão em relação à imagem */
+  }
+}
+
+@media (max-width: 767px) {
+  .image-and-button {
+    display: flex;
+    flex-direction: column; /* empilha imagem + botão verticalmente */
+    align-items: flex-start; /* botão alinhado à esquerda */
+  }
+
+  /* Botão só do destaque */
+  .highlight-mobile-offset-btn {
+    margin-top: 5rem; /* distância do botão em relação à imagem */
+    display: block;
+  }
+}
+@media (max-width: 767px) {
+  /* Apenas o botão do destaque */
+  .highlight-mobile-offset-btn {
+    margin-top: 19rem; /* ajusta quanto quer descer o botão */
+    display: block;    /* garante que fique empilhado */
+  }
+}
+/* Para todos os tablets */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .highlight-mobile-offset-btn {
+    margin-top: 5rem; /* distância do botão */
+    display: block;     /* garante que fique empilhado */
+  }
+}
+
+
+
+.featured-article-page {
+  background: #d41515; /* exemplo */
+  padding: 2rem;
+  border-radius: 12px;
+  color: white;
+}
+:deep(.featured-article-page) {
+  background: #d41515;
+  padding: 2rem;
+  border-radius: 12px;
+  color: white;
+}
+
+
+
 /* Mobile: telas até 767px */
 
 /* iPhone 12 / 12 Pro */
@@ -650,10 +719,6 @@ section.blog-list(v-else)
     transform: translateY(0rem);
   }
 }
-
-
-
-
 
 /* Todos os celulares e tablets */
 @media (max-width: 1024px) {

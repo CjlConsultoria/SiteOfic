@@ -6,6 +6,8 @@ import axios from 'axios'
 const router = useRouter()
 const route = useRoute()
 
+
+
 const isScrolled = ref(false)
 const isMenuOpen = ref(false)
 const ehPlataforma = ref(false)

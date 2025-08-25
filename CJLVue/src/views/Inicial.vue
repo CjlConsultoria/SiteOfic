@@ -516,6 +516,7 @@ section.formulario-contato
 </template>
 
 <style scoped>
+
 .tras .botao-nx {
   background-color: rgb(26, 26, 26);
   color: white;
@@ -561,10 +562,10 @@ section.formulario-contato
     left: -3px !important;
     right: -3px !important;
     bottom: 72px !important;
-    border: 1px solid #001aff !important;
+    border: 1px solid #0ea500 !important;
     border-radius: 6px !important;
     pointer-events: none !important;
-    box-shadow: 0 0 12px rgba(0, 26, 255, 0.9) !important;
+    box-shadow: 0 0 12px rgba(14, 165, 0, 0.9) !important;
   }
 }
 
@@ -586,10 +587,10 @@ section.formulario-contato
     left: 0;      /* sempre começa na esquerda do card */
     right: 0;
     bottom: 0;
-    border: 1px solid #001aff;
+    border: 1px solid #0ea500;
     border-radius: 6px;
     pointer-events: none;
-    box-shadow: 0 0 12px rgba(0, 26, 255, 0.9);
+    box-shadow: 0 0 12px rgba(14, 165, 0, 0.9) !important;
   }
 }
 
@@ -600,12 +601,12 @@ section.formulario-contato
   left: -9px;
   right: -9px;
   bottom: 9px;
-  border: 1px solid #001aff;
+  border: 1px solid #0ea500;
   border-radius: 6px;
   pointer-events: none;
 
   /* sombra mais intensa */
-  box-shadow: 0 0 12px rgba(0, 26, 255, 0.9); 
+  box-shadow: 0 0 12px rgba(14, 165, 0, 0.9) !important;
 }
 
 
@@ -1642,10 +1643,10 @@ section.formulario-contato {
   border: none;
 }
 .tras .botao-nx:hover {
-  background-color: #3425ff; /* escurece levemente ao passar o mouse */
+  background-color: #27a800; /* escurece levemente ao passar o mouse */
 }
 .tras .botao-nx {
-  background-color: #000986; /* escurece levemente ao passar o mouse */
+  background-color: #00860b; /* escurece levemente ao passar o mouse */
 }
 .espaco-rolagem {
  

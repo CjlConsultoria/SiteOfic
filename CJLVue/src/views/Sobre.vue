@@ -386,6 +386,92 @@ section.bloco-recursos-tec
 </template>
 
 <style scoped>
+
+/* Mobile e tablets */
+@media (max-width: 1024px) {
+  section.bloco-sys .area-texto-sys h2.titulo-destaque-ti,
+  section.bloco-sys .area-texto-sys p.descricao-detalhe-ti {
+    text-align: left !important;    /* alinha o texto à esquerda */
+    max-width: 110% !important;      /* limita largura do texto */
+    margin-left: -1.4rem !important;      /* inicia na borda esquerda do container */
+    
+   
+  }
+}
+
+/* Mobile e tablets */
+@media (max-width: 1024px) {
+  section.sessao-consultoria .texto-lado h2.titulo-consultoria,
+  section.sessao-consultoria .texto-lado p.descricao-consultoria {
+    text-align: left !important;    /* alinha o texto à esquerda */
+    max-width: 120% !important;      /* limita largura do texto */
+    margin-left: 0 !important;      /* garante que comece na borda esquerda */
+    margin-right: auto !important;  /* mantém alinhamento correto */
+  }
+}
+
+/* Mobile e tablets */
+@media (max-width: 1024px) {
+  section#sobre .rbm-centro-conteudo h2.rbm-titulo-central,
+  section#sobre .rbm-centro-conteudo p.rbm-descricao-cinza {
+    text-align: left !important;    /* alinha o texto à esquerda */
+    max-width: 120% !important;      /* opcional: limita largura do texto */
+    margin-left: 0.2rem !important;      /* garante que comece na borda esquerda */
+    
+  }
+}
+
+/* Celulares e tablets */
+@media (max-width: 1024px) {
+  /* Centraliza o container de texto e define largura */
+  .area-texto-sys h2.titulo-destaque-ti,
+  .area-texto-sys p.descricao-detalhe-ti {
+    max-width: 150% !important;      /* ocupa até 90% da tela */
+    width: 120%;;
+    margin-left: -2rem !important;    /* centraliza horizontalmente */
+    margin-right: auto !important;   /* centraliza horizontalmente */
+    text-align: center !important;   /* centraliza o texto */
+  }
+  .area-texto-sys h2.titulo-destaque-ti{
+    font-size: 1.5rem !important;
+    margin-top: 4rem;
+  }
+  .titulo-consultoria {
+  font-size: 1.5rem !important;
+  margin-bottom: 2rem !important;
+  
+  
+}
+.rbm-titulo-central{
+  font-size: 1.5rem !important;
+  margin-bottom: 2rem !important;
+}
+}
+
+/* Celulares e tablets */
+@media (max-width: 1024px) {
+  /* Espaço abaixo da imagem */
+  section.banner-container img.banner-image {
+    margin-bottom: 5rem !important; /* ajusta a distância abaixo da imagem */
+  }
+
+  /* Centraliza e limita a largura do texto e título */
+  section.banner-with-text .shape-left h1.title,
+  section.banner-with-text .shape-left p.description {
+    max-width: 90% !important;  
+ 
+  }
+}
+
+/* iPhone XR / 414px de largura aproximada */
+@media (min-width: 414px) and (max-width: 414px) {
+  section.banner-with-text .shape-left h1.title,
+  section.banner-with-text .shape-left p.description {
+    max-width: 80% !important;  /* largura máxima do texto */
+
+  }
+}
+
 @media (min-width: 768px) and (max-width: 1024px) {
   .lista-acordeao-tec .card-tec:last-child {
     margin-bottom: 7rem; /* ajuste o valor */
@@ -707,11 +793,8 @@ section.bloco-recursos-tec
     font-size: 1.8rem !important;
   }
 
-  .descricao-consultoria {
-    font-size: 1rem !important;
-    line-height: 1.5 !important;
-    text-align: justify !important;
-  }
+ 
+
 
   .imagem-lado {
     width: 100% !important;
@@ -731,6 +814,32 @@ section.bloco-recursos-tec
 
 
 }
+
+
+
+
+@media (max-width: 767px) {
+  /* Centraliza e define largura do texto descritivo */
+  .sessao-consultoria .descricao-consultoria {
+    position: relative !important;       
+    left: 50% !important;                
+    transform: translateX(-50%) !important; 
+    width: 130% !important;               /* largura máxima para mobile */
+    max-width: 140% !important;           
+    text-align: center !important;       
+  }
+
+  /* Centraliza e define largura do título */
+  .sessao-consultoria .titulo-consultoria {
+    position: relative !important;       
+    left: 50% !important;                
+    transform: translateX(-50%) !important; 
+    width: 130% !important;               /* largura máxima igual ao texto */
+    max-width: 140% !important;           
+    text-align: center !important;       /* centraliza o título */
+  }
+}
+
 
 
 
@@ -941,7 +1050,7 @@ display: block;
   .descricao-detalhe-ti {
     margin-left: 0;
     margin-right: 0;
-    text-align: center;
+    text-align: left;
   }
 }
 
@@ -957,6 +1066,11 @@ display: block;
 
   .descricao-detalhe-ti {
     margin-top: 1rem;
+  }
+  .titulo-recursos-tec{
+    font-size: 1.5rem !important;
+    text-align: left;
+    font-weight: bold !important;
   }
 @media (max-width: 768px) {
   .area-texto-sys {
@@ -1040,23 +1154,23 @@ display: block;
   .shape-left h1.title {
     font-size: 2rem !important;
     line-height: 2.5rem !important;
-    text-align: center;
+    text-align: left;
   }
 
   .shape-left p.description {
     font-size: 1rem !important;
     line-height: 1.6rem !important;
-    text-align: center;
+    text-align: left;
     margin-top: 1rem;
   }
-
+}
   .arrow {
     text-align: center;
     display: block;
     margin-top: 1.8rem;
     font-size: 1.5rem;
   }
-}
+
 @media (max-width: 992px) {
   .shape-left h1.title {
     font-size: 1.6rem !important;      /* diminui o tamanho da fonte */
@@ -1367,7 +1481,7 @@ html {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  font-family: 'Times New Roman', Times, serif;
+  
 }
 
 .titulo-consultoria {
@@ -1376,15 +1490,15 @@ html {
   margin-bottom: 1rem;
   text-align: left;
   color: #ffffff;
-  font-family: 'Times New Roman', Times, serif;
+  
 }
 
 .descricao-consultoria {
-  text-align: justify;
+  
   font-size: 1.1rem;
   line-height: 1.6;
   color: #b1b1b1;
-  font-family: 'Times New Roman', Times, serif;
+  
 
 }
 
@@ -1400,7 +1514,7 @@ html {
   }
 
   .titulo-consultoria {
-    text-align: center;
+    text-align: center !important;
   }
 
   .texto-lado {
@@ -1409,10 +1523,7 @@ html {
     margin: 0; /* remove margens laterais */
   }
 
-  .texto-lado p,
-  .texto-lado h2 {
-    text-align: left; /* garante alinhamento natural */
-  }
+ 
 }
 
 
