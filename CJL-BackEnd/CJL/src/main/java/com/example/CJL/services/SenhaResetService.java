@@ -44,7 +44,7 @@ public class SenhaResetService {
 
         String link = "http://localhost:8080/convivium/api/auth/resetar-senha?token=" + token;
 
-        emailService.enviarEmailRedefinicaoSenha(user.getEmail(), link);
+        emailService.enviarEmailRedefinicaoSenha(user.getEmail(),user.getNome(), link);
     }
 
     public void redefinirSenha(String token, String novaSenha) {
