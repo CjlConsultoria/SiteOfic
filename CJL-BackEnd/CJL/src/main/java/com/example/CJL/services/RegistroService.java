@@ -86,4 +86,18 @@ public class RegistroService {
         verificationService.enviarEmailConfirmacao(user);
         return Map.of("message", "Usuário registrado com sucesso");
     }
+
+    public Map<String, String> registrarAdmin(RegistroCompletoDTO registro) {
+        var retorno = registrarUsuario(registro);
+
+        User user = userRepository.findByEmail(registro.getUser().getEmail())
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+
+        Role adminRole = roleRepository.findByNome(RoleName.ROLE_ADMIN)
+                .orElseThrow(() -> new RuntimeException("Role ADMIN não encontrada"));
+        user.getRoles().add(adminRole);
+
+        userRepository.save(user);
+        return Map.of("message", "Administrador registrado com sucesso");
+    }
 }

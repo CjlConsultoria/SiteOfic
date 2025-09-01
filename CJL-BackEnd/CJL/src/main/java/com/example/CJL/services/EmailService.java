@@ -35,6 +35,7 @@ public class EmailService {
     @Value("${server.url}")
     private String serverUrl;
 
+
     private void enviarEmail(String destino, String assunto, String template, Map<String, Object> variaveis) {
         try {
             MimeMessage message = mailSender.createMimeMessage();

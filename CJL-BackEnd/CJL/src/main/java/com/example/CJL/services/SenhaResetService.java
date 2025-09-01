@@ -5,6 +5,7 @@ import com.example.CJL.entities.User;
 import com.example.CJL.repositories.SenhaResetRepository;
 import com.example.CJL.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -26,6 +27,9 @@ public class SenhaResetService {
     @Autowired
     private EmailService emailService;
 
+    @Value("${url.front}")
+    private String urlFront;
+
 
     public void solicitarRedefinicaoSenha(String email) {
         User user = userRepository.findByEmail(email)
@@ -40,9 +44,8 @@ public class SenhaResetService {
 
         tokenRepository.save(resetToken);
 
-        System.out.println("Link de redefinição: http://localhost:8080/api/auth/resetar-senha?token=" + token);
-
-        String link = "http://localhost:8080/convivium/api/auth/resetar-senha?token=" + token;
+        String link = urlFront + "/resetar-senha?token=" + token;
+        System.out.println("Link de redefinição: " + link);
 
         emailService.enviarEmailRedefinicaoSenha(user.getEmail(),user.getNome(), link);
     }
