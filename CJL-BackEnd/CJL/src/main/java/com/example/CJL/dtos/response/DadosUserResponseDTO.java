@@ -14,6 +14,7 @@ public class DadosUserResponseDTO {
     private String sobrenome;
     private String apelido;
     private String email;
+    private String telefone;
     private String genero;
     private String cidade;
     private String estado;

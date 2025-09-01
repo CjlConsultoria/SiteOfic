@@ -1,13 +1,16 @@
 package com.example.CJL.controllers;
 
+import com.example.CJL.dtos.request.TelefoneUpdateRequestDTO;
 import com.example.CJL.dtos.response.DadosUserResponseDTO;
 import com.example.CJL.dtos.request.UserRequestDTO;
 import com.example.CJL.entities.User;
 import com.example.CJL.repositories.UserRepository;
 import com.example.CJL.services.AdminService;
+import com.example.CJL.services.DadosUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,10 +24,12 @@ public class UsuarioController {
     private UserRepository userRepository;
 
     @Autowired
+    private DadosUserService dadosUserService;
+
+    @Autowired
     private AdminService adminService;
 
     @GetMapping
-    @PreAuthorize("hasRole('ADMIN')")
     public List<DadosUserResponseDTO> listarTodos() {
         return userRepository.findAll().stream()
                 .map(this::fromEntity)
@@ -55,7 +60,6 @@ public class UsuarioController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<DadosUserResponseDTO> atualizarUsuario(
             @PathVariable Long id,
             @RequestBody UserRequestDTO dto) {
@@ -65,9 +69,16 @@ public class UsuarioController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Map<String, String>> deletarUsuario(@PathVariable Long id) {
         adminService.deletarUsuario(id);
         return ResponseEntity.ok(Map.of("message", "Usuário removido com sucesso"));
+    }
+
+    @PutMapping("/atualizar-telefone")
+    public ResponseEntity<DadosUserResponseDTO> atualizarTelefone(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @RequestBody TelefoneUpdateRequestDTO dto) {
+        var usuarioAtualizado = dadosUserService.atualizarTelefone(userDetails, dto.getTelefone());
+        return ResponseEntity.ok(usuarioAtualizado);
     }
 }

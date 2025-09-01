@@ -24,6 +24,28 @@ public class DadosUserService {
         }
 
         var dadosUser = optionalUser.get();
+        return buildResponse(dadosUser);
+    }
+
+
+    public DadosUserResponseDTO atualizarTelefone(UserDetails userDetails, String novoTelefone) {
+        String email = userDetails.getUsername();
+
+        var optionalUser = userRepository.findByEmail(email);
+
+        if (optionalUser.isEmpty()) {
+            throw new ApiException.NotFoundException("Usuário não encontrado");
+        }
+
+        var user = optionalUser.get();
+        user.setTelefone(novoTelefone);
+        userRepository.save(user);
+
+        return buildResponse(user);
+    }
+
+
+    private DadosUserResponseDTO buildResponse(com.example.CJL.entities.User dadosUser) {
         DadosUserResponseDTO.DadosUserResponseDTOBuilder builder = DadosUserResponseDTO.builder()
                 .nome(dadosUser.getNome())
                 .sobrenome(dadosUser.getSobrenome())
@@ -38,6 +60,7 @@ public class DadosUserService {
                 .complemento(dadosUser.getComplemento())
                 .numero(dadosUser.getNumeroResidencia())
                 .bairro(dadosUser.getBairro())
+                .telefone(dadosUser.getTelefone())
                 .roles(dadosUser.getRoles().stream()
                         .map(role -> role.getNome().name())
                         .toList());
@@ -53,5 +76,4 @@ public class DadosUserService {
 
         return builder.build();
     }
-
 }
