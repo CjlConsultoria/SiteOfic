@@ -23,4 +23,5 @@ public class UserRequestDTO {
     private String complemento;
     private String email;
     private String senha;
+
 }

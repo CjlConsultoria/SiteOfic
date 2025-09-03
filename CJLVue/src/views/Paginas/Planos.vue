@@ -362,7 +362,15 @@ function rejeitarCookie() {
   cookieAceito.value = true
   // aqui você pode limpar cookies indesejados se houver
 }
+function abrirWhatsApp() {
+  const numero = '551151997454'
+  const mensagem = 'Olá, gostaria de solicitar um orçamento.'
+  const url = `https://wa.me/${numero}?text=${encodeURIComponent(mensagem)}`
+  window.open(url, '_blank')
+}
 </script>
+
+
 <template lang="pug">
 .loading-overlay(v-if="loading")
   .top-half
@@ -409,7 +417,9 @@ section.cards-container
       .card-right
         .card-rating
    
-        button.software-card-button Contratar
+      button.software-card-button(@click="abrirWhatsApp") Contratar
+
+
   
   
   .paginacao
@@ -425,6 +435,11 @@ section.cards-container
 </template>
 
 <style scoped>
+a {
+  text-decoration: none; /* remove underline */
+  color: inherit;        /* mantém a cor do botão */
+}
+
 /* Ajuste exclusivo para tablets */
 @media (min-width: 768px) and (max-width: 1024px) {
  section.banner-with-text .shape-left {

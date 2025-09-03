@@ -38,6 +38,7 @@ public class DadosUserService {
                 .complemento(dadosUser.getComplemento())
                 .numero(dadosUser.getNumeroResidencia())
                 .bairro(dadosUser.getBairro())
+                .telefone(dadosUser.getTelefone())
                 .roles(dadosUser.getRoles().stream()
                         .map(role -> role.getNome().name())
                         .toList());
@@ -54,4 +55,15 @@ public class DadosUserService {
         return builder.build();
     }
 
+    // ===========================
+    // Novo método para atualizar telefone
+    // ===========================
+    public void atualizarTelefone(Long id, String telefone) {
+        var user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("ID do usuário não encontrado"));
+        user.setTelefone(telefone);
+        userRepository.save(user);
+    }
+
 }
+

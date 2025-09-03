@@ -1,5 +1,5 @@
 <script setup>
-import { ref, reactive, onMounted, computed } from 'vue'
+import { ref, reactive, onMounted, computed, nextTick } from 'vue'
 import axios from 'axios'
 import LogoNexdom from '@/assets/cjl.jpg'
 import InicioPng from '@/assets/inicio2.png'
@@ -10,6 +10,32 @@ import RelatoriosPng from '@/assets/relatorios.png'
 
 
 // Controle do menu lateral e página atual
+async function salvarTelefone() {
+  try {
+    const token = localStorage.getItem('token')
+
+    if (!usuario.id) {
+      alert('ID do usuário não encontrado.')
+      return
+    }
+
+    const response = await axios.put(
+      `http://localhost:8080/api/usuarios/${usuario.id}/telefone`,
+      { telefone: usuario.telefone },
+      { headers: { Authorization: `Bearer ${token}` } }
+    )
+
+    if (response.status === 200) {
+      editandoTelefone.value = false
+      // atualiza telefone localmente caso backend tenha retornado outro formato
+      usuario.telefone = response.data.telefone
+      alert('Telefone atualizado com sucesso no banco de dados!')
+    }
+  } catch (erro) {
+    console.error('Erro ao atualizar telefone:', erro)
+    alert('Não foi possível atualizar o telefone no banco.')
+  }
+}
 
 const paginaAtual = ref('home')
 
@@ -188,7 +214,6 @@ function mudarPaginaCard(pagina) {
   paginaAtualCard.value = pagina
 }
 
-// Dados do usuário
 const usuario = reactive({
   tipoPessoa: '',
   nome: '',
@@ -205,6 +230,8 @@ const usuario = reactive({
   nomeEmpresa: '',
   cnpj: '',
   codigoPublico: '',
+  telefone: '', // << adiciona esta linha
+  genero: ''    // já que você usa também
 })
 
 async function buscarUsuarioLogado() {
@@ -219,24 +246,26 @@ async function buscarUsuarioLogado() {
       headers: { Authorization: `Bearer ${token}` }
     })
 
-    const dados = resposta.data
+const dados = resposta.data
 
-    usuario.nome = dados.nome || ''
-    usuario.sobrenome = dados.sobrenome || ''
-    usuario.email = dados.email || ''
-    usuario.cep = dados.cep || ''
-    usuario.cidade = dados.cidade || ''
-    usuario.estado = dados.estado || ''
-    usuario.cpf = dados.cpf || ''
-    usuario.cnpj = dados.cnpj || ''
-    usuario.genero = dados.genero || ''
-    usuario.tipoPessoa = dados.cnpj ? 'JURIDICA' : 'FISICA'
-    usuario.logradouro = dados.logradouro || ''
-    usuario.numero = dados.numero || ''
-    usuario.complemento = dados.complemento || ''
-    usuario.bairro = dados.bairro || ''
-    usuario.nomeEmpresa = dados.empresaNome || ''
-    usuario.codigoPublico = dados.codigoPublico || ''
+usuario.nome = dados.nome || ''
+usuario.sobrenome = dados.sobrenome || ''
+usuario.email = dados.email || ''
+usuario.cep = dados.cep || ''
+usuario.cidade = dados.cidade || ''
+usuario.estado = dados.estado || ''
+usuario.cpf = dados.cpf || ''
+usuario.cnpj = dados.cnpj || ''
+usuario.genero = dados.genero || ''
+usuario.telefone = dados.telefone || ''  // << aqui é essencial
+usuario.tipoPessoa = dados.cnpj ? 'JURIDICA' : 'FISICA'
+usuario.logradouro = dados.logradouro || ''
+usuario.numero = dados.numero || ''
+usuario.complemento = dados.complemento || ''
+usuario.bairro = dados.bairro || ''
+usuario.nomeEmpresa = dados.empresaNome || ''
+usuario.codigoPublico = dados.codigoPublico || ''
+
 
   } catch (erro) {
     console.error('Erro ao buscar usuário logado:', erro)
@@ -685,6 +714,33 @@ const menuAberto = ref(false)
 function toggleMenu() {
   menuAberto.value = !menuAberto.value
 }
+const formatarTelefoneFront = (tel) => {
+  if (!tel) return ''
+  const numeros = tel.replace(/\D/g, '')
+  if (numeros.length === 10) return numeros.replace(/(\d{2})(\d{4})(\d{4})/, '($1) $2-$3')
+  if (numeros.length === 11) return numeros.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3')
+  return tel
+}
+const editandoTelefone = ref(false)
+const inputTelefone = ref(null)
+
+
+function ativarEdicaoTelefone() {
+  editandoTelefone.value = true
+  nextTick(() => {
+    inputTelefone.value.focus()
+  })
+}
+
+// Função para validar e limitar o telefone a 11 números
+function validarTelefone(event) {
+  let valor = event.target.value
+  // Remove qualquer coisa que não seja número
+  valor = valor.replace(/\D/g, '')
+  // Limita a 11 caracteres
+  if (valor.length > 11) valor = valor.slice(0, 11)
+  usuario.telefone = valor // usa o 'usuario' já existente
+}
 
 </script>
 
@@ -776,6 +832,42 @@ function toggleMenu() {
         .field
           label E-mail
           input(type="email", :value="usuario.email", disabled)
+      .form-row
+        .field
+          label Gênero
+          input(type="text", :value="usuario.genero", disabled)
+      
+        .field
+          label Telefone
+          input(
+            type="text",
+            v-model="usuario.telefone",
+            :disabled="!editandoTelefone",   
+            :class="{ 'editando': editandoTelefone }",
+            ref="inputTelefone",
+            @mousedown.prevent,
+            @input="validarTelefone",
+            @blur="salvarTelefone"
+          )
+          .botoes-telefone
+            // botão lápis sempre visível
+            button(@click="ativarEdicaoTelefone")
+              i.lapis-icon 🖉
+            // botão verde só aparece quando editando
+            button.botao-salvar(v-if="editandoTelefone", @click="salvarTelefone")
+              i.ok-icon ✔
+
+
+
+
+
+
+
+
+
+
+
+
     .card
       h2 Endereço
       .form-row
@@ -975,7 +1067,68 @@ function toggleMenu() {
 
 
 <style scoped>
+.perfil-usuario .field .botoes-telefone {
+  display: flex;
+  gap: 0.25rem;
+  justify-content: flex-end;
+  margin-top: 0.25rem;
+}
 
+.perfil-usuario .field .botoes-telefone button {
+  width: 1.2rem;
+  height: 1.2rem;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+  cursor: pointer;
+}
+
+.perfil-usuario .field .botoes-telefone button.botao-salvar {
+  background-color: #28a745;
+  border: none;
+  border-radius: 2px;
+}
+
+.perfil-usuario .field .botoes-telefone button i {
+  font-size: 0.8rem;
+  color: inherit;
+  display: inline-block;
+  transform: scale(0.8);
+  transform-origin: center;
+}
+
+.perfil-usuario .field .botoes-telefone button i.ok-icon {
+  color: #fff;
+}
+
+
+.perfil-usuario .field input.editando {
+  border: 1px solid #000000; /* borda preta somente para telefone */
+  background-color: #000000; /* opcional: fundo preto */
+  
+  cursor: text;              /* cursor piscando */
+}
+
+
+.perfil-usuario .field button {
+  width: 1.2rem;          
+  height: 1.2rem;         
+  padding: 0;             
+  display: inline-flex;    
+  justify-content: center;
+  align-items: center;
+  align-self: flex-end;   /* move o botão para a direita */
+  margin-top: -0.35rem !important;    /* espaço abaixo do input */
+  cursor: pointer;        
+}
+
+.perfil-usuario .field button i.lapis-icon {
+  display: inline-block;
+  transform: scale(0.8); 
+  transform-origin: center; 
+  color: #000000; 
+}
 @media (max-width: 768px) {
   section.perfil-usuario .card {
     margin-left: 0;      /* remove qualquer margem à esquerda */

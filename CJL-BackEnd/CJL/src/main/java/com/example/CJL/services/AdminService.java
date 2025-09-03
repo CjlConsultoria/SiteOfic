@@ -25,10 +25,12 @@ public class AdminService {
         user.setCidade(dto.getCidade());
         user.setEstado(dto.getEstado());
         user.setCep(dto.getCep());
+        user.setTelefone(dto.getTelefone());
         user.setLogradouro(dto.getRua());
         user.setNumeroResidencia(dto.getNumeroResidencia());
         user.setBairro(dto.getBairro());
         user.setCpf(dto.getCpf());
+
 
         userRepository.save(user);
         return toDTO(user);
@@ -55,6 +57,7 @@ public class AdminService {
                 .numero(user.getNumeroResidencia())
                 .bairro(user.getBairro())
                 .cpf(user.getCpf())
+                .telefone(user.getTelefone())
                 .cnpj(user.getEmpresa() != null ? user.getEmpresa().getCnpj() : null)
                 .empresaId(user.getEmpresa() != null ? user.getEmpresa().getId() : null)
                 .empresaNome(user.getEmpresa() != null ? user.getEmpresa().getNome() : null)

@@ -74,6 +74,23 @@ section.registro-multi
         span.mensagem-erro(v-if="tentativas.etapa2 && erros.cpfVazio") CPF é obrigatório.
         span.mensagem-erro(v-else-if="tentativas.etapa2 && erros.cpfInvalido") CPF inválido.
 
+        // Campo Telefone
+        p.msg-digite-telefone.text-branco.text-left Digite o Telefone
+        .input-group
+          input(
+            type="text"
+            v-model="form.telefone"
+            inputmode="numeric"
+            maxlength="15"
+            placeholder=" "
+            id="telefone"
+            @input="formatarTelefone"
+            :class="{ 'input-erro': erros.telefoneVazio || erros.telefoneInvalido }"
+          )
+          label(for="telefone") Telefone
+        span.mensagem-erro(v-if="tentativas.etapa2 && erros.telefoneVazio") Telefone é obrigatório.
+        span.mensagem-erro(v-else-if="tentativas.etapa2 && erros.telefoneInvalido") Telefone inválido.
+
         section.botoes
           button(type="button", @click="etapaAtual--") Voltar
           button(type="submit") Seguinte
@@ -330,6 +347,13 @@ const tentativas = reactive({
   etapa6: false,
 })
 
+function formatarTelefone(e) {
+  let valor = e.target.value.replace(/\D/g, "")
+  valor = valor.replace(/^(\d{2})(\d)/g, "($1) $2") // adiciona DDD
+  valor = valor.replace(/(\d{5})(\d{4})$/, "$1-$2") // adiciona traço
+  form.telefone = valor
+}
+
 // Datas para selects de nascimento
 const dias = Array.from({ length: 31 }, (_, i) => i + 1)
 const meses = [
@@ -362,7 +386,8 @@ const form = reactive({
   estado: '',
   email: '',
   senha: '',
-  confirmaSenha: ''
+  confirmaSenha: '',
+  telefone: ''
 })
 
 // Objeto de erros
@@ -396,6 +421,8 @@ const erros = reactive({
   confirmaSenhaVazia: false,
   senhasDiferentes: false,
   ehPessoaJuridicaVazio: false,
+  telefoneVazio: false,
+  telefoneInvalido: false
 })
 
 // Validação de CPF
@@ -440,10 +467,21 @@ const validarEtapa1 = () => {
 }
 
 const validarEtapa2 = () => {
-  const cpfLimpo = form.cpf.replace(/\D/g, '')
+  // --- CPF ---
+  const cpfLimpo = form.cpf.replace(/\D/g, "")
   erros.cpfVazio = !cpfLimpo
   erros.cpfInvalido = cpfLimpo.length !== 11 || !validarCPF(cpfLimpo)
-  return !erros.cpfVazio && !erros.cpfInvalido
+
+  // --- Telefone ---
+  const telLimpo = form.telefone.replace(/\D/g, "")
+  erros.telefoneVazio = !telLimpo
+  // aceitando 10 dígitos (fixo) ou 11 dígitos (celular)
+  erros.telefoneInvalido = !(telLimpo.length === 10 || telLimpo.length === 11)
+
+  return !erros.cpfVazio &&
+         !erros.cpfInvalido &&
+         !erros.telefoneVazio &&
+         !erros.telefoneInvalido
 }
 
 const validarEtapa3 = () => {
@@ -590,7 +628,7 @@ const enviarCadastro = async () => {
       nome: form.nome.trim(),
       sobrenome: form.sobrenome.trim(),
       apelido: form.apelido.trim(),
-      telefone: form.telefone,
+      telefone: form.telefone.replace(/\D/g, ''),
       pj: form.ehPessoaJuridica,
       cpf: form.cpf.replace(/\D/g, ''),
       diaNascimento: Number(form.dia),
@@ -679,6 +717,16 @@ const formatarCNPJ = () => {
 </script>
 
 <style scoped>
+
+.msg-digite-telefone {
+  margin-top: -3.5rem !important; /* margem menor */
+}
+.msg-digite-telefone {
+  position: relative;
+  top: 30px; /* desce só o texto */
+  text-align: left !important;
+}
+
 .radio-group {
   display: flex;
   flex-direction: column; /* coloca em coluna (um em cima do outro) */

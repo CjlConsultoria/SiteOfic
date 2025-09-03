@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import jakarta.persistence.EntityNotFoundException;
 
 @RestController
 @RequestMapping("/api/usuarios")
@@ -40,7 +41,7 @@ public class UsuarioController {
                 .estado(user.getEstado())
                 .cep(user.getCep())
                 .logradouro(user.getLogradouro())
-                .numero(user.getTelefone())
+                .telefone(user.getTelefone())
                 .bairro(user.getBairro())
                 .cpf(user.getCpf())
                 .cnpj(user.getEmpresa() != null ? user.getEmpresa().getCnpj() : null)
@@ -65,6 +66,22 @@ public class UsuarioController {
     public ResponseEntity<Map<String, String>> deletarUsuario(@PathVariable Long id) {
         adminService.deletarUsuario(id);
         return ResponseEntity.ok(Map.of("message", "Usuário removido com sucesso"));
+    }
+
+    @PutMapping("/{id}/telefone")
+    public ResponseEntity<DadosUserResponseDTO> atualizarTelefone(
+            @PathVariable Long id,
+            @RequestBody Map<String, String> body) {
+
+        String novoTelefone = body.get("telefone");
+
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+
+        user.setTelefone(novoTelefone);
+        userRepository.save(user);
+
+        return ResponseEntity.ok(fromEntity(user));
     }
 
 }

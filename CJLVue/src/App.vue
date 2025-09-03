@@ -1,12 +1,28 @@
 <script setup lang="ts">
-import { ref, reactive, watch, onMounted, onUnmounted } from 'vue'
+import { ref, reactive, watch, onMounted, onUnmounted, nextTick } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import axios from 'axios'
 
 const router = useRouter()
 const route = useRoute()
 
+watch(
+  () => route.fullPath,
+  async () => {
+    await nextTick()
 
+    // 1️⃣ Scroll da janela principal
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' })
+
+    // 2️⃣ Se você tem container com overflow
+    const mainContent = document.querySelector<HTMLElement>('main.main-content')
+    if (mainContent) mainContent.scrollTop = 0
+
+    const wrapper = document.querySelector<HTMLElement>('.wrapper')
+    if (wrapper) wrapper.scrollTop = 0
+  },
+  { immediate: true }
+)
 
 const isScrolled = ref(false)
 const isMenuOpen = ref(false)
@@ -213,6 +229,15 @@ div.layout-wrapper(:class="{ 'layout-plataforma': ehPlataforma }")
           )
 
           div.user-dropdown-google(v-if="userDropdownOpen")
+            // Mostrar "Empresa" se for Pessoa Jurídica
+            p.empresa-label(v-if="usuario.cnpj && usuario.cnpj !== ''")
+              span.icon(style="margin-right: 0.5rem;")
+                svg(width="16" height="16" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg")
+                  path(d="M3 22V2h18v20H3zm2-2h14V4H5v16zm3-7h2v5H8v-5zm4 0h2v5h-2v-5zm4 0h2v5h-2v-5z")
+              | Empresa
+
+
+
             button.fechar-dropdown(@click="userDropdownOpen = false" aria-label="Fechar") ×
 
             img.foto-perfil-google(:src="usuario.fotoUrl", alt="Foto do perfil")
@@ -264,8 +289,8 @@ div.layout-wrapper(:class="{ 'layout-plataforma': ehPlataforma }")
 
         //- Botões de login/registro
         .auth-buttons
-          //-a.external-btn.link-btn(href="/login") Login
-          //-RouterLink.external-btn.link-btn(to="/registre") Registre-se
+          a.external-btn.link-btn(href="/login") Login
+          RouterLink.external-btn.link-btn(to="/registre") Registre-se
           button.external-btn(@click="irParaURLExterna") Convivium
   
   //- Conteúdo principal
@@ -284,6 +309,19 @@ div.layout-wrapper(:class="{ 'layout-plataforma': ehPlataforma }")
 
 
 <style scoped>
+.empresa-label {
+  color: #000000;      /* cor do texto */
+  font-weight: 700;   /* negrito */
+  display: flex;       /* alinha ícone e texto */
+  align-items: center; /* centraliza verticalmente */
+}
+
+.empresa-label .icon svg {
+  display: block;
+  font-weight: 900 !important;
+  
+  transform: translateY(0px); /* ajusta verticalmente o ícone */
+}
 
 
 /* TABLET: 768px a 1024px */

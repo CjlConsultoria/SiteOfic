@@ -390,7 +390,7 @@ section.banner-container
 section.sessao-cjl(id="sessao")
   .card-cjl
     h2.titulo-cinza Consultoria Estratégica de TI
-    p.description
+    p.description1
       | A Consultoria Estratégica de TI é fundamental para alinhar a tecnologia aos objetivos de negócio, transformando investimentos em inovação, eficiência e competitividade. Nosso trabalho vai além da simples implementação de soluções; ajudamos sua empresa a definir prioridades.
     a.btn-contato(
       href="https://wa.me/551151997454?text=Olá,%20gostaria%20de%20solicitar%20um%20orçamento."
@@ -481,6 +481,35 @@ section.cards-container
   </template>
 
 <style scoped>
+@media (max-width: 992px) {
+  section.depoimento-bloco .titulo-depoimento h2 {
+    white-space: nowrap;       /* força ficar em uma linha */
+    font-size: 1.6rem;         /* reduz o tamanho da fonte para caber */
+    overflow: visible;         /* garante que o texto não seja cortado */
+  }}
+
+
+
+/* Somente tablets */
+@media (min-width: 768px) and (max-width: 1024px) {
+  section.sessao-cjl {
+    display: flex;
+    justify-content: center; /* centraliza no eixo horizontal */
+    text-align: center;      /* centraliza texto */
+    padding: 2rem;           /* espaço interno */
+  }
+
+
+
+  section.sessao-cjl h2,
+  section.sessao-cjl p,
+  section.sessao-cjl a {
+    text-align: center !important; /* força alinhamento dos textos e botão */
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
 .cookie-banner-wrapper p {
   color: #000;
   text-align: left;
@@ -827,13 +856,8 @@ section.cards-container
   }
 }
 
-@media (max-width: 992px) {
-  section.depoimento-bloco .titulo-depoimento h2 {
-    white-space: nowrap;       /* força ficar em uma linha */
-    font-size: 1.6rem;         /* reduz o tamanho da fonte para caber */
-    overflow: visible;         /* garante que o texto não seja cortado */
-  }
-}
+
+
 
 
 /* Ajuste para telas menores que 992px */
@@ -1909,10 +1933,10 @@ button:hover {
 
   .shape-left p.description {
     font-size: 0.80rem !important;
-    line-height: 1.6rem !important;
+    line-height: 1.3rem !important;
     text-align: left;
-    margin-left: 0.5rem;
-    max-width: 90%;           /* limita o tamanho horizontal da descrição */
+    margin-left: -2.2rem;
+    max-width: 100%;           /* limita o tamanho horizontal da descrição */
     word-wrap: break-word;    
     overflow-wrap: break-word;
   }
@@ -1925,18 +1949,19 @@ button:hover {
 }
 @media (max-width: 400px) {
   .shape-left h1.title {
-    font-size: 1.4rem !important;
+    font-size: 1.2rem !important;
     line-height: 1.8rem !important;
-    margin-top: 110px !important; /* empurra pra baixo */
+    margin-top: 120px !important; /* empurra pra baixo */
     text-align: left;
   }
 
    .shape-left p.description {
-    font-size: 0.80rem !important;
+    font-size: 0.75rem !important;
     line-height: 1.2rem !important;
     text-align: left;
     padding-left: -2rem !important;  /* empurra mais para a esquerda */
     padding-right: 1rem !important; /* mantém um pouco de espaço à direita */
+    margin-top: -0.3rem;
   }
 }
 @media (max-width: 992px) {
@@ -2610,12 +2635,22 @@ html, body {
   line-height: 1.5;
   max-width: 400px;
   margin-bottom: 3rem;
+  text-align: left;
+  padding-left: 2.8rem;
+  
+  font-family: Arial, Helvetica, sans-serif;
+}
+.description1{
+    font-size: 1rem;
+  color: #a7a7a7;
+  line-height: 1.5;
+  max-width: 400px;
+  margin-bottom: 3rem;
   text-align: center;
   
-  font-family: inherit;
-  font-family: 'Times New Roman', Times, serif;
+  
+  font-family: Arial, Helvetica, sans-serif;
 }
-
 .arrow {
   position: relative;  /* necessário para usar top */
   top: -50px;          /* sobe 10px */

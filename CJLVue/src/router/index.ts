@@ -8,72 +8,35 @@ import Registre from '@/views/Registre.vue'
 import Plataforma from '@/views/Plataforma.vue'
 import Blog from '@/views/Blog.vue'
 
-
-
 const routes = [
-  {
-    path: '/',
-    name: 'home',
-    component: Inicial,
-  },
-  {
-    path: '/planos',
-    name: 'Planos',
-    component: Planos,
-  },
-  {
-    path: '/sobre',
-    name: 'Sobre',
-    component: Sobre,
-  },
-  {
-    path: '/servicos',
-    name: 'Servicos',
-    component: Servicos,
-  },
-  {
-    path: '/login',
-    name: 'Login',
-    component: Login,
-  },
-  {
-    path: '/registre',
-    name: 'Registre',
-    component: Registre,
-  },
-  {
-    path: '/plataforma',
-    name: 'Plataforma',
-    component: Plataforma,
-    meta: { requiresAuth: true }
-  },
-  {
-    path: '/blog',
-    name: 'Blog',
-    component: Blog,
-  },
-  {
-    path: '/artigo/:id',
-    name: 'ArtigoDetalhe',
-    component: Blog,
-  }
+  { path: '/', name: 'home', component: Inicial },
+  { path: '/planos', name: 'Planos', component: Planos },
+  { path: '/sobre', name: 'Sobre', component: Sobre },
+  { path: '/servicos', name: 'Servicos', component: Servicos },
+  { path: '/login', name: 'Login', component: Login },
+  { path: '/registre', name: 'Registre', component: Registre },
+  { path: '/plataforma', name: 'Plataforma', component: Plataforma, meta: { requiresAuth: true } },
+  { path: '/blog', name: 'Blog', component: Blog },
+  { path: '/artigo/:id', name: 'ArtigoDetalhe', component: Blog }
 ]
 
 const router = createRouter({
   history: createWebHistory(),
-  routes
-})
+  routes,
+  scrollBehavior(to, from, savedPosition) {
+    return new Promise((resolve) => {
+      // espera o DOM renderizar
+      setTimeout(() => {
+        // 1️⃣ Scroll da janela
+        window.scrollTo(0, 0)
 
-// Guard global para verificar autenticação nas rotas protegidas
-router.beforeEach((to, from, next) => {
-  const token = localStorage.getItem('token')
-  
-  if (to.meta.requiresAuth && !token) {
-    // Se a rota requer auth e não tem token, redireciona para login
-    next('/login')
-  } else {
-    // Senão, permite o acesso
-    next()
+        // 2️⃣ Scroll do container interno
+        const mainContent = document.querySelector<HTMLElement>('main.main-content')
+        if (mainContent) mainContent.scrollTop = 0
+
+        resolve({ left: 0, top: 0 })
+      }, 50) // 50ms é suficiente para DOM atualizar
+    })
   }
 })
 

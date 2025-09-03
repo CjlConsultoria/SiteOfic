@@ -26,6 +26,7 @@ public class DadosUserResponseDTO {
     private String cnpj;
     private Long empresaId;
     private String empresaNome;
+    private String telefone;
 
     private List<String> roles;
 }
