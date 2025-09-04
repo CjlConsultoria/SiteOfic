@@ -7,53 +7,318 @@ import MoradoresPng from '@/assets/moradores.png'
 import ReclamacoesPng from '@/assets/reclamacoes.png'
 import DenunciaPng from '@/assets/denuncia.png'
 import RelatoriosPng from '@/assets/relatorios.png'
+// Lista de usuários
+// Lista de usuários
+const usuarios = ref([])
 
+// Modal de edição de usuário
+const modalUsuarioAberto = ref(false)
+const usuarioSelecionado = reactive({
+  id: null,
+  nome: '',
+  email: '',
+  role: '',
+  permissoes: { gerenciarUsuarios: false, editarSistemas: false, visualizarRelatorios: false }
+})
+const usuarioIndexSelecionado = ref(null)
+
+// Modal de novo usuário
+const mostrarModalNovoUsuario = ref(false)
+const novoUsuario = reactive({
+  nome: '',
+  email: '',
+  cpf: '',
+  senha: '',
+  role: 'USER'
+})
 
 // Controle do menu lateral e página atual
-async function salvarTelefone() {
-  try {
-    const token = localStorage.getItem('token')
+const paginaAtual = ref('dashboard')
+const permissoes = reactive({
+  gerenciarUsuarios: false,
+  editarSistemas: false,
+  visualizarRelatorios: false
+})
 
-    if (!usuario.id) {
-      alert('ID do usuário não encontrado.')
-      return
-    }
-
-    const response = await axios.put(
-      `http://localhost:8080/api/usuarios/${usuario.id}/telefone`,
-      { telefone: usuario.telefone },
-      { headers: { Authorization: `Bearer ${token}` } }
-    )
-
-    if (response.status === 200) {
-      editandoTelefone.value = false
-      // atualiza telefone localmente caso backend tenha retornado outro formato
-      usuario.telefone = response.data.telefone
-      alert('Telefone atualizado com sucesso no banco de dados!')
-    }
-  } catch (erro) {
-    console.error('Erro ao atualizar telefone:', erro)
-    alert('Não foi possível atualizar o telefone no banco.')
-  }
-}
-
-const paginaAtual = ref('home')
-
-
-
-// Ir para página de perfil e carregar dados do usuário
-async function irParaPerfil() {
-  console.log('irParaPerfil chamado')
-  paginaAtual.value = 'perfil'
-  await buscarUsuarioLogado()
-}
-
+// Função para normalizar labels
 function normalizarLabel(label) {
   return label
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '')
     .toLowerCase()
-    .replace(/\s+/g, '')  // Remove espaços para normalizar melhor
+    .replace(/\s+/g, '')
+}
+
+// Função para obter token
+function obterToken(admin = false) {
+  if (admin) return localStorage.getItem('tokenAdmin')
+  return localStorage.getItem('token')
+}
+
+window.obterToken = function(admin = false) {
+  if(admin) return localStorage.getItem('tokenAdmin')
+  return localStorage.getItem('token')
+}
+
+// Determina role principal
+function getRolePrincipal(roles) {
+  if (!roles || !Array.isArray(roles)) return 'User'
+  return roles.includes('ROLE_ADMIN') ? 'Admin' : 'User'
+}
+
+// Carregar usuários do backend
+async function carregarUsuarios() {
+  try {
+    const token = obterToken()
+    if (!token) {
+      console.warn('Token não encontrado, redirecionando para login')
+      window.location.href = '/login'
+      return
+    }
+
+    const response = await axios.get('http://localhost:8080/api/usuarios', {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+
+    usuarios.value = response.data.map(u => ({
+      ...u,
+      role: getRolePrincipal(u.roles)
+    }))
+
+    console.log('Usuários carregados:', usuarios.value)
+  } catch (error) {
+    console.error('Não foi possível carregar os usuários:', error.response?.data || error)
+    alert('Não foi possível carregar os usuários. Verifique se você está logado.')
+  }
+}
+
+// Abrir modal de edição
+function abrirModalUsuario(index) {
+  const user = usuarios.value[index]
+  usuarioSelecionado.id = user.id
+  usuarioSelecionado.nome = user.nome
+  usuarioSelecionado.email = user.email
+  usuarioSelecionado.role = user.role
+  usuarioSelecionado.permissoes = user.permissoes || {}
+  usuarioIndexSelecionado.value = index
+  modalUsuarioAberto.value = true
+
+  nextTick(() => {
+    const input = document.getElementById('nomeUsuario')
+    if (input) input.focus()
+  })
+}
+
+// Salvar usuário atualizado
+async function salvarUsuario() {
+  if (usuarioIndexSelecionado.value === null) return;
+
+  const token = localStorage.getItem('tokenAdmin');
+  if (!token) {
+    alert('Token admin não encontrado. Faça login como admin.');
+    return;
+  }
+
+  const payloadToken = JSON.parse(atob(token.split('.')[1]));
+  if (!payloadToken.roles.includes("ROLE_ADMIN")) {
+    alert('O token não possui permissão de admin.');
+    return;
+  }
+
+  if (!usuarioSelecionado || !usuarioSelecionado.id) {
+    alert('Usuário inválido para atualização.')
+    return
+  }
+
+  let roleIds = []
+  if (usuarioSelecionado.role === "ROLE_ADMIN") {
+    roleIds = [2]
+  } else {
+    roleIds = [1]
+  }
+
+  const permissoesArray = Object.keys(usuarioSelecionado.permissoes).filter(
+    key => usuarioSelecionado.permissoes[key]
+  )
+
+  const payload = {
+    nome: usuarioSelecionado.nome || '',
+    email: usuarioSelecionado.email || '',
+    roleIds: roleIds,
+    permissoes: permissoesArray
+  }
+
+  modalUsuarioAberto.value = false;
+
+  try {
+    const response = await axios.put(
+      `http://localhost:8080/api/usuarios/${usuarioSelecionado.id}`,
+      payload,
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+
+    const updatedUser = response.data
+    usuarios.value[usuarioIndexSelecionado.value] = {
+      ...usuarios.value[usuarioIndexSelecionado.value],
+      nome: updatedUser.nome,
+      email: updatedUser.email,
+      role: getRolePrincipal(updatedUser.roles),
+      roles: updatedUser.roles,
+      permissoes: usuarioSelecionado.permissoes
+    }
+
+    alert('Usuário atualizado com sucesso!');
+    console.log('Usuário atualizado no backend:', updatedUser);
+
+  } catch (erro) {
+    console.error('Erro ao atualizar o usuário no backend:', erro.response?.data || erro);
+    alert('Não foi possível atualizar o usuário. Veja o console para mais detalhes.');
+  }
+}
+
+// Excluir usuário
+async function excluirUsuario(index) {
+  const user = usuarios.value[index]
+
+  if (!confirm(`Deseja realmente excluir o usuário ${user.nome}?`)) return
+
+  const token = localStorage.getItem('tokenAdmin')
+  if (!token) {
+    alert('Token admin não encontrado. Faça login como admin.')
+    return
+  }
+
+  try {
+    await axios.delete(`http://localhost:8080/api/usuarios/${user.id}`, {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+
+    usuarios.value.splice(index, 1)
+    alert('Usuário excluído com sucesso!')
+    console.log('Usuário excluído do backend:', user)
+  } catch (erro) {
+    console.error('Erro ao excluir o usuário no backend:', erro.response?.data || erro)
+    alert('Não foi possível excluir o usuário.')
+  }
+}
+
+// Abrir modal de novo usuário
+function abrirModalNovoUsuario() {
+  mostrarModalNovoUsuario.value = true
+  Object.assign(novoUsuario, { nome: '', email: '', cpf: '', senha: '', role: 'USER' })
+
+  nextTick(() => {
+    const input = document.getElementById('novoNomeUsuario')
+    if (input) input.focus()
+  })
+}
+
+// Registrar novo usuário
+async function registrarUsuario() {
+  const token = localStorage.getItem('tokenAdmin')
+  if (!token) {
+    alert('Token admin não encontrado. Faça login como admin.')
+    return
+  }
+
+  // Define roleIds compatível com backend
+  let roleIds = []
+  if (novoUsuario.role === "ROLE_ADMIN") roleIds = [2]
+  else roleIds = [1]
+
+  const payload = {
+    nome: novoUsuario.nome,
+    email: novoUsuario.email,
+    cpf: novoUsuario.cpf,
+    senha: novoUsuario.senha,
+    roleIds: roleIds
+  }
+
+  try {
+    const response = await axios.post(
+      'http://localhost:8080/api/usuarios',
+      payload,
+      { headers: { Authorization: `Bearer ${token}` } }
+    )
+
+    // Adiciona usuário na lista local
+    usuarios.value.push({
+      ...response.data,
+      role: getRolePrincipal(response.data.roles)
+    })
+
+    mostrarModalNovoUsuario.value = false
+    alert('Novo usuário registrado com sucesso!')
+  } catch (erro) {
+    console.error('Erro ao registrar usuário:', erro.response?.data || erro)
+    alert('Não foi possível registrar o usuário. Verifique se você tem permissão de admin.')
+  }
+}
+
+
+// Lista computada
+const listaUsuarios = computed(() => usuarios.value)
+
+// Carregar usuários ao montar o componente
+onMounted(async () => {
+  await carregarUsuarios()
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// Salvar telefone do usuário
+async function salvarTelefone() {
+  if (!usuarioSelecionado.id) {
+    alert('ID do usuário não encontrado.')
+    return
+  }
+
+  try {
+    const token = obterToken()
+    const response = await axios.put(
+      `http://localhost:8080/api/usuarios/${usuarioSelecionado.id}/telefone`,
+      { telefone: usuarioSelecionado.telefone },
+      { headers: { Authorization: `Bearer ${token}` } }
+    )
+
+    if (response.status === 200) {
+      usuarioSelecionado.telefone = response.data.telefone
+      alert('Telefone atualizado com sucesso!')
+    }
+  } catch (erro) {
+    console.error('Erro ao atualizar telefone:', erro)
+    alert('Não foi possível atualizar o telefone.')
+  }
+}
+
+// Ir para página de perfil
+async function irParaPerfil() {
+  console.log('irParaPerfil chamado')
+  paginaAtual.value = 'perfil'
+  if (typeof buscarUsuarioLogado === 'function') {
+    await buscarUsuarioLogado()
+  }
 }
 
 
@@ -67,6 +332,11 @@ function irParaPagina(label) {
     return
   }
 
+
+
+
+
+  
   if (labelNormalizado === 'dashboard') {
     paginaAtual.value = 'dashboard'
   } else if (labelNormalizado === 'servicos') {
@@ -78,9 +348,13 @@ function irParaPagina(label) {
     paginaAtual.value = 'perfil'
   } else if (labelNormalizado === 'ajuda') {
     paginaAtual.value = 'ajuda'
+  } else if (labelNormalizado === 'admin') {
+    paginaAtual.value = 'admin'   
+    console.log('Entrou na área Admin')
   } else {
     paginaAtual.value = labelNormalizado
-  }
+}
+
 }
 
 // Controle do modal de sistema
@@ -111,6 +385,7 @@ const menuPrincipal = [
 ]
 
 const menuSecundaria = [  // corrigido nome da constante para 'menuSecundaria'
+  { label: 'Admin', url: '#', icon: '🙍‍♂️' },
   { label: 'Perfil', url: '#', icon: '🙍‍♂️' },
   { label: 'Ajuda', url: '#', icon: '❓' },
   { label: 'Sair', url: '#', icon: '🔒' }
@@ -679,12 +954,11 @@ const modalCarregando = ref(false)
 
 
 
-// onMounted para buscar dados se estiver na página perfil
 onMounted(() => {
-  if (paginaAtual.value === 'perfil') {
-    buscarUsuarioLogado()
-  }
+  carregarUsuarios().catch(err => console.error(err))
 })
+
+
 
 const menuPlataformaAberto = ref(false)
 
@@ -1060,6 +1334,95 @@ function validarTelefone(event) {
           p.faq-resposta(v-if="faq.aberto") {{ faq.resposta }}
   teleport(to="body")
     button.menu-toggle(@click="toggleMenu") ☰
+
+  // Seção ADMIN
+  section.admin-section(v-if="paginaAtual === 'admin'")
+    .admin-container
+      h1.admin-title Área do Administrador
+
+      p.admin-subtitle Gerencie usuários, permissões e roles do sistema.
+
+      // Formulário de permissões
+      .permissoes-form
+        h2 Permissões
+        label
+          input(type="checkbox" v-model="permissoes.gerenciarUsuarios")
+          | Gerenciar Usuários
+        label
+          input(type="checkbox" v-model="permissoes.editarSistemas")
+          | Editar Sistemas
+        label
+          input(type="checkbox" v-model="permissoes.visualizarRelatorios")
+          | Visualizar Relatórios
+
+      hr
+
+      // Lista de usuários (exemplo)
+      h2 Usuários
+      button.btn-novo(@click="abrirModalNovoUsuario")
+        span.icon.plus-icon
+        | Novo Usuário
+
+
+
+      table.admin-table
+        thead
+          tr
+            th Nome
+            th Email
+            th CPF
+            th Role
+            th Ações
+        tbody
+          tr(v-for="(user, index) in usuarios" :key="user.id")
+            td {{ user.nome }}
+            td {{ user.email }}
+            td {{ user.cpf }}
+            td {{ user.role }}
+
+            td
+              button.btn-editar(@click="abrirModalUsuario(index)") ✏️
+
+              button.btn-excluir(@click="excluirUsuario(index)") 🗑️
+
+      // Modal de novo usuário
+      div.modal(v-if="mostrarModalNovoUsuario")
+        div.modal-content
+          h2 Novo Usuário
+          label Nome
+            input#novoNomeUsuario(type="text" v-model="novoUsuario.nome")
+          label Email
+            input(type="email" v-model="novoUsuario.email")
+          label CPF
+            input(type="text" v-model="novoUsuario.cpf")
+          label Senha
+            input(type="password" v-model="novoUsuario.senha")
+          label Role
+            select(v-model="novoUsuario.role")
+              option(value="ROLE_ADMIN") Admin
+              option(value="ROLE_USER") User
+          .modal-buttons
+            button(@click="registrarUsuario") Salvar
+            button(@click="mostrarModalNovoUsuario = false") Cancelar
+
+
+      // Modal de edição de usuário
+      div.modal(v-if="modalUsuarioAberto")
+        div.modal-content
+          h2 Editar Usuário
+          label Nome
+            input(type="text" v-model="usuarioSelecionado.nome")
+          label Email
+            input(type="email" v-model="usuarioSelecionado.email")
+          label Role
+            select(v-model="usuarioSelecionado.role")
+              option(value="ROLE_ADMIN") Admin
+              option(value="ROLE_USER") User
+          .modal-buttons
+            button(@click="salvarUsuario") Salvar
+            button(@click="modalUsuarioAberto = false") Cancelar
+
+
 </template>
 
 
@@ -1067,6 +1430,223 @@ function validarTelefone(event) {
 
 
 <style scoped>
+.btn-novo {
+  background-color: #098609;
+  color: #ffffff;
+  font-weight: bold;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0px;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.btn-novo:hover {
+  background-color: #27a700;
+  transform: translateY(-2px);
+}
+
+/* Ícone branco garantido */
+.plus-icon::before {
+  content: "\271A"; /* Unicode do símbolo + em formato de ícone */
+  color: #ffffff;   /* Cor branca */
+  font-size: 16px;  /* Ajuste do tamanho do ícone */
+}
+
+
+
+.admin-table td:last-child {
+  text-align: center;  /* empurra os botões para a direita */
+}
+
+/* Mantém o espaçamento entre os botões */
+.admin-table td:last-child button {
+  margin-left: 0px;
+}
+
+/* Cabeçalho da tabela */
+.admin-table thead th {
+  background-color: rgb(31, 31, 31);  /* fundo preto */
+  color: white;             /* texto branco */
+}
+
+/* Corpo da tabela */
+.admin-table tbody td {
+  background-color: white;  /* fundo branco ou padrão */
+  color: black;             /* texto preto */
+}
+
+.modal {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: rgba(0,0,0,0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: #ffffff;
+  padding: 30px;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+  margin-left: 12rem;
+}
+
+.modal-content h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #141414;
+}
+
+.modal-content label {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 15px;
+  font-weight: 500;
+  color: #333;
+}
+
+.modal-content input,
+.modal-content select {
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  margin-top: 5px;
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.modal-buttons button {
+  padding: 8px 15px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.modal-buttons button:first-child {
+  background-color: #4caf50;
+  color: white;
+}
+
+.modal-buttons button:last-child {
+  background-color: #f44336;
+  color: white;
+}
+
+.admin-section {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 40px 20px;
+  background-color: #ffffff;
+  min-height: 100vh;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.admin-container {
+  background-color: #f3f3f3;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.493);
+  width: 100%;
+  max-width: 950px;
+  margin-left: 15rem;
+  height: 700px;
+}
+
+.admin-title {
+  text-align: center;
+  color: #333;
+  margin-bottom: 10px;
+  font-size: 2rem;
+}
+
+.admin-subtitle {
+  text-align: center;
+  color: #666;
+  margin-bottom: 30px;
+}
+
+.permissoes-form {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-bottom: 30px;
+}
+
+.permissoes-form label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+  color: #444;
+  margin-left: 2rem;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+}
+
+.admin-table th,
+.admin-table td {
+  padding: 5px 15px;
+  border: 1px solid #8f8f8f;
+  text-align: left;
+  color: #000;
+}
+
+.admin-table th {
+  background-color: #f0f0f0;
+  color: #333;
+}
+
+.admin-table tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.btn-editar,
+.btn-excluir {
+  padding: 6px 10px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.7rem;
+}
+
+.btn-editar {
+  background-color: #384425;
+  color: white;
+  margin-right: 5px;
+}
+
+.btn-excluir {
+  background-color: #ff2617;
+  color: white;
+}
+
+
+
+
+
+
+
+
+
+
 .perfil-usuario .field .botoes-telefone {
   display: flex;
   gap: 0.25rem;
