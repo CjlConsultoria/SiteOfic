@@ -7,8 +7,6 @@ import MoradoresPng from '@/assets/moradores.png'
 import ReclamacoesPng from '@/assets/reclamacoes.png'
 import DenunciaPng from '@/assets/denuncia.png'
 import RelatoriosPng from '@/assets/relatorios.png'
-// Lista de usuários
-// Lista de usuários
 const usuarios = ref([])
 
 // Modal de edição de usuário
@@ -24,12 +22,34 @@ const usuarioIndexSelecionado = ref(null)
 
 // Modal de novo usuário
 const mostrarModalNovoUsuario = ref(false)
+const etapaCadastro = ref(1) // 1 = primeira etapa, 2 = segunda, etc.
 const novoUsuario = reactive({
   nome: '',
-  email: '',
+  sobrenome: '',
+  apelido: '',
   cpf: '',
+  cnpj: '',
+  nomeEmpresa: '',
+  dataNascimento: {
+    dia: '',
+    mes: '',
+    ano: ''
+  },
+  genero: '',
+  cep: '',
+  logradouro: '',
+  complemento: '',
+  numero: '',
+  bairro: '',
+  cidade: '',
+  estado: '',
+  email: '',
   senha: '',
-  role: 'USER'
+  confirmaSenha: '',
+  telefone: '',
+  ehPessoaJuridica: false,
+  role: 'USER',
+  permissoes: { gerenciarUsuarios: false, editarSistemas: false, visualizarRelatorios: false }
 })
 
 // Controle do menu lateral e página atual
@@ -40,7 +60,9 @@ const permissoes = reactive({
   visualizarRelatorios: false
 })
 
-// Função para normalizar labels
+// ===========================
+// Funções auxiliares
+// ===========================
 function normalizarLabel(label) {
   return label
     .normalize('NFD')
@@ -49,7 +71,6 @@ function normalizarLabel(label) {
     .replace(/\s+/g, '')
 }
 
-// Função para obter token
 function obterToken(admin = false) {
   if (admin) return localStorage.getItem('tokenAdmin')
   return localStorage.getItem('token')
@@ -60,13 +81,14 @@ window.obterToken = function(admin = false) {
   return localStorage.getItem('token')
 }
 
-// Determina role principal
 function getRolePrincipal(roles) {
   if (!roles || !Array.isArray(roles)) return 'User'
   return roles.includes('ROLE_ADMIN') ? 'Admin' : 'User'
 }
 
+// ===========================
 // Carregar usuários do backend
+// ===========================
 async function carregarUsuarios() {
   try {
     const token = obterToken()
@@ -92,7 +114,9 @@ async function carregarUsuarios() {
   }
 }
 
+// ===========================
 // Abrir modal de edição
+// ===========================
 function abrirModalUsuario(index) {
   const user = usuarios.value[index]
   usuarioSelecionado.id = user.id
@@ -109,7 +133,9 @@ function abrirModalUsuario(index) {
   })
 }
 
+// ===========================
 // Salvar usuário atualizado
+// ===========================
 async function salvarUsuario() {
   if (usuarioIndexSelecionado.value === null) return;
 
@@ -131,11 +157,8 @@ async function salvarUsuario() {
   }
 
   let roleIds = []
-  if (usuarioSelecionado.role === "ROLE_ADMIN") {
-    roleIds = [2]
-  } else {
-    roleIds = [1]
-  }
+  if (usuarioSelecionado.role === "ROLE_ADMIN") roleIds = [2]
+  else roleIds = [1]
 
   const permissoesArray = Object.keys(usuarioSelecionado.permissoes).filter(
     key => usuarioSelecionado.permissoes[key]
@@ -176,7 +199,9 @@ async function salvarUsuario() {
   }
 }
 
+// ===========================
 // Excluir usuário
+// ===========================
 async function excluirUsuario(index) {
   const user = usuarios.value[index]
 
@@ -202,18 +227,40 @@ async function excluirUsuario(index) {
   }
 }
 
+// ===========================
 // Abrir modal de novo usuário
+// ===========================
 function abrirModalNovoUsuario() {
   mostrarModalNovoUsuario.value = true
-  Object.assign(novoUsuario, { nome: '', email: '', cpf: '', senha: '', role: 'USER' })
-
+  etapaCadastro.value = 1
+  Object.assign(novoUsuario, {
+    nome: '', sobrenome: '', apelido: '', cpf: '', cnpj: '', nomeEmpresa: '',
+    dataNascimento: { dia: '', mes: '', ano: '' },
+    genero: '', cep: '', logradouro: '', complemento: '', numero: '', bairro: '',
+    cidade: '', estado: '', email: '', senha: '', confirmaSenha: '', telefone: '',
+    ehPessoaJuridica: false, role: 'ROLE_USER',
+    permissoes: { gerenciarUsuarios: false, editarSistemas: false, visualizarRelatorios: false }
+  })
   nextTick(() => {
     const input = document.getElementById('novoNomeUsuario')
     if (input) input.focus()
   })
 }
 
+// ===========================
+// Etapas do cadastro multietapas
+// ===========================
+function proximaEtapa() {
+  if (etapaCadastro.value < 5) etapaCadastro.value++
+}
+
+function etapaAnterior() {
+  if (etapaCadastro.value > 1) etapaCadastro.value--
+}
+
+// ===========================
 // Registrar novo usuário
+// ===========================
 async function registrarUsuario() {
   const token = localStorage.getItem('tokenAdmin')
   if (!token) {
@@ -221,17 +268,16 @@ async function registrarUsuario() {
     return
   }
 
-  // Define roleIds compatível com backend
-  let roleIds = []
-  if (novoUsuario.role === "ROLE_ADMIN") roleIds = [2]
-  else roleIds = [1]
+  const payloadRoleIds = novoUsuario.role === "ROLE_ADMIN" ? [2] : [1]
+  const permissoesArray = Object.keys(novoUsuario.permissoes).filter(key => novoUsuario.permissoes[key])
 
   const payload = {
     nome: novoUsuario.nome,
     email: novoUsuario.email,
     cpf: novoUsuario.cpf,
     senha: novoUsuario.senha,
-    roleIds: roleIds
+    roleIds: payloadRoleIds,
+    permissoes: permissoesArray
   }
 
   try {
@@ -241,10 +287,10 @@ async function registrarUsuario() {
       { headers: { Authorization: `Bearer ${token}` } }
     )
 
-    // Adiciona usuário na lista local
     usuarios.value.push({
       ...response.data,
-      role: getRolePrincipal(response.data.roles)
+      role: getRolePrincipal(response.data.roles),
+      permissoes: novoUsuario.permissoes
     })
 
     mostrarModalNovoUsuario.value = false
@@ -255,19 +301,17 @@ async function registrarUsuario() {
   }
 }
 
-
+// ===========================
 // Lista computada
+// ===========================
 const listaUsuarios = computed(() => usuarios.value)
 
+// ===========================
 // Carregar usuários ao montar o componente
+// ===========================
 onMounted(async () => {
   await carregarUsuarios()
 })
-
-
-
-
-
 
 
 
@@ -1389,21 +1433,88 @@ function validarTelefone(event) {
       div.modal(v-if="mostrarModalNovoUsuario")
         div.modal-content
           h2 Novo Usuário
-          label Nome
-            input#novoNomeUsuario(type="text" v-model="novoUsuario.nome")
-          label Email
-            input(type="email" v-model="novoUsuario.email")
-          label CPF
-            input(type="text" v-model="novoUsuario.cpf")
-          label Senha
-            input(type="password" v-model="novoUsuario.senha")
-          label Role
-            select(v-model="novoUsuario.role")
-              option(value="ROLE_ADMIN") Admin
-              option(value="ROLE_USER") User
-          .modal-buttons
-            button(@click="registrarUsuario") Salvar
-            button(@click="mostrarModalNovoUsuario = false") Cancelar
+
+          // Etapa 1
+          div(v-if="etapaCadastro === 1")
+            label Nome
+              input(type="text" v-model="novoUsuario.nome")
+            label Sobrenome
+              input(type="text" v-model="novoUsuario.sobrenome")
+            label Apelido
+              input(type="text" v-model="novoUsuario.apelido")
+            .modal-buttons
+              button(@click="proximaEtapa") Próximo
+              button(@click="mostrarModalNovoUsuario = false") Cancelar
+
+          // Etapa 2
+          div(v-if="etapaCadastro === 2")
+            label CPF
+              input(type="text" v-model="novoUsuario.cpf")
+            label CNPJ
+              input(type="text" v-model="novoUsuario.cnpj")
+            label Nome da Empresa
+              input(type="text" v-model="novoUsuario.nomeEmpresa")
+            label Telefone
+              input(type="text" v-model="novoUsuario.telefone")
+            .modal-buttons
+              button(@click="etapaAnterior") Voltar
+              button(@click="proximaEtapa") Próximo
+
+          // Etapa 3
+          div(v-if="etapaCadastro === 3")
+            label Data de Nascimento
+              .data-nascimento
+                input(type="text" placeholder="Dia" v-model="novoUsuario.dataNascimento.dia")
+                input(type="text" placeholder="Mês" v-model="novoUsuario.dataNascimento.mes")
+                input(type="text" placeholder="Ano" v-model="novoUsuario.dataNascimento.ano")
+            label Gênero
+              select(v-model="novoUsuario.genero")
+                option(value="") Selecione
+                option(value="Masculino") Masculino
+                option(value="Feminino") Feminino
+                option(value="Outro") Outro
+            .modal-buttons
+              button(@click="etapaAnterior") Voltar
+              button(@click="proximaEtapa") Próximo
+
+          // Etapa 4
+          div(v-if="etapaCadastro === 4")
+            label CEP
+              input(type="text" v-model="novoUsuario.cep")
+            label Logradouro
+              input(type="text" v-model="novoUsuario.logradouro")
+            label Complemento
+              input(type="text" v-model="novoUsuario.complemento")
+            label Número
+              input(type="text" v-model="novoUsuario.numero")
+            label Bairro
+              input(type="text" v-model="novoUsuario.bairro")
+            label Cidade
+              input(type="text" v-model="novoUsuario.cidade")
+            label Estado
+              input(type="text" v-model="novoUsuario.estado")
+            .modal-buttons
+              button(@click="etapaAnterior") Voltar
+              button(@click="proximaEtapa") Próximo
+
+          // Etapa 5
+          div(v-if="etapaCadastro === 5")
+            label Email
+              input(type="email" v-model="novoUsuario.email")
+            label Senha
+              input(type="password" v-model="novoUsuario.senha")
+            label Confirme a Senha
+              input(type="password" v-model="novoUsuario.confirmaSenha")
+            label Role
+              select(v-model="novoUsuario.role")
+                option(value="ROLE_ADMIN") Admin
+                option(value="ROLE_USER") User
+            .modal-buttons
+              button(@click="etapaAnterior") Voltar
+              button(@click="registrarUsuario") Salvar
+              button(@click="mostrarModalNovoUsuario = false") Cancelar
+
+
 
 
       // Modal de edição de usuário
