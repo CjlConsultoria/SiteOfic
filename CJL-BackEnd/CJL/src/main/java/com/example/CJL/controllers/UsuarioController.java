@@ -32,6 +32,7 @@ public class UsuarioController {
 
     private DadosUserResponseDTO fromEntity(User user) {
         return DadosUserResponseDTO.builder()
+                .id(user.getId()) // ✅ agora o id vai para o front
                 .nome(user.getNome())
                 .sobrenome(user.getSobrenome())
                 .apelido(user.getApelido())

@@ -7,6 +7,7 @@ import MoradoresPng from '@/assets/moradores.png'
 import ReclamacoesPng from '@/assets/reclamacoes.png'
 import DenunciaPng from '@/assets/denuncia.png'
 import RelatoriosPng from '@/assets/relatorios.png'
+
 const usuarios = ref([])
 
 // Modal de edição de usuário
@@ -14,7 +15,20 @@ const modalUsuarioAberto = ref(false)
 const usuarioSelecionado = reactive({
   id: null,
   nome: '',
+  sobrenome: '',
+  apelido: '',
   email: '',
+  cpf: '',
+  cnpj: '',
+  telefone: '',
+  genero: '',
+  cidade: '',
+  estado: '',
+  cep: '',
+  logradouro: '',
+  bairro: '',
+  numero: '',
+  complemento: '',
   role: '',
   permissoes: { gerenciarUsuarios: false, editarSistemas: false, visualizarRelatorios: false }
 })
@@ -30,11 +44,7 @@ const novoUsuario = reactive({
   cpf: '',
   cnpj: '',
   nomeEmpresa: '',
-  dataNascimento: {
-    dia: '',
-    mes: '',
-    ano: ''
-  },
+  dataNascimento: { dia: '', mes: '', ano: '' },
   genero: '',
   cep: '',
   logradouro: '',
@@ -48,7 +58,7 @@ const novoUsuario = reactive({
   confirmaSenha: '',
   telefone: '',
   ehPessoaJuridica: false,
-  role: 'USER',
+  role: 'ROLE_USER',
   permissoes: { gerenciarUsuarios: false, editarSistemas: false, visualizarRelatorios: false }
 })
 
@@ -72,13 +82,11 @@ function normalizarLabel(label) {
 }
 
 function obterToken(admin = false) {
-  if (admin) return localStorage.getItem('tokenAdmin')
-  return localStorage.getItem('token')
+  return admin ? localStorage.getItem('tokenAdmin') : localStorage.getItem('token')
 }
 
 window.obterToken = function(admin = false) {
-  if(admin) return localStorage.getItem('tokenAdmin')
-  return localStorage.getItem('token')
+  return admin ? localStorage.getItem('tokenAdmin') : localStorage.getItem('token')
 }
 
 function getRolePrincipal(roles) {
@@ -91,9 +99,9 @@ function getRolePrincipal(roles) {
 // ===========================
 async function carregarUsuarios() {
   try {
-    const token = obterToken()
+    const token = obterToken(true) // ✅ usar tokenAdmin
     if (!token) {
-      console.warn('Token não encontrado, redirecionando para login')
+      console.warn('Token admin não encontrado, redirecionando para login')
       window.location.href = '/login'
       return
     }
@@ -102,15 +110,34 @@ async function carregarUsuarios() {
       headers: { Authorization: `Bearer ${token}` }
     })
 
+    console.log("Response backend:", JSON.stringify(response.data, null, 2))
+
     usuarios.value = response.data.map(u => ({
-      ...u,
-      role: getRolePrincipal(u.roles)
+      id: u.id, // sempre pegar o id do backend
+      nome: u.nome || '',
+      sobrenome: u.sobrenome || '',
+      apelido: u.apelido || '',
+      email: u.email || '',
+      cpf: u.cpf || '',
+      cnpj: u.cnpj || '',
+      telefone: u.telefone || '',
+      genero: u.genero || '',
+      cidade: u.cidade || '',
+      estado: u.estado || '',
+      cep: u.cep || '',
+      logradouro: u.logradouro || '',
+      bairro: u.bairro || '',
+      numero: u.numero || '',
+      complemento: u.complemento || '',
+      role: getRolePrincipal(u.roles),
+      roles: u.roles || [],
+      permissoes: u.permissoes || { gerenciarUsuarios: false, editarSistemas: false, visualizarRelatorios: false }
     }))
 
     console.log('Usuários carregados:', usuarios.value)
   } catch (error) {
     console.error('Não foi possível carregar os usuários:', error.response?.data || error)
-    alert('Não foi possível carregar os usuários. Verifique se você está logado.')
+    alert('Não foi possível carregar os usuários. Verifique se você está logado como admin.')
   }
 }
 
@@ -119,11 +146,7 @@ async function carregarUsuarios() {
 // ===========================
 function abrirModalUsuario(index) {
   const user = usuarios.value[index]
-  usuarioSelecionado.id = user.id
-  usuarioSelecionado.nome = user.nome
-  usuarioSelecionado.email = user.email
-  usuarioSelecionado.role = user.role
-  usuarioSelecionado.permissoes = user.permissoes || {}
+  Object.assign(usuarioSelecionado, user)
   usuarioIndexSelecionado.value = index
   modalUsuarioAberto.value = true
 
@@ -137,65 +160,67 @@ function abrirModalUsuario(index) {
 // Salvar usuário atualizado
 // ===========================
 async function salvarUsuario() {
-  if (usuarioIndexSelecionado.value === null) return;
+  if (usuarioIndexSelecionado.value === null) return
 
-  const token = localStorage.getItem('tokenAdmin');
+  const token = obterToken(true)
   if (!token) {
-    alert('Token admin não encontrado. Faça login como admin.');
-    return;
-  }
-
-  const payloadToken = JSON.parse(atob(token.split('.')[1]));
-  if (!payloadToken.roles.includes("ROLE_ADMIN")) {
-    alert('O token não possui permissão de admin.');
-    return;
-  }
-
-  if (!usuarioSelecionado || !usuarioSelecionado.id) {
-    alert('Usuário inválido para atualização.')
+    alert('Token admin não encontrado. Faça login como admin.')
     return
   }
 
-  let roleIds = []
-  if (usuarioSelecionado.role === "ROLE_ADMIN") roleIds = [2]
-  else roleIds = [1]
+  const payloadToken = JSON.parse(atob(token.split('.')[1]))
+  if (!payloadToken.roles.includes('ROLE_ADMIN')) {
+    alert('O token não possui permissão de admin.')
+    return
+  }
 
-  const permissoesArray = Object.keys(usuarioSelecionado.permissoes).filter(
-    key => usuarioSelecionado.permissoes[key]
-  )
+  console.log("Tentando salvar usuário:", usuarioSelecionado)
+
+  const roleIds = usuarioSelecionado.role === 'Admin' || usuarioSelecionado.role === 'ROLE_ADMIN' ? [2] : [1]
+  const permissoesArray = Object.keys(usuarioSelecionado.permissoes).filter(key => usuarioSelecionado.permissoes[key])
 
   const payload = {
     nome: usuarioSelecionado.nome || '',
+    sobrenome: usuarioSelecionado.sobrenome || '',
+    apelido: usuarioSelecionado.apelido || '',
     email: usuarioSelecionado.email || '',
+    cpf: usuarioSelecionado.cpf || '',
+    cnpj: usuarioSelecionado.cnpj || '',
+    telefone: usuarioSelecionado.telefone || '',
+    genero: usuarioSelecionado.genero || '',
+    cidade: usuarioSelecionado.cidade || '',
+    estado: usuarioSelecionado.estado || '',
+    cep: usuarioSelecionado.cep || '',
+    logradouro: usuarioSelecionado.logradouro || '',
+    bairro: usuarioSelecionado.bairro || '',
+    numero: usuarioSelecionado.numero || '',
+    complemento: usuarioSelecionado.complemento || '',
     roleIds: roleIds,
     permissoes: permissoesArray
   }
 
-  modalUsuarioAberto.value = false;
+  modalUsuarioAberto.value = false
 
   try {
     const response = await axios.put(
       `http://localhost:8080/api/usuarios/${usuarioSelecionado.id}`,
       payload,
       { headers: { Authorization: `Bearer ${token}` } }
-    );
+    )
 
     const updatedUser = response.data
     usuarios.value[usuarioIndexSelecionado.value] = {
       ...usuarios.value[usuarioIndexSelecionado.value],
-      nome: updatedUser.nome,
-      email: updatedUser.email,
+      ...updatedUser,
       role: getRolePrincipal(updatedUser.roles),
-      roles: updatedUser.roles,
-      permissoes: usuarioSelecionado.permissoes
+      roles: updatedUser.roles
     }
 
-    alert('Usuário atualizado com sucesso!');
-    console.log('Usuário atualizado no backend:', updatedUser);
-
+    alert('Usuário atualizado com sucesso!')
+    console.log('Usuário atualizado no backend:', updatedUser)
   } catch (erro) {
-    console.error('Erro ao atualizar o usuário no backend:', erro.response?.data || erro);
-    alert('Não foi possível atualizar o usuário. Veja o console para mais detalhes.');
+    console.error('Erro ao atualizar o usuário no backend:', erro.response?.data || erro)
+    alert('Não foi possível atualizar o usuário. Veja o console para mais detalhes.')
   }
 }
 
@@ -207,7 +232,7 @@ async function excluirUsuario(index) {
 
   if (!confirm(`Deseja realmente excluir o usuário ${user.nome}?`)) return
 
-  const token = localStorage.getItem('tokenAdmin')
+  const token = obterToken(true)
   if (!token) {
     alert('Token admin não encontrado. Faça login como admin.')
     return
@@ -262,20 +287,32 @@ function etapaAnterior() {
 // Registrar novo usuário
 // ===========================
 async function registrarUsuario() {
-  const token = localStorage.getItem('tokenAdmin')
+  const token = obterToken(true)
   if (!token) {
     alert('Token admin não encontrado. Faça login como admin.')
     return
   }
 
-  const payloadRoleIds = novoUsuario.role === "ROLE_ADMIN" ? [2] : [1]
+  const payloadRoleIds = novoUsuario.role === 'ROLE_ADMIN' ? [2] : [1]
   const permissoesArray = Object.keys(novoUsuario.permissoes).filter(key => novoUsuario.permissoes[key])
 
   const payload = {
     nome: novoUsuario.nome,
+    sobrenome: novoUsuario.sobrenome,
+    apelido: novoUsuario.apelido,
     email: novoUsuario.email,
-    cpf: novoUsuario.cpf,
     senha: novoUsuario.senha,
+    cpf: novoUsuario.cpf,
+    cnpj: novoUsuario.cnpj,
+    telefone: novoUsuario.telefone,
+    genero: novoUsuario.genero,
+    cidade: novoUsuario.cidade,
+    estado: novoUsuario.estado,
+    cep: novoUsuario.cep,
+    logradouro: novoUsuario.logradouro,
+    bairro: novoUsuario.bairro,
+    numero: novoUsuario.numero,
+    complemento: novoUsuario.complemento,
     roleIds: payloadRoleIds,
     permissoes: permissoesArray
   }
@@ -287,14 +324,17 @@ async function registrarUsuario() {
       { headers: { Authorization: `Bearer ${token}` } }
     )
 
+    const newUser = response.data
+
     usuarios.value.push({
-      ...response.data,
-      role: getRolePrincipal(response.data.roles),
+      ...newUser,
+      role: getRolePrincipal(newUser.roles),
       permissoes: novoUsuario.permissoes
     })
 
     mostrarModalNovoUsuario.value = false
     alert('Novo usuário registrado com sucesso!')
+    console.log('Usuário registrado no backend:', newUser)
   } catch (erro) {
     console.error('Erro ao registrar usuário:', erro.response?.data || erro)
     alert('Não foi possível registrar o usuário. Verifique se você tem permissão de admin.')
@@ -312,15 +352,6 @@ const listaUsuarios = computed(() => usuarios.value)
 onMounted(async () => {
   await carregarUsuarios()
 })
-
-
-
-
-
-
-
-
-
 
 
 

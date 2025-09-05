@@ -3,20 +3,31 @@ package com.example.CJL.services;
 import com.example.CJL.dtos.response.DadosUserResponseDTO;
 import com.example.CJL.dtos.request.UserRequestDTO;
 import com.example.CJL.entities.User;
+import com.example.CJL.entities.Role;
 import com.example.CJL.repositories.UserRepository;
+import com.example.CJL.repositories.RoleRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.HashSet;
+import java.util.Set;
+import java.util.List;
 
 @Service
 public class AdminService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private RoleRepository roleRepository;
+
     public DadosUserResponseDTO atualizarUsuario(Long id, UserRequestDTO dto) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado"));
 
+        // Atualizar campos básicos
         user.setNome(dto.getNome());
         user.setSobrenome(dto.getSobrenome());
         user.setApelido(dto.getApelido());
@@ -29,8 +40,18 @@ public class AdminService {
         user.setLogradouro(dto.getRua());
         user.setNumeroResidencia(dto.getNumeroResidencia());
         user.setBairro(dto.getBairro());
-        user.setCpf(dto.getCpf());
+        user.setCpf(dto.getCpf()); // CPF agora é atualizado corretamente
 
+        // Atualizar roles
+        if (dto.getRoleIds() != null && !dto.getRoleIds().isEmpty()) {
+            Set<Role> novasRoles = new HashSet<>();
+            for (Long roleId : dto.getRoleIds()) {
+                Role role = roleRepository.findById(roleId)
+                        .orElseThrow(() -> new EntityNotFoundException("Role não encontrada: " + roleId));
+                novasRoles.add(role);
+            }
+            user.setRoles(novasRoles);
+        }
 
         userRepository.save(user);
         return toDTO(user);
@@ -66,5 +87,4 @@ public class AdminService {
                         .toList())
                 .build();
     }
-
 }

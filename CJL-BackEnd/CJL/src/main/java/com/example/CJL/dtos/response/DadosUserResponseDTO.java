@@ -10,6 +10,9 @@ import java.util.List;
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class DadosUserResponseDTO {
+
+    private Long id; // ✅ adicionado para permitir o builder .id()
+
     private String nome;
     private String sobrenome;
     private String apelido;

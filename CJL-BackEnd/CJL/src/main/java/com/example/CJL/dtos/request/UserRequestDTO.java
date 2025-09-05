@@ -2,6 +2,8 @@ package com.example.CJL.dtos.request;
 
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 public class UserRequestDTO {
     private String nome;
@@ -9,6 +11,7 @@ public class UserRequestDTO {
     private String apelido;
     private String telefone;
     private String cpf;
+    private String cnpj;
     private boolean pj;
     private int diaNascimento;
     private int mesNascimento;
@@ -24,4 +27,7 @@ public class UserRequestDTO {
     private String email;
     private String senha;
 
+    // NOVOS CAMPOS PARA ROLES E PERMISSÕES
+    private List<Long> roleIds;            // Lista de IDs das roles do usuário
+    private List<String> permissoes;       // Lista de permissões como strings (ex: "gerenciarUsuarios")
 }
