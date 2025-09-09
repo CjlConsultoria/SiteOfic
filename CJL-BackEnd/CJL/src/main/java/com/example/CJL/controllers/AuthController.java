@@ -28,12 +28,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 
-
 @RestController
 @RequestMapping("/api/auth")
 @Tag(name = "Autenticação", description = "Endpoints de registro de usuários, login e geração de token JWT")
 public class AuthController {
-
 
     @Autowired
     private UserRepository userRepository;
@@ -65,37 +63,47 @@ public class AuthController {
     @Autowired
     private RegistroService registroService;
 
-
+    // ==============================
+    // Registrar usuário com debug
+    // ==============================
     @Operation(summary = "Registrar novo usuário", description = "Cria um novo usuário com os dados fornecidos, incluindo endereço via CEP.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Usuário registrado com sucesso"),
             @ApiResponse(responseCode = "400", description = "E-mail já utilizado"),
             @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
     })
-
     @PostMapping("/register")
     public ResponseEntity<Map<String, String>> register(@RequestBody RegistroCompletoDTO registro) {
-        UserRequestDTO dto = registro.getUser();
-        EmpresaRequestDTO empresaDto = registro.getEmpresa();
-        Map<String, String> result = registroService.registrarUsuario(registro);
+        try {
+            System.out.println("[DEBUG] Registro recebido: " + registro);
 
-        if (result == null || result.isEmpty()) {
+            Map<String, String> result = registroService.registrarUsuario(registro);
+            System.out.println("[DEBUG] Resultado do registroService: " + result);
+
+            if (result == null || result.isEmpty()) {
+                System.err.println("[ERROR] Resultado vazio do registroService!");
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .body(Map.of("message", "Erro interno: resultado vazio"));
+            }
+
+            if ("Email já utilizado".equals(result.get("message"))) {
+                System.out.println("[DEBUG] Email já utilizado detectado");
+                return ResponseEntity.badRequest().body(result);
+            }
+
+            System.out.println("[DEBUG] Registro realizado com sucesso!");
+            return ResponseEntity.ok(result);
+        } catch (Exception e) {
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("message", "Erro interno: resultado vazio"));
+                    .body(Map.of("message", "Erro interno ao registrar usuário"));
         }
-
-        if ("Email já utilizado".equals(result.get("message"))) {
-            return ResponseEntity.badRequest().body(result);
-        }
-
-        return ResponseEntity.ok(result);
     }
 
-
-    @Operation(
-            summary = "Realizar login",
-            description = "Autentica o usuário e retorna um token JWT para uso em endpoints protegidos"
-    )
+    // ==============================
+    // Login com debug
+    // ==============================
+    @Operation(summary = "Realizar login", description = "Autentica o usuário e retorna um token JWT para uso em endpoints protegidos")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Login bem-sucedido, token JWT retornado",
                     content = @Content(mediaType = "application/json",
@@ -106,21 +114,29 @@ public class AuthController {
             @ApiResponse(responseCode = "500", description = "Erro interno do servidor",
                     content = @Content(schema = @Schema(hidden = true)))
     })
-
     @PostMapping("/login")
-    public ResponseEntity<?> login (@RequestBody LoginRequestDTO dto){
+    public ResponseEntity<?> login(@RequestBody LoginRequestDTO dto) {
         try {
+            System.out.println("[DEBUG] Login solicitado para: " + dto.getEmail());
+
             String token = loginService.LoginAuthentication(dto.getEmail(), dto.getSenha());
+            System.out.println("[DEBUG] Token gerado: " + token);
+
             return ResponseEntity.ok(new JwtResponseDTO(token));
         } catch (UsernameNotFoundException e) {
+            System.err.println("[ERROR] Credenciais inválidas para: " + dto.getEmail());
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Credenciais inválidas");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("message", "Erro interno ao realizar login"));
         }
     }
 
-    @Operation(
-            summary = "Obter dados do usuário autenticado",
-            description = "Retorna os dados do usuário logado com base no token JWT fornecido no header Authorization"
-    )
+    // ==============================
+    // Retornar dados do usuário logado com debug
+    // ==============================
+    @Operation(summary = "Obter dados do usuário autenticado", description = "Retorna os dados do usuário logado com base no token JWT fornecido no header Authorization")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Dados do usuário retornados com sucesso",
                     content = @Content(mediaType = "application/json",
@@ -139,10 +155,22 @@ public class AuthController {
             @ApiResponse(responseCode = "401", description = "Token JWT ausente ou inválido",
                     content = @Content(schema = @Schema(hidden = true)))
     })
-
     @GetMapping("/dados")
     public ResponseEntity<DadosUserResponseDTO> getLoggerUser(@AuthenticationPrincipal UserDetails userDetails) {
-        var dto = dadosUserService.getDadosUsuario(userDetails);
-        return ResponseEntity.ok(dto);
+        try {
+            if (userDetails == null) {
+                System.err.println("[ERROR] UserDetails está nulo (token ausente ou inválido)");
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            }
+
+            System.out.println("[DEBUG] UserDetails recebido: " + userDetails.getUsername());
+            DadosUserResponseDTO dto = dadosUserService.getDadosUsuario(userDetails);
+            System.out.println("[DEBUG] Dados retornados: " + dto);
+
+            return ResponseEntity.ok(dto);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 }

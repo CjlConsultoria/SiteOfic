@@ -27,7 +27,6 @@ public class UserRequestDTO {
     private String email;
     private String senha;
 
-    // NOVOS CAMPOS PARA ROLES E PERMISSÕES
-    private List<Long> roleIds;            // Lista de IDs das roles do usuário
-    private List<String> permissoes;       // Lista de permissões como strings (ex: "gerenciarUsuarios")
+    // NOVO CAMPO PARA ROLES
+    private List<String> roles; // Lista de nomes de roles (ex: "ROLE_USER", "ROLE_ADMIN")
 }

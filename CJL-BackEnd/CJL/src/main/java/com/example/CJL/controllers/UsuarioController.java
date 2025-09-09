@@ -7,11 +7,11 @@ import com.example.CJL.repositories.UserRepository;
 import com.example.CJL.services.AdminService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
-import jakarta.persistence.EntityNotFoundException;
 
 @RestController
 @RequestMapping("/api/usuarios")
@@ -24,65 +24,56 @@ public class UsuarioController {
     private AdminService adminService;
 
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public List<DadosUserResponseDTO> listarTodos() {
         return userRepository.findAll().stream()
-                .map(this::fromEntity)
+                .map(adminService::toDTO)
                 .toList();
     }
 
-    private DadosUserResponseDTO fromEntity(User user) {
-        return DadosUserResponseDTO.builder()
-                .id(user.getId()) // ✅ agora o id vai para o front
-                .nome(user.getNome())
-                .sobrenome(user.getSobrenome())
-                .apelido(user.getApelido())
-                .email(user.getEmail())
-                .genero(user.getGenero())
-                .cidade(user.getCidade())
-                .estado(user.getEstado())
-                .cep(user.getCep())
-                .logradouro(user.getLogradouro())
-                .telefone(user.getTelefone())
-                .bairro(user.getBairro())
-                .cpf(user.getCpf())
-                .cnpj(user.getEmpresa() != null ? user.getEmpresa().getCnpj() : null)
-                .empresaId(user.getEmpresa() != null ? user.getEmpresa().getId() : null)
-                .empresaNome(user.getEmpresa() != null ? user.getEmpresa().getNome() : null)
-                .roles(user.getRoles().stream()
-                        .map(role -> role.getNome().name())
-                        .toList())
-                .build();
-    }
-
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<DadosUserResponseDTO> atualizarUsuario(
             @PathVariable Long id,
             @RequestBody UserRequestDTO dto) {
 
-        DadosUserResponseDTO atualizado = adminService.atualizarUsuario(id, dto);
-        return ResponseEntity.ok(atualizado);
+        try {
+            DadosUserResponseDTO atualizado = adminService.atualizarUsuario(id, dto);
+            return ResponseEntity.ok(atualizado);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).build();
+        }
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Map<String, String>> deletarUsuario(@PathVariable Long id) {
-        adminService.deletarUsuario(id);
-        return ResponseEntity.ok(Map.of("message", "Usuário removido com sucesso"));
+        try {
+            adminService.deletarUsuario(id);
+            return ResponseEntity.ok(Map.of("message", "Usuário removido com sucesso"));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).build();
+        }
     }
 
     @PutMapping("/{id}/telefone")
+    @PreAuthorize("hasRole('ADMIN') or #id == principal.id")
     public ResponseEntity<DadosUserResponseDTO> atualizarTelefone(
             @PathVariable Long id,
             @RequestBody Map<String, String> body) {
 
-        String novoTelefone = body.get("telefone");
-
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
-
-        user.setTelefone(novoTelefone);
-        userRepository.save(user);
-
-        return ResponseEntity.ok(fromEntity(user));
+        try {
+            String novoTelefone = body.get("telefone");
+            User user = userRepository.findById(id)
+                    .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+            user.setTelefone(novoTelefone);
+            userRepository.save(user);
+            return ResponseEntity.ok(adminService.toDTO(user));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).build();
+        }
     }
-
 }

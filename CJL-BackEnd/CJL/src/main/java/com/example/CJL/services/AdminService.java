@@ -4,6 +4,7 @@ import com.example.CJL.dtos.response.DadosUserResponseDTO;
 import com.example.CJL.dtos.request.UserRequestDTO;
 import com.example.CJL.entities.User;
 import com.example.CJL.entities.Role;
+import com.example.CJL.dtos.enums.RoleName;
 import com.example.CJL.repositories.UserRepository;
 import com.example.CJL.repositories.RoleRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -12,7 +13,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.List;
 
 @Service
 public class AdminService {
@@ -23,6 +23,9 @@ public class AdminService {
     @Autowired
     private RoleRepository roleRepository;
 
+    // ===========================
+    // Atualizar usuário
+    // ===========================
     public DadosUserResponseDTO atualizarUsuario(Long id, UserRequestDTO dto) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado"));
@@ -40,14 +43,22 @@ public class AdminService {
         user.setLogradouro(dto.getRua());
         user.setNumeroResidencia(dto.getNumeroResidencia());
         user.setBairro(dto.getBairro());
-        user.setCpf(dto.getCpf()); // CPF agora é atualizado corretamente
+        user.setCpf(dto.getCpf());
 
-        // Atualizar roles
-        if (dto.getRoleIds() != null && !dto.getRoleIds().isEmpty()) {
+        // Atualizar roles recebendo lista de strings do frontend
+        if (dto.getRoles() != null && !dto.getRoles().isEmpty()) {
             Set<Role> novasRoles = new HashSet<>();
-            for (Long roleId : dto.getRoleIds()) {
-                Role role = roleRepository.findById(roleId)
-                        .orElseThrow(() -> new EntityNotFoundException("Role não encontrada: " + roleId));
+            for (String roleStr : dto.getRoles()) {
+                RoleName roleEnum;
+                try {
+                    roleEnum = RoleName.valueOf(roleStr); // converte string para enum
+                } catch (IllegalArgumentException e) {
+                    throw new RuntimeException("Role inválida: " + roleStr);
+                }
+
+                Role role = roleRepository.findByNome(roleEnum)
+                        .orElseThrow(() -> new RuntimeException("Role não encontrada: " + roleStr));
+
                 novasRoles.add(role);
             }
             user.setRoles(novasRoles);
@@ -57,6 +68,9 @@ public class AdminService {
         return toDTO(user);
     }
 
+    // ===========================
+    // Deletar usuário
+    // ===========================
     public void deletarUsuario(Long id) {
         if (!userRepository.existsById(id)) {
             throw new EntityNotFoundException("Usuário não encontrado");
@@ -64,8 +78,12 @@ public class AdminService {
         userRepository.deleteById(id);
     }
 
-    private DadosUserResponseDTO toDTO(User user) {
+    // ===========================
+    // Converter usuário para DTO
+    // ===========================
+    public DadosUserResponseDTO toDTO(User user) { // <-- TORNEI PÚBLICO
         return DadosUserResponseDTO.builder()
+                .id(user.getId())
                 .nome(user.getNome())
                 .sobrenome(user.getSobrenome())
                 .apelido(user.getApelido())
@@ -83,7 +101,7 @@ public class AdminService {
                 .empresaId(user.getEmpresa() != null ? user.getEmpresa().getId() : null)
                 .empresaNome(user.getEmpresa() != null ? user.getEmpresa().getNome() : null)
                 .roles(user.getRoles().stream()
-                        .map(role -> role.getNome().name())
+                        .map(r -> r.getNome().name()) // enum -> string
                         .toList())
                 .build();
     }

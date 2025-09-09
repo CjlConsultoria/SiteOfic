@@ -7,10 +7,11 @@ import MoradoresPng from '@/assets/moradores.png'
 import ReclamacoesPng from '@/assets/reclamacoes.png'
 import DenunciaPng from '@/assets/denuncia.png'
 import RelatoriosPng from '@/assets/relatorios.png'
-
+// ===========================
+// Reactive States
+// ===========================
 const usuarios = ref([])
 
-// Modal de edição de usuário
 const modalUsuarioAberto = ref(false)
 const usuarioSelecionado = reactive({
   id: null,
@@ -29,14 +30,13 @@ const usuarioSelecionado = reactive({
   bairro: '',
   numero: '',
   complemento: '',
-  role: '',
+  roles: ['ROLE_USER'], // array
   permissoes: { gerenciarUsuarios: false, editarSistemas: false, visualizarRelatorios: false }
 })
 const usuarioIndexSelecionado = ref(null)
 
-// Modal de novo usuário
 const mostrarModalNovoUsuario = ref(false)
-const etapaCadastro = ref(1) // 1 = primeira etapa, 2 = segunda, etc.
+const etapaCadastro = ref(1)
 const novoUsuario = reactive({
   nome: '',
   sobrenome: '',
@@ -58,11 +58,10 @@ const novoUsuario = reactive({
   confirmaSenha: '',
   telefone: '',
   ehPessoaJuridica: false,
-  role: 'ROLE_USER',
+  roles: ['ROLE_USER'], // array
   permissoes: { gerenciarUsuarios: false, editarSistemas: false, visualizarRelatorios: false }
 })
 
-// Controle do menu lateral e página atual
 const paginaAtual = ref('dashboard')
 const permissoes = reactive({
   gerenciarUsuarios: false,
@@ -71,7 +70,7 @@ const permissoes = reactive({
 })
 
 // ===========================
-// Funções auxiliares
+// Helpers
 // ===========================
 function normalizarLabel(label) {
   return label
@@ -85,35 +84,55 @@ function obterToken(admin = false) {
   return admin ? localStorage.getItem('tokenAdmin') : localStorage.getItem('token')
 }
 
-window.obterToken = function(admin = false) {
-  return admin ? localStorage.getItem('tokenAdmin') : localStorage.getItem('token')
-}
-
 function getRolePrincipal(roles) {
-  if (!roles || !Array.isArray(roles)) return 'User'
-  return roles.includes('ROLE_ADMIN') ? 'Admin' : 'User'
+  if (!roles || !Array.isArray(roles)) return 'ROLE_USER'
+  return roles.includes('ROLE_ADMIN') ? 'ROLE_ADMIN' : 'ROLE_USER'
 }
 
 // ===========================
-// Carregar usuários do backend
+// Computed para sincronizar role do usuário
+// ===========================
+const usuarioRole = computed({
+  get() {
+    if (!usuarioSelecionado.roles || usuarioSelecionado.roles.length === 0) return 'ROLE_USER'
+    return usuarioSelecionado.roles.includes('ROLE_ADMIN') ? 'ROLE_ADMIN' : 'ROLE_USER'
+  },
+  set(value) {
+    usuarioSelecionado.roles = [value] // substitui a role atual
+  }
+})
+
+// ===========================
+// Axios Instance (com token padrão)
+// ===========================
+function getAxiosInstance(admin = false) {
+  const token = obterToken(admin)
+  if (!token) {
+    console.warn('Token não encontrado, redirecionando para login')
+    window.location.href = '/login'
+    return null
+  }
+
+  return axios.create({
+    baseURL: 'http://localhost:8080',
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  })
+}
+
+// ===========================
+// Carregar usuários
 // ===========================
 async function carregarUsuarios() {
   try {
-    const token = obterToken(true) // ✅ usar tokenAdmin
-    if (!token) {
-      console.warn('Token admin não encontrado, redirecionando para login')
-      window.location.href = '/login'
-      return
-    }
+    const axiosInstance = getAxiosInstance(false)
+    if (!axiosInstance) return
 
-    const response = await axios.get('http://localhost:8080/api/usuarios', {
-      headers: { Authorization: `Bearer ${token}` }
-    })
-
-    console.log("Response backend:", JSON.stringify(response.data, null, 2))
+    const response = await axiosInstance.get('/api/usuarios')
 
     usuarios.value = response.data.map(u => ({
-      id: u.id, // sempre pegar o id do backend
+      id: u.id,
       nome: u.nome || '',
       sobrenome: u.sobrenome || '',
       apelido: u.apelido || '',
@@ -129,15 +148,13 @@ async function carregarUsuarios() {
       bairro: u.bairro || '',
       numero: u.numero || '',
       complemento: u.complemento || '',
+      roles: u.roles || ['ROLE_USER'],
       role: getRolePrincipal(u.roles),
-      roles: u.roles || [],
       permissoes: u.permissoes || { gerenciarUsuarios: false, editarSistemas: false, visualizarRelatorios: false }
     }))
-
-    console.log('Usuários carregados:', usuarios.value)
   } catch (error) {
     console.error('Não foi possível carregar os usuários:', error.response?.data || error)
-    alert('Não foi possível carregar os usuários. Verifique se você está logado como admin.')
+    alert('Não foi possível carregar os usuários. Faça login para continuar.')
   }
 }
 
@@ -162,51 +179,22 @@ function abrirModalUsuario(index) {
 async function salvarUsuario() {
   if (usuarioIndexSelecionado.value === null) return
 
-  const token = obterToken(true)
-  if (!token) {
-    alert('Token admin não encontrado. Faça login como admin.')
-    return
-  }
+  const axiosInstance = getAxiosInstance(true)
+  if (!axiosInstance) return
 
-  const payloadToken = JSON.parse(atob(token.split('.')[1]))
-  if (!payloadToken.roles.includes('ROLE_ADMIN')) {
-    alert('O token não possui permissão de admin.')
-    return
-  }
-
-  console.log("Tentando salvar usuário:", usuarioSelecionado)
-
-  const roleIds = usuarioSelecionado.role === 'Admin' || usuarioSelecionado.role === 'ROLE_ADMIN' ? [2] : [1]
-  const permissoesArray = Object.keys(usuarioSelecionado.permissoes).filter(key => usuarioSelecionado.permissoes[key])
+  const roleIds = usuarioSelecionado.roles.map(r => r === 'ROLE_ADMIN' ? 2 : 1)
+  const permissoesArray = Object.keys(usuarioSelecionado.permissoes).filter(k => usuarioSelecionado.permissoes[k])
 
   const payload = {
-    nome: usuarioSelecionado.nome || '',
-    sobrenome: usuarioSelecionado.sobrenome || '',
-    apelido: usuarioSelecionado.apelido || '',
-    email: usuarioSelecionado.email || '',
-    cpf: usuarioSelecionado.cpf || '',
-    cnpj: usuarioSelecionado.cnpj || '',
-    telefone: usuarioSelecionado.telefone || '',
-    genero: usuarioSelecionado.genero || '',
-    cidade: usuarioSelecionado.cidade || '',
-    estado: usuarioSelecionado.estado || '',
-    cep: usuarioSelecionado.cep || '',
-    logradouro: usuarioSelecionado.logradouro || '',
-    bairro: usuarioSelecionado.bairro || '',
-    numero: usuarioSelecionado.numero || '',
-    complemento: usuarioSelecionado.complemento || '',
-    roleIds: roleIds,
+    ...usuarioSelecionado,
+    roleIds,
     permissoes: permissoesArray
   }
 
   modalUsuarioAberto.value = false
 
   try {
-    const response = await axios.put(
-      `http://localhost:8080/api/usuarios/${usuarioSelecionado.id}`,
-      payload,
-      { headers: { Authorization: `Bearer ${token}` } }
-    )
+    const response = await axiosInstance.put(`/api/usuarios/${usuarioSelecionado.id}`, payload)
 
     const updatedUser = response.data
     usuarios.value[usuarioIndexSelecionado.value] = {
@@ -217,7 +205,6 @@ async function salvarUsuario() {
     }
 
     alert('Usuário atualizado com sucesso!')
-    console.log('Usuário atualizado no backend:', updatedUser)
   } catch (erro) {
     console.error('Erro ao atualizar o usuário no backend:', erro.response?.data || erro)
     alert('Não foi possível atualizar o usuário. Veja o console para mais detalhes.')
@@ -232,20 +219,13 @@ async function excluirUsuario(index) {
 
   if (!confirm(`Deseja realmente excluir o usuário ${user.nome}?`)) return
 
-  const token = obterToken(true)
-  if (!token) {
-    alert('Token admin não encontrado. Faça login como admin.')
-    return
-  }
+  const axiosInstance = getAxiosInstance(true)
+  if (!axiosInstance) return
 
   try {
-    await axios.delete(`http://localhost:8080/api/usuarios/${user.id}`, {
-      headers: { Authorization: `Bearer ${token}` }
-    })
-
+    await axiosInstance.delete(`/api/usuarios/${user.id}`)
     usuarios.value.splice(index, 1)
     alert('Usuário excluído com sucesso!')
-    console.log('Usuário excluído do backend:', user)
   } catch (erro) {
     console.error('Erro ao excluir o usuário no backend:', erro.response?.data || erro)
     alert('Não foi possível excluir o usuário.')
@@ -263,7 +243,8 @@ function abrirModalNovoUsuario() {
     dataNascimento: { dia: '', mes: '', ano: '' },
     genero: '', cep: '', logradouro: '', complemento: '', numero: '', bairro: '',
     cidade: '', estado: '', email: '', senha: '', confirmaSenha: '', telefone: '',
-    ehPessoaJuridica: false, role: 'ROLE_USER',
+    ehPessoaJuridica: false,
+    roles: ['ROLE_USER'],
     permissoes: { gerenciarUsuarios: false, editarSistemas: false, visualizarRelatorios: false }
   })
   nextTick(() => {
@@ -287,54 +268,32 @@ function etapaAnterior() {
 // Registrar novo usuário
 // ===========================
 async function registrarUsuario() {
-  const token = obterToken(true)
-  if (!token) {
-    alert('Token admin não encontrado. Faça login como admin.')
-    return
-  }
+  const axiosInstance = getAxiosInstance(true)
+  if (!axiosInstance) return
 
-  const payloadRoleIds = novoUsuario.role === 'ROLE_ADMIN' ? [2] : [1]
+  const payloadRoleIds = novoUsuario.roles.map(r => r === 'ROLE_ADMIN' ? 2 : 1)
   const permissoesArray = Object.keys(novoUsuario.permissoes).filter(key => novoUsuario.permissoes[key])
 
   const payload = {
-    nome: novoUsuario.nome,
-    sobrenome: novoUsuario.sobrenome,
-    apelido: novoUsuario.apelido,
-    email: novoUsuario.email,
-    senha: novoUsuario.senha,
-    cpf: novoUsuario.cpf,
-    cnpj: novoUsuario.cnpj,
-    telefone: novoUsuario.telefone,
-    genero: novoUsuario.genero,
-    cidade: novoUsuario.cidade,
-    estado: novoUsuario.estado,
-    cep: novoUsuario.cep,
-    logradouro: novoUsuario.logradouro,
-    bairro: novoUsuario.bairro,
-    numero: novoUsuario.numero,
-    complemento: novoUsuario.complemento,
+    ...novoUsuario,
     roleIds: payloadRoleIds,
     permissoes: permissoesArray
   }
 
   try {
-    const response = await axios.post(
-      'http://localhost:8080/api/usuarios',
-      payload,
-      { headers: { Authorization: `Bearer ${token}` } }
-    )
+    const response = await axiosInstance.post('/api/usuarios', payload)
 
     const newUser = response.data
 
     usuarios.value.push({
       ...newUser,
       role: getRolePrincipal(newUser.roles),
+      roles: newUser.roles,
       permissoes: novoUsuario.permissoes
     })
 
     mostrarModalNovoUsuario.value = false
     alert('Novo usuário registrado com sucesso!')
-    console.log('Usuário registrado no backend:', newUser)
   } catch (erro) {
     console.error('Erro ao registrar usuário:', erro.response?.data || erro)
     alert('Não foi possível registrar o usuário. Verifique se você tem permissão de admin.')
@@ -342,16 +301,38 @@ async function registrarUsuario() {
 }
 
 // ===========================
-// Lista computada
+// Computed
 // ===========================
 const listaUsuarios = computed(() => usuarios.value)
 
 // ===========================
-// Carregar usuários ao montar o componente
+// On Mounted
 // ===========================
 onMounted(async () => {
   await carregarUsuarios()
 })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1552,17 +1533,31 @@ function validarTelefone(event) {
       div.modal(v-if="modalUsuarioAberto")
         div.modal-content
           h2 Editar Usuário
-          label Nome
-            input(type="text" v-model="usuarioSelecionado.nome")
-          label Email
-            input(type="email" v-model="usuarioSelecionado.email")
-          label Role
-            select(v-model="usuarioSelecionado.role")
+
+          label(for="nomeUsuario") Nome
+            input#nomeUsuario(
+              type="text"
+              v-model="usuarioSelecionado.nome"
+              placeholder="Digite o nome"
+            )
+
+          label(for="emailUsuario") Email
+            input#emailUsuario(
+              type="email"
+              v-model="usuarioSelecionado.email"
+              placeholder="Digite o email"
+            )
+
+          label(for="roleUsuario") Role
+            select#roleUsuario(v-model="usuarioRole")
               option(value="ROLE_ADMIN") Admin
               option(value="ROLE_USER") User
+
           .modal-buttons
-            button(@click="salvarUsuario") Salvar
-            button(@click="modalUsuarioAberto = false") Cancelar
+            button(type="button" @click="salvarUsuario") Salvar
+            button(type="button" @click="modalUsuarioAberto = false") Cancelar
+
+
 
 
 </template>
