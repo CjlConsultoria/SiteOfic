@@ -80,8 +80,8 @@ function normalizarLabel(label) {
     .replace(/\s+/g, '')
 }
 
-function obterToken(admin = false) {
-  return admin ? localStorage.getItem('tokenAdmin') : localStorage.getItem('token')
+function obterToken() {
+  return localStorage.getItem('token') // sempre usar token do usuário logado
 }
 
 function getRolePrincipal(roles) {
@@ -105,8 +105,8 @@ const usuarioRole = computed({
 // ===========================
 // Axios Instance (com token padrão)
 // ===========================
-function getAxiosInstance(admin = false) {
-  const token = obterToken(admin)
+function getAxiosInstance() {
+  const token = obterToken()
   if (!token) {
     console.warn('Token não encontrado, redirecionando para login')
     window.location.href = '/login'
@@ -126,7 +126,7 @@ function getAxiosInstance(admin = false) {
 // ===========================
 async function carregarUsuarios() {
   try {
-    const axiosInstance = getAxiosInstance(false)
+    const axiosInstance = getAxiosInstance()
     if (!axiosInstance) return
 
     const response = await axiosInstance.get('/api/usuarios')
@@ -179,15 +179,14 @@ function abrirModalUsuario(index) {
 async function salvarUsuario() {
   if (usuarioIndexSelecionado.value === null) return
 
-  const axiosInstance = getAxiosInstance(true)
+  const axiosInstance = getAxiosInstance()
   if (!axiosInstance) return
 
-  const roleIds = usuarioSelecionado.roles.map(r => r === 'ROLE_ADMIN' ? 2 : 1)
   const permissoesArray = Object.keys(usuarioSelecionado.permissoes).filter(k => usuarioSelecionado.permissoes[k])
 
   const payload = {
     ...usuarioSelecionado,
-    roleIds,
+    roles: [usuarioRole.value], // enviar somente a role selecionada
     permissoes: permissoesArray
   }
 
@@ -219,7 +218,7 @@ async function excluirUsuario(index) {
 
   if (!confirm(`Deseja realmente excluir o usuário ${user.nome}?`)) return
 
-  const axiosInstance = getAxiosInstance(true)
+  const axiosInstance = getAxiosInstance()
   if (!axiosInstance) return
 
   try {
@@ -268,15 +267,14 @@ function etapaAnterior() {
 // Registrar novo usuário
 // ===========================
 async function registrarUsuario() {
-  const axiosInstance = getAxiosInstance(true)
+  const axiosInstance = getAxiosInstance()
   if (!axiosInstance) return
 
-  const payloadRoleIds = novoUsuario.roles.map(r => r === 'ROLE_ADMIN' ? 2 : 1)
   const permissoesArray = Object.keys(novoUsuario.permissoes).filter(key => novoUsuario.permissoes[key])
 
   const payload = {
     ...novoUsuario,
-    roleIds: payloadRoleIds,
+    roles: novoUsuario.roles, // array de strings
     permissoes: permissoesArray
   }
 
@@ -311,14 +309,6 @@ const listaUsuarios = computed(() => usuarios.value)
 onMounted(async () => {
   await carregarUsuarios()
 })
-
-
-
-
-
-
-
-
 
 
 

@@ -23,6 +23,9 @@ public class UsuarioController {
     @Autowired
     private AdminService adminService;
 
+    // ===========================
+    // Listar todos os usuários
+    // ===========================
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
     public List<DadosUserResponseDTO> listarTodos() {
@@ -31,6 +34,9 @@ public class UsuarioController {
                 .toList();
     }
 
+    // ===========================
+    // Atualizar usuário (admin)
+    // ===========================
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<DadosUserResponseDTO> atualizarUsuario(
@@ -46,6 +52,9 @@ public class UsuarioController {
         }
     }
 
+    // ===========================
+    // Deletar usuário (admin)
+    // ===========================
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Map<String, String>> deletarUsuario(@PathVariable Long id) {
@@ -58,6 +67,9 @@ public class UsuarioController {
         }
     }
 
+    // ===========================
+    // Atualizar telefone (admin ou próprio usuário)
+    // ===========================
     @PutMapping("/{id}/telefone")
     @PreAuthorize("hasRole('ADMIN') or #id == principal.id")
     public ResponseEntity<DadosUserResponseDTO> atualizarTelefone(
@@ -66,10 +78,16 @@ public class UsuarioController {
 
         try {
             String novoTelefone = body.get("telefone");
+            if (novoTelefone == null || novoTelefone.isBlank()) {
+                return ResponseEntity.badRequest().build();
+            }
+
             User user = userRepository.findById(id)
                     .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+
             user.setTelefone(novoTelefone);
             userRepository.save(user);
+
             return ResponseEntity.ok(adminService.toDTO(user));
         } catch (Exception e) {
             e.printStackTrace();

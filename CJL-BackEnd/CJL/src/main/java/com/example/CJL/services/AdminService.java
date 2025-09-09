@@ -9,6 +9,8 @@ import com.example.CJL.repositories.UserRepository;
 import com.example.CJL.repositories.RoleRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
@@ -30,41 +32,42 @@ public class AdminService {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado"));
 
-        // Atualizar campos básicos
-        user.setNome(dto.getNome());
-        user.setSobrenome(dto.getSobrenome());
-        user.setApelido(dto.getApelido());
-        user.setEmail(dto.getEmail());
-        user.setGenero(dto.getGenero());
-        user.setCidade(dto.getCidade());
-        user.setEstado(dto.getEstado());
-        user.setCep(dto.getCep());
-        user.setTelefone(dto.getTelefone());
-        user.setLogradouro(dto.getRua());
-        user.setNumeroResidencia(dto.getNumeroResidencia());
-        user.setBairro(dto.getBairro());
-        user.setCpf(dto.getCpf());
+        // Recupera email do usuário logado
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String emailLogado = auth != null ? auth.getName() : null;
 
-        // Atualizar roles recebendo lista de strings do frontend
-        if (dto.getRoles() != null && !dto.getRoles().isEmpty()) {
+        // Atualizar campos básicos
+        if (dto.getNome() != null) user.setNome(dto.getNome());
+        if (dto.getSobrenome() != null) user.setSobrenome(dto.getSobrenome());
+        if (dto.getApelido() != null) user.setApelido(dto.getApelido());
+        if (dto.getEmail() != null) user.setEmail(dto.getEmail());
+        if (dto.getGenero() != null) user.setGenero(dto.getGenero());
+        if (dto.getCidade() != null) user.setCidade(dto.getCidade());
+        if (dto.getEstado() != null) user.setEstado(dto.getEstado());
+        if (dto.getCep() != null) user.setCep(dto.getCep());
+        if (dto.getTelefone() != null) user.setTelefone(dto.getTelefone());
+        if (dto.getRua() != null) user.setLogradouro(dto.getRua());
+        if (dto.getNumeroResidencia() != null) user.setNumeroResidencia(dto.getNumeroResidencia());
+        if (dto.getBairro() != null) user.setBairro(dto.getBairro());
+        if (dto.getCpf() != null) user.setCpf(dto.getCpf());
+
+        // Atualizar roles somente se não for o usuário logado
+        if (!user.getEmail().equals(emailLogado) && dto.getRoles() != null) {
             Set<Role> novasRoles = new HashSet<>();
             for (String roleStr : dto.getRoles()) {
-                RoleName roleEnum;
                 try {
-                    roleEnum = RoleName.valueOf(roleStr); // converte string para enum
+                    RoleName roleEnum = RoleName.valueOf(roleStr);
+                    Role role = roleRepository.findByNome(roleEnum)
+                            .orElseThrow(() -> new RuntimeException("Role não encontrada: " + roleStr));
+                    novasRoles.add(role);
                 } catch (IllegalArgumentException e) {
                     throw new RuntimeException("Role inválida: " + roleStr);
                 }
-
-                Role role = roleRepository.findByNome(roleEnum)
-                        .orElseThrow(() -> new RuntimeException("Role não encontrada: " + roleStr));
-
-                novasRoles.add(role);
             }
             user.setRoles(novasRoles);
         }
 
-        userRepository.save(user);
+        userRepository.save(user); // salva alterações no banco
         return toDTO(user);
     }
 
@@ -81,7 +84,7 @@ public class AdminService {
     // ===========================
     // Converter usuário para DTO
     // ===========================
-    public DadosUserResponseDTO toDTO(User user) { // <-- TORNEI PÚBLICO
+    public DadosUserResponseDTO toDTO(User user) {
         return DadosUserResponseDTO.builder()
                 .id(user.getId())
                 .nome(user.getNome())
