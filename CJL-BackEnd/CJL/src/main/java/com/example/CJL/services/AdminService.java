@@ -5,7 +5,6 @@ import com.example.CJL.dtos.request.UserRequestDTO;
 import com.example.CJL.entities.User;
 import com.example.CJL.exception.ApiException;
 import com.example.CJL.repositories.UserRepository;
-import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

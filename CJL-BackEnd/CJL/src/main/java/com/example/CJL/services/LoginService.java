@@ -1,16 +1,13 @@
 package com.example.CJL.services;
 
-import ch.qos.logback.core.joran.conditional.IfAction;
 import com.example.CJL.entities.User;
 import com.example.CJL.exception.ApiException;
 import com.example.CJL.repositories.UserRepository;
 import com.example.CJL.security.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
 
 @Service
 public class LoginService {

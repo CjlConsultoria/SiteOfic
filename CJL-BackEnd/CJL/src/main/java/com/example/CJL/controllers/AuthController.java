@@ -17,6 +17,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -137,6 +138,7 @@ public class AuthController {
     })
 
     @GetMapping("/dados")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<DadosUserResponseDTO> getLoggerUser(@AuthenticationPrincipal UserDetails userDetails) {
         var dto = dadosUserService.getDadosUsuario(userDetails);
         return ResponseEntity.ok(dto);
