@@ -7,6 +7,9 @@ import MoradoresPng from '@/assets/moradores.png'
 import ReclamacoesPng from '@/assets/reclamacoes.png'
 import DenunciaPng from '@/assets/denuncia.png'
 import RelatoriosPng from '@/assets/relatorios.png'
+import '@fortawesome/fontawesome-free/css/all.css'
+
+
 // ===========================
 // Reactive States
 // ===========================
@@ -1061,6 +1064,36 @@ function validarTelefone(event) {
   if (valor.length > 11) valor = valor.slice(0, 11)
   usuario.telefone = valor // usa o 'usuario' já existente
 }
+const filtroRole = ref('TODOS')       // TODOS, ROLE_ADMIN, ROLE_USER
+const ordenarAlfabetico = ref(false)  // false = sem ordem, true = ordem alfabética
+
+const filtroPesquisa = ref('')
+const usuariosFiltrados = computed(() => {
+  let lista = [...usuarios.value]
+
+  // Filtrar por role
+  if (filtroRole.value !== 'TODOS') {
+    lista = lista.filter(u => u.role === filtroRole.value)
+  }
+
+  // Filtrar por pesquisa
+  if (filtroPesquisa.value && filtroPesquisa.value.trim() !== '') {
+    const termo = filtroPesquisa.value.toLowerCase()
+    lista = lista.filter(u =>
+      u.nome.toLowerCase().includes(termo) ||
+      u.email.toLowerCase().includes(termo) ||
+      u.cpf.includes(termo)
+    )
+  }
+
+  // Ordenar alfabeticamente (opcional)
+  if (ordenarAlfabetico.value === 'A') {
+    lista.sort((a, b) => a.nome.localeCompare(b.nome))
+  }
+
+  return lista
+})
+
 
 </script>
 
@@ -1388,8 +1421,8 @@ function validarTelefone(event) {
 
       p.admin-subtitle Gerencie usuários, permissões e roles do sistema.
 
-      // Formulário de permissões
-      .permissoes-form
+      //-// Formulário de permissões
+      //-.permissoes-form
         h2 Permissões
         label
           input(type="checkbox" v-model="permissoes.gerenciarUsuarios")
@@ -1402,12 +1435,24 @@ function validarTelefone(event) {
           | Visualizar Relatórios
 
       hr
+      // Container do título, botão e filtro
+      .div-header-usuarios
+        
+          .header-actions
+            button.btn-novo(@click="abrirModalNovoUsuario")
+              span.icon.plus-icon
+              | Novo Usuário
 
-      // Lista de usuários (exemplo)
-      h2 Usuários
-      button.btn-novo(@click="abrirModalNovoUsuario")
-        span.icon.plus-icon
-        | Novo Usuário
+            label
+              select(v-model="filtroRole")
+                option(value="TODOS") Todos
+                option(value="ROLE_ADMIN") Admin
+                option(value="ROLE_USER") User
+
+      // Filtro de pesquisa
+      label.label-pesquisa 
+        input.input-pesquisa(type="text" v-model="filtroPesquisa" placeholder="CPF, Nome ou Email")
+
 
 
 
@@ -1417,19 +1462,31 @@ function validarTelefone(event) {
             th Nome
             th Email
             th CPF
+            th Telefone
             th Role
-            th Ações
+            th.col-acoes Ações
         tbody
-          tr(v-for="(user, index) in usuarios" :key="user.id")
+          tr(v-for="(user, index) in usuariosFiltrados" :key="user.id")
             td {{ user.nome }}
             td {{ user.email }}
             td {{ user.cpf }}
+            td {{ user.telefone }}
             td {{ user.role }}
 
-            td
-              button.btn-editar(@click="abrirModalUsuario(index)") ✏️
+            td.col-acoes
+              button.btn-acao(@click="abrirModalUsuario(index)", title="Editar")
+                svg(width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round")
+                  path(d="M12 20h9")
+                  path(d="M16.5 3.5a2.121 2.121 0 1 1 3 3L7 19l-4 1 1-4 12.5-12.5z")
+              button.btn-acao(@click="excluirUsuario(index)", title="Excluir")
+                svg(width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round")
+                  polyline(points="3 6 5 6 21 6")
+                  path(d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6")
+                  path(d="M10 11v6")
+                  path(d="M14 11v6")
 
-              button.btn-excluir(@click="excluirUsuario(index)") 🗑️
+
+
 
       // Modal de novo usuário
       div.modal(v-if="mostrarModalNovoUsuario")
@@ -1557,6 +1614,96 @@ function validarTelefone(event) {
 
 
 <style scoped>
+.div-header-usuarios {
+  display: flex;
+  align-items: center; /* centraliza verticalmente */
+  justify-content: space-between; /* coloca botão à esquerda e filtro à direita */
+  gap: 1rem; /* espaço entre os elementos */
+  flex-wrap: wrap; /* quebra linha em telas pequenas */
+  margin-bottom: 1rem;
+}
+.input-pesquisa {
+  position: relative;
+  padding: 0.2rem 0.5rem; /* mantém o padding desejado */
+  border: 1px solid #000000;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  width: 200px;
+  margin-left: 37rem;
+  transition: all 0.2s;
+  top: -3.1rem;
+  box-sizing: border-box; /* faz o padding contar dentro da altura */
+  line-height: 1.2;
+  height: 1.5rem; /* define altura exata da caixa */
+}
+
+
+
+.input-pesquisa:focus {
+  outline: none;
+  border-color: rgb(0, 0, 0);
+  box-shadow: 0 0 4px rgba(255, 153, 0, 0.5);
+}
+
+.admin-table th.col-acoes,
+.admin-table td.col-acoes {
+  width: 80px; /* ou qualquer valor desejado */
+  text-align: center; /* centraliza os botões */
+  white-space: nowrap; /* evita quebra de linha */
+}
+
+.btn-acao {
+  padding: 2px 4px; /* diminui tamanho do botão */
+  margin: 0 2px;
+}
+
+.btn-acao {
+  background-color: #f0f0f0; /* cor de fundo */
+  border: none;
+  padding: 4px 3px; /* tamanho pequeno */
+  margin-right: 4px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.8rem; /* ícones pequenos */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+
+.btn-acao:hover {
+  background-color: #e0e0e0;
+}
+.btn-acao svg {
+  width: 16px;   /* largura do ícone */
+  height: 13px;  /* altura do ícone */
+}
+.div-header-usuarios {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* botão esquerda, filtro direita */
+  margin-bottom: 1rem;
+}
+.header-actions select {
+  padding: 0.3rem 0.5rem;
+  border-radius: 4px;
+  margin-left: 41rem; /* desloca manualmente 20rem para a direita */
+  
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem; /* espaço entre botão e filtro */
+  
+}
+
+.header-actions select {
+  padding: 0.4rem 0.5rem;
+  border-radius: 4px;
+  border: 1px solid #000000;
+}
+
 .btn-novo {
   background-color: #098609;
   color: #ffffff;
@@ -1704,6 +1851,7 @@ function validarTelefone(event) {
   text-align: center;
   color: #666;
   margin-bottom: 30px;
+  margin-top: -1rem;
 }
 
 .permissoes-form {
@@ -1723,9 +1871,10 @@ function validarTelefone(event) {
 }
 
 .admin-table {
-  width: 100%;
+  width: 900px; /* largura fixa da tabela */
+  max-width: 100%; /* não ultrapassa a tela em telas pequenas */
   border-collapse: collapse;
-  margin-top: 15px;
+ 
 }
 
 .admin-table th,
@@ -1747,11 +1896,11 @@ function validarTelefone(event) {
 
 .btn-editar,
 .btn-excluir {
-  padding: 6px 10px;
+  padding: 4px 4px;
   border: none;
   border-radius: 6px;
   cursor: pointer;
-  font-size: 0.7rem;
+  font-size: 0.6rem;
 }
 
 .btn-editar {

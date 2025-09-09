@@ -59,7 +59,12 @@ public class UsuarioController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Map<String, String>> deletarUsuario(@PathVariable Long id) {
         try {
+            System.out.println("🚨 Chamaram DELETE para o usuário ID: " + id);
+
             adminService.deletarUsuario(id);
+
+            System.out.println("✅ Usuário ID " + id + " foi removido do banco.");
+
             return ResponseEntity.ok(Map.of("message", "Usuário removido com sucesso"));
         } catch (Exception e) {
             e.printStackTrace();
