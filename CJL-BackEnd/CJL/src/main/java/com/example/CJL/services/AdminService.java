@@ -1,18 +1,28 @@
 package com.example.CJL.services;
 
+import com.example.CJL.dtos.enums.RoleName;
 import com.example.CJL.dtos.response.DadosUserResponseDTO;
 import com.example.CJL.dtos.request.UserRequestDTO;
+import com.example.CJL.entities.Role;
 import com.example.CJL.entities.User;
 import com.example.CJL.exception.ApiException;
+import com.example.CJL.repositories.RoleRepository;
 import com.example.CJL.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Set;
 
 @Service
 public class AdminService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private RoleRepository roleRepository;
+
+
     public DadosUserResponseDTO atualizarUsuario(Long id, UserRequestDTO dto) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ApiException.NotFoundException("Usuário não encontrado: "));
@@ -29,6 +39,12 @@ public class AdminService {
         user.setNumeroResidencia(dto.getNumeroResidencia());
         user.setBairro(dto.getBairro());
         user.setCpf(dto.getCpf());
+
+        if (dto.getRole() != null) {
+            Role role = roleRepository.findByNome(RoleName.valueOf(dto.getRole()))
+                    .orElseThrow(() -> new ApiException.NotFoundException("Role não encontrada: " + dto.getRole()));
+            user.setRoles(Set.of(role));
+        }
 
         userRepository.save(user);
         return toDTO(user);
