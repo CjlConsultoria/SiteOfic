@@ -1,8 +1,8 @@
 package com.example.CJL.controllers;
 
 import com.example.CJL.dtos.request.TelefoneUpdateRequestDTO;
-import com.example.CJL.dtos.response.DadosUserResponseDTO;
 import com.example.CJL.dtos.request.UserRequestDTO;
+import com.example.CJL.dtos.response.DadosUserResponseDTO;
 import com.example.CJL.entities.User;
 import com.example.CJL.repositories.UserRepository;
 import com.example.CJL.services.AdminService;
@@ -71,14 +71,12 @@ public class UsuarioController {
         return ResponseEntity.ok(atualizado);
     }
 
-
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Map<String, String>> deletarUsuario(@PathVariable Long id) {
         adminService.deletarUsuario(id);
         return ResponseEntity.ok(Map.of("message", "Usuário removido com sucesso"));
     }
-
 
     @PutMapping("/atualizar-telefone")
     @PreAuthorize("isAuthenticated()")

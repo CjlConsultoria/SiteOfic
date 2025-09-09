@@ -1,8 +1,8 @@
-package com.example.CJL.dtos.request;
+    package com.example.CJL.dtos.request;
 
-import lombok.Data;
+    import lombok.Data;
 
-@Data
-public class TelefoneUpdateRequestDTO {
-    private String telefone;
-}
+    @Data
+    public class TelefoneUpdateRequestDTO {
+        private String telefone;
+    }

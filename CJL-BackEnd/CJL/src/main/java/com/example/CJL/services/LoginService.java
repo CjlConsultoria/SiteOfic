@@ -5,9 +5,8 @@ import com.example.CJL.exception.ApiException;
 import com.example.CJL.repositories.UserRepository;
 import com.example.CJL.security.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 
 @Service
 public class LoginService {
@@ -16,7 +15,7 @@ public class LoginService {
     private UserRepository userRepository;
 
     @Autowired
-    private BCryptPasswordEncoder bCryptPasswordEncoder;
+    private PasswordEncoder passwordEncoder; // <- injetando o bean genérico
 
     @Autowired
     private JwtUtil jwtUtil;
@@ -25,7 +24,7 @@ public class LoginService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new ApiException.NotFoundException("Usuário não encontrado"));
 
-        if (!bCryptPasswordEncoder.matches(senha, user.getSenha())) {
+        if (!passwordEncoder.matches(senha, user.getSenha())) {
             throw new ApiException.UnauthorizedException("Usuário ou senha inválidos");
         }
 
