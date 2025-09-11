@@ -1093,6 +1093,253 @@ const usuariosFiltrados = computed(() => {
 
   return lista
 })
+const errosEtapa1 = reactive({
+  nome: '',
+  sobrenome: ''
+})
+
+function validarEtapa1() {
+  errosEtapa1.nome = novoUsuario.nome ? '' : 'O campo Nome é obrigatório'
+  errosEtapa1.sobrenome = novoUsuario.sobrenome ? '' : 'O campo Sobrenome é obrigatório'
+
+  if (!errosEtapa1.nome && !errosEtapa1.sobrenome) {
+    proximaEtapa()
+  }
+}
+const isPessoaJuridica = ref(false)
+
+const errosEtapa2 = reactive({
+  cpf: '',
+  cnpj: '',
+  nomeEmpresa: '',
+  telefone: ''
+})
+
+function validarEtapa2() {
+  errosEtapa2.cpf = novoUsuario.cpf ? '' : 'O campo CPF é obrigatório'
+  errosEtapa2.telefone = novoUsuario.telefone ? '' : 'O campo Telefone é obrigatório'
+
+  if (isPessoaJuridica.value) {
+    errosEtapa2.cnpj = novoUsuario.cnpj ? '' : 'O campo CNPJ é obrigatório'
+    errosEtapa2.nomeEmpresa = novoUsuario.nomeEmpresa ? '' : 'O campo Nome da Empresa é obrigatório'
+  } else {
+    errosEtapa2.cnpj = ''
+    errosEtapa2.nomeEmpresa = ''
+  }
+
+  const camposValidos =
+    !errosEtapa2.cpf &&
+    !errosEtapa2.telefone &&
+    (!isPessoaJuridica.value || (!errosEtapa2.cnpj && !errosEtapa2.nomeEmpresa))
+
+  if (camposValidos) {
+    proximaEtapa()
+  }
+}
+const meses = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"]
+
+const anoAtual = new Date().getFullYear()
+const anos = Array.from({ length: anoAtual - 1920 + 1 }, (_, i) => anoAtual - i)
+
+// Se já existe o novoUsuario, apenas adicione os campos da Etapa 3
+if (!novoUsuario.dataNascimento) {
+  novoUsuario.dataNascimento = { dia: '', mes: '', ano: '' }
+}
+if (!novoUsuario.genero) {
+  novoUsuario.genero = ''
+}
+
+// Crie apenas o objeto de erros para Etapa 3
+const errosEtapa3 = reactive({
+  dataNascimento: '',
+  genero: ''
+})
+
+// Função de validação da Etapa 3
+function validarEtapa3() {
+  errosEtapa3.dataNascimento = ''
+  errosEtapa3.genero = ''
+
+  const { dia, mes, ano } = novoUsuario.dataNascimento
+  const { genero } = novoUsuario
+
+  // Verifica se todos os campos foram preenchidos
+  if (!dia || !mes || !ano) {
+    errosEtapa3.dataNascimento = 'Por favor, preencha a data completa.'
+  } else {
+    // Verifica se a idade é >= 18
+    const hoje = new Date()
+    const nascimento = new Date(ano, mes - 1, dia)
+    let idade = hoje.getFullYear() - nascimento.getFullYear()
+    const m = hoje.getMonth() - nascimento.getMonth()
+    const d = hoje.getDate() - nascimento.getDate()
+    if (idade < 18 || (idade === 18 && (m < 0 || (m === 0 && d < 0)))) {
+      errosEtapa3.dataNascimento = 'Você deve ter pelo menos 18 anos.'
+    }
+  }
+
+  if (!genero) {
+    errosEtapa3.genero = 'Por favor, selecione seu gênero.'
+  }
+
+  // Avança para a próxima etapa apenas se não houver erros
+  if (!errosEtapa3.dataNascimento && !errosEtapa3.genero) {
+    proximaEtapa()
+  }
+}
+// Adiciona os campos da Etapa 4 se ainda não existirem
+if (!('cep' in novoUsuario)) novoUsuario.cep = ''
+if (!('logradouro' in novoUsuario)) novoUsuario.logradouro = ''
+if (!('complemento' in novoUsuario)) novoUsuario.complemento = ''
+if (!('numero' in novoUsuario)) novoUsuario.numero = ''
+if (!('bairro' in novoUsuario)) novoUsuario.bairro = ''
+if (!('cidade' in novoUsuario)) novoUsuario.cidade = ''
+if (!('estado' in novoUsuario)) novoUsuario.estado = ''
+
+// Objeto de erros da Etapa 4
+const errosEtapa4 = reactive({
+  cep: '',
+  logradouro: '',
+  numero: '',
+  bairro: '',
+  cidade: '',
+  estado: ''
+})
+
+// Substitua a função antiga por esta
+async function buscarEndereco() {
+  errosEtapa4.cep = ''  // limpa erro anterior
+  try {
+    const cepLimpo = novoUsuario.cep.replace(/\D/g, '')  // remove tudo que não é número
+    if (cepLimpo.length === 8) {
+      const res = await axios.get(`https://viacep.com.br/ws/${cepLimpo}/json/`)
+      if (!res.data.erro) {
+        novoUsuario.logradouro = res.data.logradouro
+        novoUsuario.bairro = res.data.bairro
+        novoUsuario.cidade = res.data.localidade
+        novoUsuario.estado = res.data.uf
+      } else {
+        errosEtapa4.cep = 'CEP não encontrado!'
+      }
+    }
+  } catch (err) {
+    console.error(err)
+    errosEtapa4.cep = 'Erro ao buscar o CEP.'
+  }
+}
+
+
+
+// Variável de erro geral
+const erroGeralEtapa4 = ref('')
+
+// Função de validação da Etapa 4
+function validarEtapa4() {
+  erroGeralEtapa4.value = '' // limpa mensagem anterior
+
+  // Verifica campos obrigatórios (complemento é opcional)
+  if (
+    !novoUsuario.cep ||
+    !novoUsuario.logradouro ||
+    !novoUsuario.numero ||
+    !novoUsuario.bairro ||
+    !novoUsuario.cidade ||
+    !novoUsuario.estado
+  ) {
+    erroGeralEtapa4.value = 'Por favor, preencha todos os campos obrigatórios.'
+    return // não avança
+  }
+
+  // Se tudo estiver preenchido, avança
+  proximaEtapa()
+}
+
+
+// Objeto de erros para cada campo
+const errosModalUsuario = reactive({
+  nome: '',
+  email: '',
+  role: ''
+})
+
+
+
+// Função de validação do modal
+function validarModalUsuario() {
+  // Limpa mensagens de erro
+  errosModalUsuario.nome = ''
+  errosModalUsuario.email = ''
+  errosModalUsuario.role = ''
+
+  let camposValidos = true
+
+  if (!usuarioSelecionado.nome) {
+    errosModalUsuario.nome = 'O campo Nome é obrigatório'
+    camposValidos = false
+  }
+  if (!usuarioSelecionado.email) {
+    errosModalUsuario.email = 'O campo Email é obrigatório'
+    camposValidos = false
+  }
+  if (!usuarioRole.value) {
+    errosModalUsuario.role = 'O campo Role é obrigatório'
+    camposValidos = false
+  }
+
+  // Se todos os campos válidos, salva o usuário
+  if (camposValidos) {
+    salvarUsuario()
+  }
+}
+const errosEtapa5 = reactive({
+  email: '',
+  senha: '',
+  confirmaSenha: '',
+  role: ''
+})
+function validarEtapa5() {
+  // Limpa erros anteriores
+  errosEtapa5.email = ''
+  errosEtapa5.senha = ''
+  errosEtapa5.confirmaSenha = ''
+  errosEtapa5.role = ''
+
+  let temErro = false
+
+  if (!novoUsuario.email) {
+    errosEtapa5.email = 'O campo Email é obrigatório'
+    temErro = true
+  }
+
+  if (!novoUsuario.senha) {
+    errosEtapa5.senha = 'O campo Senha é obrigatório'
+    temErro = true
+  }
+
+  if (!novoUsuario.confirmaSenha) {
+    errosEtapa5.confirmaSenha = 'A confirmação da senha é obrigatória'
+    temErro = true
+  } else if (novoUsuario.senha !== novoUsuario.confirmaSenha) {
+    errosEtapa5.confirmaSenha = 'As senhas não coincidem'
+    temErro = true
+  }
+
+  if (!novoUsuario.role) {
+    errosEtapa5.role = 'Selecione uma função'
+    temErro = true
+  }
+
+  if (!temErro) {
+    registrarUsuario() // chama sua função de salvar
+  }
+}
+
+
+
+
+
+
+
 
 
 </script>
@@ -1495,114 +1742,305 @@ const usuariosFiltrados = computed(() => {
 
           // Etapa 1
           div(v-if="etapaCadastro === 1")
-            label Nome
-              input(type="text" v-model="novoUsuario.nome")
-            label Sobrenome
-              input(type="text" v-model="novoUsuario.sobrenome")
-            label Apelido
-              input(type="text" v-model="novoUsuario.apelido")
+            .input-group
+              input(type="text" v-model="novoUsuario.nome" placeholder=" " :class="{ 'input-error': errosEtapa1.nome }")
+              label Nome
+              span.error(v-if="errosEtapa1.nome")
+                svg.error-icon(xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="white")
+                  circle(cx="10" cy="10" r="10" fill="red")
+                  text(x="10" y="15" text-anchor="middle" font-size="14" font-weight="bold" fill="white") !
+                | {{ errosEtapa1.nome }}
+
+            .input-group
+              input(type="text" v-model="novoUsuario.sobrenome" placeholder=" " :class="{ 'input-error': errosEtapa1.sobrenome }")
+              label Sobrenome
+              span.error(v-if="errosEtapa1.sobrenome")
+                svg.error-icon(xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="white")
+                  circle(cx="10" cy="10" r="10" fill="red")
+                  text(x="10" y="15" text-anchor="middle" font-size="14" font-weight="bold" fill="white") !
+                | {{ errosEtapa1.sobrenome }}
+
+            .input-group.apelido-group
+              input(type="text" v-model="novoUsuario.apelido" placeholder=" ")
+              label Apelido
+
             .modal-buttons
-              button(@click="proximaEtapa") Próximo
               button(@click="mostrarModalNovoUsuario = false") Cancelar
+              button(@click="validarEtapa1") Próximo
+
+
+              
 
           // Etapa 2
           div(v-if="etapaCadastro === 2")
-            label CPF
-              input(type="text" v-model="novoUsuario.cpf")
-            label CNPJ
-              input(type="text" v-model="novoUsuario.cnpj")
-            label Nome da Empresa
-              input(type="text" v-model="novoUsuario.nomeEmpresa")
-            label Telefone
-              input(type="text" v-model="novoUsuario.telefone")
+            .input-group
+              input(
+                type="text"
+                v-model="novoUsuario.cpf"
+                placeholder=" "
+                :class="{ 'input-error': errosEtapa2.cpf }"
+              )
+              label CPF
+              span.error(v-if="errosEtapa2.cpf")
+                svg.error-icon(xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="white")
+                  circle(cx="10" cy="10" r="10" fill="red")
+                  text(x="10" y="15" text-anchor="middle" font-size="14" font-weight="bold" fill="white") !
+                | {{ errosEtapa2.cpf }}
+
+            
+            
+
+            // Telefone (sempre visível)
+            .input-group
+              input(
+                type="text"
+                v-model="novoUsuario.telefone"
+                placeholder=" "
+                :class="{ 'input-error': errosEtapa2.telefone }"
+              )
+              label Telefone
+              span.error(v-if="errosEtapa2.telefone")
+                svg.error-icon(xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="white")
+                  circle(cx="10" cy="10" r="10" fill="red")
+                  text(x="10" y="15" text-anchor="middle" font-size="14" font-weight="bold" fill="white") !
+                | {{ errosEtapa2.telefone }}
+
+            // Botões
             .modal-buttons
               button(@click="etapaAnterior") Voltar
-              button(@click="proximaEtapa") Próximo
+              button(@click="validarEtapa2") Próximo
+
+          
+
+
 
           // Etapa 3
           div(v-if="etapaCadastro === 3")
             label Data de Nascimento
               .data-nascimento
-                input(type="text" placeholder="Dia" v-model="novoUsuario.dataNascimento.dia")
-                input(type="text" placeholder="Mês" v-model="novoUsuario.dataNascimento.mes")
-                input(type="text" placeholder="Ano" v-model="novoUsuario.dataNascimento.ano")
+                select(v-model="novoUsuario.dataNascimento.dia" :class="{ 'input-error': errosEtapa3.dataNascimento }")
+                  option(value="") Dia
+                  option(v-for="d in 31" :key="d" :value="d") {{ d }}
+                select(v-model="novoUsuario.dataNascimento.mes" :class="{ 'input-error': errosEtapa3.dataNascimento }")
+                  option(value="") Mês
+                  option(v-for="(m, index) in meses" :key="index" :value="index + 1") {{ m }}
+                select(v-model="novoUsuario.dataNascimento.ano" :class="{ 'input-error': errosEtapa3.dataNascimento }")
+                  option(value="") Ano
+                  option(v-for="ano in anos" :key="ano" :value="ano") {{ ano }}
+              // Mensagem de erro
+              span.error(v-if="errosEtapa3.dataNascimento")
+                svg.error-icon(xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="white")
+                  circle(cx="10" cy="10" r="10" fill="red")
+                  text(x="10" y="15" text-anchor="middle" font-size="14" font-weight="bold" fill="white") !
+                | {{ errosEtapa3.dataNascimento }}
+
             label Gênero
-              select(v-model="novoUsuario.genero")
+              select.select-genero(v-model="novoUsuario.genero" :class="{ 'input-error': errosEtapa3.genero }")
                 option(value="") Selecione
                 option(value="Masculino") Masculino
                 option(value="Feminino") Feminino
                 option(value="Outro") Outro
+              // Mensagem de erro
+              span.error(v-if="errosEtapa3.genero")
+                svg.error-icon(xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="white")
+                  circle(cx="10" cy="10" r="10" fill="red")
+                  text(x="10" y="15" text-anchor="middle" font-size="14" font-weight="bold" fill="white") !
+                | {{ errosEtapa3.genero }}
+
+
             .modal-buttons
               button(@click="etapaAnterior") Voltar
-              button(@click="proximaEtapa") Próximo
+              button(@click="validarEtapa3") Próximo
+
+
+
 
           // Etapa 4
           div(v-if="etapaCadastro === 4")
-            label CEP
-              input(type="text" v-model="novoUsuario.cep")
-            label Logradouro
-              input(type="text" v-model="novoUsuario.logradouro")
-            label Complemento
-              input(type="text" v-model="novoUsuario.complemento")
-            label Número
-              input(type="text" v-model="novoUsuario.numero")
-            label Bairro
-              input(type="text" v-model="novoUsuario.bairro")
-            label Cidade
-              input(type="text" v-model="novoUsuario.cidade")
-            label Estado
-              input(type="text" v-model="novoUsuario.estado")
+            .input-group
+              input(type="text" v-model="novoUsuario.cep" placeholder=" " @blur="buscarEndereco" :class="{ 'input-error': errosEtapa4.cep }")
+              label CEP
+              span.error(v-if="errosEtapa4.cep")
+                svg.error-icon(xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="white")
+                  circle(cx="10" cy="10" r="10" fill="red")
+                  text(x="10" y="15" text-anchor="middle" font-size="14" font-weight="bold" fill="white") !
+                | {{ errosEtapa4.cep }}
+
+            .input-group
+              input(type="text" v-model="novoUsuario.logradouro" placeholder=" " :class="{ 'input-error': errosEtapa4.logradouro }")
+              label Logradouro
+              span.error(v-if="errosEtapa4.logradouro")
+                svg.error-icon(xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="white")
+                  circle(cx="10" cy="10" r="10" fill="red")
+                  text(x="10" y="15" text-anchor="middle" font-size="14" font-weight="bold" fill="white") !
+                | {{ errosEtapa4.logradouro }}
+
+            .input-group
+              input(type="text" v-model="novoUsuario.complemento" placeholder=" ")
+              label Complemento
+
+            .input-group
+              input(type="text" v-model="novoUsuario.numero" placeholder=" " :class="{ 'input-error': errosEtapa4.numero }")
+              label Número
+              span.error(v-if="errosEtapa4.numero")
+                svg.error-icon(xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="white")
+                  circle(cx="10" cy="10" r="10" fill="red")
+                  text(x="10" y="15" text-anchor="middle" font-size="14" font-weight="bold" fill="white") !
+                | {{ errosEtapa4.numero }}
+
+            .input-group
+              input(type="text" v-model="novoUsuario.bairro" placeholder=" " :class="{ 'input-error': errosEtapa4.bairro }")
+              label Bairro
+              span.error(v-if="errosEtapa4.bairro")
+                svg.error-icon(xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="white")
+                  circle(cx="10" cy="10" r="10" fill="red")
+                  text(x="10" y="15" text-anchor="middle" font-size="14" font-weight="bold" fill="white") !
+                | {{ errosEtapa4.bairro }}
+
+            .input-group
+              input(type="text" v-model="novoUsuario.cidade" placeholder=" " :class="{ 'input-error': errosEtapa4.cidade }")
+              label Cidade
+              span.error(v-if="errosEtapa4.cidade")
+                svg.error-icon(xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="white")
+                  circle(cx="10" cy="10" r="10" fill="red")
+                  text(x="10" y="15" text-anchor="middle" font-size="14" font-weight="bold" fill="white") !
+                | {{ errosEtapa4.cidade }}
+
+            .input-group
+              input(type="text" v-model="novoUsuario.estado" placeholder=" ")
+              label Estado
+
+            span.error.error-geral(v-if="erroGeralEtapa4")
+              svg.error-icon(xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="white")
+                circle(cx="10" cy="10" r="10" fill="red")
+                text(x="10" y="15" text-anchor="middle" font-size="14" font-weight="bold" fill="white") !
+              | {{ erroGeralEtapa4 }}
+
+
             .modal-buttons
               button(@click="etapaAnterior") Voltar
-              button(@click="proximaEtapa") Próximo
+              button(@click="validarEtapa4") Próximo
+
+
 
           // Etapa 5
           div(v-if="etapaCadastro === 5")
-            label Email
-              input(type="email" v-model="novoUsuario.email")
-            label Senha
-              input(type="password" v-model="novoUsuario.senha")
-            label Confirme a Senha
-              input(type="password" v-model="novoUsuario.confirmaSenha")
-            label Role
-              select(v-model="novoUsuario.role")
+            .input-group
+              input(
+                type="email"
+                v-model="novoUsuario.email"
+                placeholder=" "
+                :class="{ 'input-error': errosEtapa5.email }"
+              )
+              label Email
+              span.error(v-if="errosEtapa5.email")
+                svg.error-icon(xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="white")
+                  circle(cx="10" cy="10" r="10" fill="red")
+                  text(x="10" y="15" text-anchor="middle" font-size="14" font-weight="bold" fill="white") !
+                | {{ errosEtapa5.email }}
+
+            .input-group
+              input(
+                type="password"
+                v-model="novoUsuario.senha"
+                placeholder=" "
+                :class="{ 'input-error': errosEtapa5.senha }"
+              )
+              label Senha
+              span.error(v-if="errosEtapa5.senha")
+                svg.error-icon(xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="white")
+                  circle(cx="10" cy="10" r="10" fill="red")
+                  text(x="10" y="15" text-anchor="middle" font-size="14" font-weight="bold" fill="white") !
+                | {{ errosEtapa5.senha }}
+
+            .input-group
+              input(
+                type="password"
+                v-model="novoUsuario.confirmaSenha"
+                placeholder=" "
+                :class="{ 'input-error': errosEtapa5.confirmaSenha }"
+              )
+              label Confirme a Senha
+              span.error(v-if="errosEtapa5.confirmaSenha")
+                svg.error-icon(xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="white")
+                  circle(cx="10" cy="10" r="10" fill="red")
+                  text(x="10" y="15" text-anchor="middle" font-size="14" font-weight="bold" fill="white") !
+                | {{ errosEtapa5.confirmaSenha }}
+
+            .role-container
+              label.role-select(for="role") Role
+              select.role-select-input(
+                id="role"
+                v-model="novoUsuario.role"
+                :class="{ 'input-error': errosEtapa5.role }"
+              )
                 option(value="ROLE_ADMIN") Admin
                 option(value="ROLE_USER") User
+              span.error(v-if="errosEtapa5.role")
+                svg.error-icon(xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="white")
+                  circle(cx="10" cy="10" r="10" fill="red")
+                  text(x="10" y="15" text-anchor="middle" font-size="14" font-weight="bold" fill="white") !
+                | {{ errosEtapa5.role }}
+
+       
             .modal-buttons
-              button(@click="etapaAnterior") Voltar
-              button(@click="registrarUsuario") Salvar
               button(@click="mostrarModalNovoUsuario = false") Cancelar
+              button(@click="etapaAnterior") Voltar
+              button.salvar-btn(@click="validarEtapa5") Salvar
+
+
+
+
 
 
 
 
       // Modal de edição de usuário
       div.modal(v-if="modalUsuarioAberto")
-        div.modal-content
-          h2 Editar Usuário
+        div.modal-content0
+          h2.modal-titulo0 Editar Usuário
 
-          label(for="nomeUsuario") Nome
-            input#nomeUsuario(
+          label.label0(for="nomeUsuario") Nome
+            input.input0#nomeUsuario(
               type="text"
               v-model="usuarioSelecionado.nome"
               placeholder="Digite o nome"
+              :class="{ 'input-error0': errosModalUsuario.nome }"
             )
+            span.error0(v-if="errosModalUsuario.nome")
+              svg.error-icon0(xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="white")
+                circle(cx="10" cy="10" r="10" fill="red")
+                text(x="10" y="15" text-anchor="middle" font-size="14" font-weight="bold" fill="white") !
+              | {{ errosModalUsuario.nome }}
 
-          label(for="emailUsuario") Email
-            input#emailUsuario(
+          label.label0(for="emailUsuario") Email
+            input.input0#emailUsuario(
               type="email"
               v-model="usuarioSelecionado.email"
               placeholder="Digite o email"
+              :class="{ 'input-error0': errosModalUsuario.email }"
             )
+            span.error0(v-if="errosModalUsuario.email")
+              svg.error-icon0(xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="white")
+                circle(cx="10" cy="10" r="10" fill="red")
+                text(x="10" y="15" text-anchor="middle" font-size="14" font-weight="bold" fill="white") !
+              | {{ errosModalUsuario.email }}
 
-          label(for="roleUsuario") Role
-            select#roleUsuario(v-model="usuarioRole")
+          label.label0(for="roleUsuario") Role
+            select.select0#roleUsuario(v-model="usuarioRole" :class="{ 'input-error0': errosModalUsuario.role }")
               option(value="ROLE_ADMIN") Admin
               option(value="ROLE_USER") User
+            span.error0(v-if="errosModalUsuario.role")
+              svg.error-icon0(xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="white")
+                circle(cx="10" cy="10" r="10" fill="red")
+                text(x="10" y="15" text-anchor="middle" font-size="14" font-weight="bold" fill="white") !
+              | {{ errosModalUsuario.role }}
 
-          .modal-buttons
-            button(type="button" @click="salvarUsuario") Salvar
-            button(type="button" @click="modalUsuarioAberto = false") Cancelar
+          .modal-buttons0
+            button.button0(type="button" @click="modalUsuarioAberto = false") Cancelar
+            button.button0(type="button" @click="validarModalUsuario") Salvar
+
+
 
 
 
@@ -1614,6 +2052,441 @@ const usuariosFiltrados = computed(() => {
 
 
 <style scoped>
+.role-select-input {
+  width: 100%;
+  max-width: 340px;
+  height: 40px;
+  padding: 0 1rem; /* padding horizontal */
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  background-color: #222;
+  color: #fff;
+  font-size: 15px;
+  box-sizing: border-box;
+
+  /* Remover seta padrão */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+
+  /* Adicionar seta customizada à direita */
+  background-image: url('data:image/svg+xml;charset=US-ASCII,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 20 20"><polygon points="0,0 20,0 10,10" fill="white"/></svg>');
+  background-repeat: no-repeat;
+  background-position: calc(100% - 1rem) center; /* desloca a seta 1rem da borda direita */
+  background-size: 0.6rem auto;
+
+  /* espaço para o texto não sobrepor a seta */
+  padding-right: 2.5rem;
+}
+
+/* Modal geral */
+.modal0 {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: rgba(0,0,0,0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+/* Conteúdo do modal */
+.modal-content0 {
+  background-color: #202020;
+  padding: 30px;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+  margin-left: 12rem;
+}
+
+/* Título */
+.modal-titulo0 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #ffffff;
+}
+
+/* Labels */
+.label0 {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 15px;
+  margin-left: -6px;
+  color: #dbdbdb;
+}
+
+/* Inputs e selects */
+/* Inputs do modal */
+.input0,
+.select0 {
+  width: 100%;
+  padding: 1rem 12px; /* padding maior aumenta a altura */
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  margin-top: 5px;
+  box-sizing: border-box;
+  background-color: #202020;
+  color: white;
+  font-size: 1rem;
+  min-height: 3rem; /* define altura mínima */
+}
+.select0 {
+  width: 100%;
+  padding: 1rem 12px; /* padding maior aumenta a altura */
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  margin-top: 5px;
+  box-sizing: border-box;
+  background-color: #202020;
+  color: white;
+  font-size: 1rem;
+  min-height: 3rem; /* define altura mínima */
+
+  /* Remover seta padrão */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+
+  /* Adicionar seta customizada à direita */
+  background-image: url('data:image/svg+xml;charset=US-ASCII,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 20 20"><polygon points="0,0 20,0 10,10" fill="white"/></svg>');
+  background-repeat: no-repeat;
+  background-position: calc(100% - 1rem) center; /* move 1rem da borda direita */
+  background-size: 0.6rem auto;
+  padding-right: 2.5rem; /* espaço para a seta */
+}
+
+/* Foco nos inputs */
+.input0:focus,
+.select0:focus {
+  border-color: #ff9900;
+  background-color: transparent;
+  color: #ffffff;
+  outline: none;
+}
+
+/* Mantém cor se já tiver texto */
+.input0:not(:placeholder-shown) {
+  border-color: #fc9700;
+  background-color: transparent;
+  color: #ffffff;
+}
+
+/* Botões do modal */
+.modal-buttons0 {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 1rem;
+}
+
+.button0 {
+  padding: 8px 15px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.button0:first-child {
+  background-color: #d4d4d4;
+  color: rgb(0, 0, 0);
+}
+
+.button0:last-child {
+  background-color: #007a04;
+  color: white;
+}
+
+.button0:first-child:hover {
+  background-color: #cacaca;
+}
+
+.button0:last-child:hover {
+  background-color: #3db917;
+}
+
+/* Mensagem de erro */
+.error0 {
+  color: red;
+  font-size: 0.70rem;
+  margin-top: 0.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-height: 0rem; /* mantém espaço mesmo sem erro */
+}
+
+/* Ícone do erro */
+.error-icon0 {
+  width: 11px;
+  height: 11px;
+  flex-shrink: 0;
+  margin-top: -1px;
+}
+
+/* Input com erro */
+.input-error0 {
+  border: 1px solid rgb(218, 0, 0);
+}
+.select0 {
+  width: 100%;
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  margin-top: 5px;
+  box-sizing: border-box;
+  background-color: #202020; /* mesma cor do modal */
+  color: white; /* cor do texto */
+}
+
+/* Opcional: garante que as opções também fiquem brancas no Firefox e Chrome */
+.select0 option {
+  background-color: #202020; /* fundo das opções */
+  color: white; /* texto branco */
+}
+
+
+
+
+
+
+
+
+
+
+.modal-buttons button {
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  background-color: #c08300;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.modal-buttons button:hover {
+  background-color: #cf9f00;
+
+}
+.salvar-btn {
+  background-color: #ff9900; /* cor inicial do botão */
+  color: #fff;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.salvar-btn:hover {
+  background-color: #252724; /* cor ao passar o mouse */
+}
+
+.role-select {
+  display: inline-block; /* garante que margin funcione */
+  font-weight: bold;
+  color: #cf4f4f;
+  padding-left: 7px; /* ajusta a posição para a direita */
+  margin-top: -1rem;
+}
+
+/* Estilo do label */
+
+
+
+
+/* Nova classe para o erro único antes do botão */
+.error-geral {
+  position: relative;
+  top: -2rem; /* sobe em relação ao fluxo normal */
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+}
+
+/* Para inputs autofill do Chrome, Edge e outros baseados em WebKit */
+/* Chrome, Edge e outros baseados em WebKit */
+input:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0px 1000px transparent inset !important; /* fundo transparente */
+  -webkit-text-fill-color: rgb(255, 255, 255) !important; /* cor do texto permanece preta */
+  transition: background-color 5000s ease-in-out 0s; /* previne animação de fundo */
+}
+
+/* Firefox */
+input:-moz-autofill {
+  box-shadow: 0 0 0px 1000px transparent inset !important; /* fundo transparente */
+  -moz-text-fill-color: rgb(255, 255, 255) !important; /* texto preto */
+}
+
+
+.select-genero {
+  width: 21rem;   /* largura menor que os outros selects */
+  padding: 6px 10px; /* altura confortável */
+  font-size: 14px;
+  background-color: transparent;
+  color: #ffffff;
+}
+/* Estilo das opções dentro do select de gênero */
+.select-genero option {
+  color: #000000;          /* texto das opções preto */
+  background-color: #ffffff; /* fundo das opções branco */
+}
+.data-nascimento select {
+  margin-right: 9px;
+  padding: 8px 10px;
+  min-width: 100px;
+  font-size: 14px;
+  height: 40px;
+  background-color: transparent;
+  color: #ffffff; /* texto do select fechado */
+}
+
+/* Estilo das opções dentro do select */
+.data-nascimento select option {
+  color: #000000; /* texto das opções preto */
+  background-color: #ffffff; /* fundo das opções branco */
+}
+
+/* Radios isolados */
+.grupo-radios-juridica {
+  display: flex;
+  gap: 20px;
+  margin-top: 12px;
+}
+
+.opcao-juridica {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.input-radio-juridica {
+  accent-color: #020081;
+  cursor: pointer;
+}
+
+
+
+
+/* Estilos para o botão */
+.modal-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1rem;
+}
+
+
+
+
+
+
+.input-group {
+  position: relative;
+  margin-bottom: 4rem; /* altura suficiente para input + erro */
+  height: 1.3rem; /* fixa a altura total para input + erro */
+}
+.input-group input {
+  display: block;
+  width: 100%;
+  min-height: 2.7rem; /* força altura mínima */
+  padding: 1rem 12px; /* espaço interno */
+  font-size: 1rem;
+  line-height: 1.4rem; /* garante que não achate */
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  outline: none;
+  background: transparent;
+  box-sizing: border-box;
+}
+
+
+
+.input-group label {
+  position: absolute;
+  top: 50%;
+  left: 12px;
+  transform: translateY(-0%);
+  color: #333;
+  pointer-events: none;
+  background: transparent;
+  padding: 0 4px;
+  transition: all 0.2s ease;
+}
+
+.input-group input:focus + label,
+.input-group input:not(:placeholder-shown) + label {
+  top: -5px;
+  left: 8px;
+  font-size: 0.8rem;
+  color: #ffffff;
+  background: rgb(31, 31, 31);
+}
+.input-group label {
+  font-size: 0.85rem; /* tamanho normal */
+}
+/* Quando o usuário clicar/digitar no campo */
+.modal-content input:focus {
+  border-color: #ff9900;        /* cor da borda */
+  background-color: transparent;    /* fundo escuro */
+  color: #ffffff;               /* cor do texto digitado */
+  outline: none;                /* remove o contorno padrão */
+}
+
+/* Mantém a cor se já tiver texto dentro */
+.modal-content input:not(:placeholder-shown) {
+  border-color: #fc9700;
+  background-color: transparent;
+  color: #ffffff;
+}
+
+.modal-content input:focus {
+  border-color: #ff9900;        /* cor da borda */
+  background-color: transparent; /* fundo transparente */
+  color: #ffffff;               /* cor do texto digitado */
+  outline: none;                /* remove contorno padrão */
+}
+
+
+/* Erro absoluto, não empurra o input */
+.input-group .error {
+  position: absolute;
+  bottom: -2.6rem; /* ajusta a posição do erro abaixo do input */
+  left: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.70rem;
+  color: red;
+}
+
+.input-error {
+  border-color: red;
+}
+
+.error {
+  color: red;
+  font-size: 0.70rem;
+  margin-top: 0.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-height: 0rem; /* reserva espaço mesmo sem erro */
+}
+
+
+.error-icon {
+  width: 11px;
+  height: 11px;
+  flex-shrink: 0;
+  margin-top: -1px;
+}
+
+.input-error {
+  border: 1px solid rgb(218, 0, 0);
+}
+
+
 .div-header-usuarios {
   display: flex;
   align-items: center; /* centraliza verticalmente */
@@ -1765,7 +2638,7 @@ const usuariosFiltrados = computed(() => {
 }
 
 .modal-content {
-  background-color: #ffffff;
+  background-color: #202020;
   padding: 30px;
   border-radius: 12px;
   width: 100%;
@@ -1777,15 +2650,15 @@ const usuariosFiltrados = computed(() => {
 .modal-content h2 {
   text-align: center;
   margin-bottom: 20px;
-  color: #141414;
+  color: #ffffff;
 }
 
 .modal-content label {
   display: flex;
   flex-direction: column;
   margin-bottom: 15px;
-  font-weight: 500;
-  color: #333;
+  margin-left: -6px;
+  color: #dbdbdb;
 }
 
 .modal-content input,
@@ -1794,6 +2667,17 @@ const usuariosFiltrados = computed(() => {
   border-radius: 6px;
   border: 1px solid #ccc;
   margin-top: 5px;
+}
+
+
+.modal-buttons button:first-child:hover {
+  background-color: #cacaca; /* verde mais escuro ao passar o mouse */
+}
+
+
+
+.modal-buttons button:last-child:hover {
+  background-color: #3db917; /* cinza mais escuro ao passar o mouse */
 }
 
 .modal-buttons {
@@ -1810,12 +2694,12 @@ const usuariosFiltrados = computed(() => {
 }
 
 .modal-buttons button:first-child {
-  background-color: #4caf50;
-  color: white;
+  background-color: #d4d4d4;
+  color: rgb(0, 0, 0);
 }
 
 .modal-buttons button:last-child {
-  background-color: #f44336;
+  background-color: #007a04;
   color: white;
 }
 
