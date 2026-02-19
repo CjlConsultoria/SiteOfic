@@ -32,7 +32,7 @@ function irParaRegistre() {
 }
 
 function irParaURLExterna() {
-  window.open('https://convivium-front.onrender.com/inicio', '_blank')
+  window.open('https://convivium-front.onrender.com', '_blank')
 }
 
 function toggleMenu() {
