@@ -4,15 +4,57 @@ import { useRouter } from 'next/navigation'
 import { getUserData } from '@/lib/api'
 
 const systems = [
-  { name: 'Convivium', desc: 'Gestão completa de condomínios e prédios residenciais', icon: '🏢', rating: 4.8, reviews: 120, status: 'Ativo', url: 'https://convivium-front.onrender.com', features: ['Gestão de moradores', 'Controle de encomendas', 'Reclamações e denúncias', 'Comunicados', 'Dashboard financeiro'], price: 'Sob consulta' },
-  { name: 'TradeLinkInvest', desc: 'Plataforma de análise e acompanhamento de investimentos', icon: '📈', rating: 4.7, reviews: 95, status: 'Ativo', url: 'https://tradelinkinvest.com.br', features: ['Dashboard de carteira', 'Análise de ativos', 'Rentabilidade real', 'Alertas personalizados'], price: 'Sob consulta' },
-  { name: 'SAPLINK', desc: 'Integration Health Monitor para consultorias SAP', icon: '◆', rating: 0, reviews: 0, status: 'Em Desenvolvimento', url: '/saplink', features: ['Health Score por cliente', 'IA diagnóstica', 'Alertas WhatsApp', 'Relatórios white-label'], price: 'A partir de R$ 1.200/mês' },
-  { name: 'Gestão de Estoque', desc: 'Controle de entradas, saídas e movimentações', icon: '📦', rating: 4.7, reviews: 95, status: 'Disponível', url: '#', features: ['Entradas e saídas', 'Alertas de estoque', 'Relatórios', 'Multi-filial'], price: 'R$ 99,90/mês' },
-  { name: 'Vendas Online', desc: 'E-commerce integrado com gestão de pedidos', icon: '🛒', rating: 4.6, reviews: 78, status: 'Disponível', url: '#', features: ['Catálogo de produtos', 'Carrinho', 'Pagamento integrado', 'Painel admin'], price: 'R$ 149,90/mês' },
-  { name: 'Financeiro Pessoal', desc: 'Controle de finanças pessoais e investimentos', icon: '💰', rating: 4.9, reviews: 200, status: 'Disponível', url: '#', features: ['Receitas e despesas', 'Metas financeiras', 'Gráficos', 'Exportação'], price: 'R$ 29,90/mês' },
-  { name: 'Agendamento Online', desc: 'Sistema de agendamento para serviços', icon: '📅', rating: 4.5, reviews: 65, status: 'Disponível', url: '#', features: ['Agenda visual', 'Confirmação automática', 'Lembretes', 'Multi-profissional'], price: 'R$ 79,90/mês' },
-  { name: 'RH e Folha', desc: 'Gestão de recursos humanos e folha de pagamento', icon: '👥', rating: 4.7, reviews: 110, status: 'Disponível', url: '#', features: ['Cadastro de funcionários', 'Cálculo de folha', 'Férias e 13º', 'Relatórios'], price: 'R$ 199,90/mês' },
-  { name: 'Chamados Técnicos', desc: 'Help desk e suporte ao cliente', icon: '🎧', rating: 4.4, reviews: 55, status: 'Disponível', url: '#', features: ['Abertura de chamados', 'SLA', 'Base de conhecimento', 'Dashboard'], price: 'R$ 89,90/mês' },
+  {
+    name: 'Convivium', desc: 'Gestão completa de condomínios e prédios residenciais', icon: '🏢', rating: 4.8, reviews: 120, status: 'Ativo', url: 'https://convivium-front.onrender.com', price: 'Sob consulta',
+    features: ['Gestão de moradores por bloco e apartamento', 'Controle de encomendas com QR code e fotos', 'Reclamações e denúncias com acompanhamento', 'Comunicados com confirmação de leitura', 'Dashboard financeiro com Stripe', 'Controle de visitantes', 'Solicitações de manutenção', 'Notificações por WhatsApp e email'],
+    about: 'O Convivium é uma plataforma SaaS completa para gestão condominial. Desenvolvido pela CJL Consultoria, permite que síndicos e administradoras gerenciem múltiplos condomínios em um único painel.',
+    howItWorks: ['Crie sua conta e cadastre o condomínio', 'Adicione os blocos, apartamentos e moradores', 'Moradores recebem acesso ao portal para registrar encomendas, reclamações e ver comunicados', 'O síndico acompanha tudo pelo dashboard com métricas em tempo real', 'Relatórios financeiros e de gestão gerados automaticamente'],
+    benefits: ['Reduza o tempo gasto com gestão manual em até 70%', 'Elimine papéis e planilhas — tudo digital e centralizado', 'Moradores mais satisfeitos com transparência e agilidade', 'Controle financeiro completo com cobrança automatizada', 'Multi-condomínio: gerencie vários prédios em uma conta'],
+    techStack: 'Vue.js + Spring Boot + PostgreSQL + Stripe + WhatsApp API',
+    support: 'Suporte por WhatsApp e email em horário comercial. SLA de 4 horas para chamados críticos.',
+  },
+  {
+    name: 'TradeLinkInvest', desc: 'Plataforma de análise e acompanhamento de investimentos', icon: '📈', rating: 4.7, reviews: 95, status: 'Ativo', url: 'https://tradelinkinvest.com.br', price: 'Sob consulta',
+    features: ['Dashboard consolidado de carteira', 'Indicadores fundamentalistas e técnicos', 'Rentabilidade real vs benchmark', 'Alertas personalizados de variação', 'Conteúdo educativo para investidores', 'Acompanhamento de dividendos'],
+    about: 'O TradeLinkInvest é uma plataforma brasileira voltada para investidores que querem dados claros e acionáveis. Consolida informações de diferentes fontes em um único dashboard intuitivo.',
+    howItWorks: ['Crie sua conta gratuita na plataforma', 'Adicione seus ativos (ações, FIIs, renda fixa, cripto)', 'O sistema consolida automaticamente os dados e calcula rentabilidade', 'Configure alertas para variações relevantes', 'Acompanhe sua evolução patrimonial com gráficos detalhados'],
+    benefits: ['Visão completa da carteira em um só lugar', 'Tome decisões baseadas em dados, não em achismos', 'Acompanhe rentabilidade real (descontando inflação)', 'Alertas evitam que você perca oportunidades', 'Conteúdo educativo para evoluir como investidor'],
+    techStack: 'React + Node.js + PostgreSQL',
+    support: 'Suporte por email. Base de conhecimento com tutoriais e FAQs.',
+  },
+  {
+    name: 'SAPLINK', desc: 'Integration Health Monitor para consultorias SAP', icon: '◆', rating: 0, reviews: 0, status: 'Em Desenvolvimento', url: '/saplink', price: 'A partir de R$ 1.200/mês',
+    features: ['Health Score de 0 a 100 por cliente', 'Diagnóstico com IA em português', 'Alertas via WhatsApp antes do cliente perceber', 'Relatórios white-label com marca da consultoria', 'Dead Code Scanner para migração S/4HANA', 'Dashboard multi-cliente em tempo real', '8 conectores nativos (SAP, Protheus, WMS, etc.)', 'Agente Docker não-invasivo (read-only via RFC)'],
+    about: 'O SAPLINK é um sistema de monitoramento de integrações SAP feito para consultorias que gerenciam múltiplos clientes. Transforma a consultoria de reativa para proativa.',
+    howItWorks: ['Instale o agente Docker no servidor do cliente (30 min, não-invasivo)', 'O agente coleta dados via RFC a cada 30 segundos', 'O dashboard multi-cliente mostra Health Score de todos os clientes', 'Quando algo falha, você recebe alerta no WhatsApp antes do cliente ligar', 'A IA analisa o erro e entrega causa raiz + passos de correção em português'],
+    benefits: ['Saiba do problema antes do cliente — ligue para ele, não o contrário', 'Júnior resolve o que antes só sênior resolvia', 'Relatório mensal com ROI visível — renovação mais fácil', 'Gerencie mais clientes sem contratar mais consultores', 'Análise pré-migração S/4HANA em dias, não meses'],
+    techStack: 'React + Node.js + TimescaleDB + Claude AI + Docker',
+    support: 'Onboarding dedicado. Suporte prioritário por WhatsApp.',
+  },
+  {
+    name: 'Gestão de Estoque', desc: 'Controle de entradas, saídas e movimentações', icon: '📦', rating: 4.7, reviews: 95, status: 'Disponível', url: '#', price: 'R$ 99,90/mês',
+    features: ['Entradas e saídas com rastreio', 'Alertas de estoque mínimo', 'Relatórios de movimentação', 'Gestão multi-filial', 'Código de barras / QR code', 'Inventário automatizado'],
+    about: 'Sistema completo de gestão de estoque para empresas de todos os portes. Controle entradas, saídas e movimentações com precisão.',
+    howItWorks: ['Cadastre seus produtos e categorias', 'Registre entradas (compras) e saídas (vendas/uso)', 'Configure alertas de estoque mínimo', 'Acompanhe relatórios de movimentação e giro', 'Faça inventários periódicos com conferência automatizada'],
+    benefits: ['Elimine rupturas de estoque com alertas automáticos', 'Reduza desperdícios com controle preciso', 'Relatórios de giro ajudam a otimizar compras', 'Multi-filial: controle estoque de várias unidades'],
+    techStack: 'Vue.js + Spring Boot + PostgreSQL', support: 'Suporte por WhatsApp e email.',
+  },
+  {
+    name: 'Vendas Online', desc: 'E-commerce integrado com gestão de pedidos', icon: '🛒', rating: 4.6, reviews: 78, status: 'Disponível', url: '#', price: 'R$ 149,90/mês',
+    features: ['Catálogo de produtos com fotos', 'Carrinho de compras', 'Pagamento integrado (Pix, cartão, boleto)', 'Painel admin com métricas', 'Gestão de pedidos e status', 'Cupons de desconto'],
+    about: 'Plataforma de e-commerce completa para PMEs que querem vender online sem complexidade.',
+    howItWorks: ['Configure sua loja com logo e cores', 'Cadastre produtos com fotos e variações', 'Compartilhe o link da loja com clientes', 'Receba pedidos e gerencie pelo painel admin', 'Acompanhe métricas de vendas em tempo real'],
+    benefits: ['Comece a vender online em menos de 1 hora', 'Sem taxa por venda — apenas mensalidade fixa', 'Pagamento integrado com as principais bandeiras', 'Relatórios de vendas para tomar decisões melhores'],
+    techStack: 'React + Node.js + Stripe', support: 'Suporte por WhatsApp e email.',
+  },
+  {
+    name: 'Financeiro Pessoal', desc: 'Controle de finanças pessoais e investimentos', icon: '💰', rating: 4.9, reviews: 200, status: 'Disponível', url: '#', price: 'R$ 29,90/mês',
+    features: ['Receitas e despesas categorizadas', 'Metas financeiras com progresso', 'Gráficos e relatórios visuais', 'Exportação para Excel/PDF', 'Controle de cartões de crédito', 'Orçamento mensal'],
+    about: 'Aplicação simples e poderosa para controle de finanças pessoais. Organize receitas, despesas e metas em um só lugar.',
+    howItWorks: ['Crie sua conta e defina categorias', 'Registre receitas e despesas diariamente', 'Defina metas de economia e acompanhe o progresso', 'Analise gráficos para entender seus padrões de gasto', 'Exporte relatórios para compartilhar ou arquivar'],
+    benefits: ['Visão clara de para onde vai seu dinheiro', 'Metas visuais motivam a economizar mais', 'Simples de usar — não precisa ser expert em finanças', 'O plano mais acessível da CJL'],
+    techStack: 'React + Node.js', support: 'Suporte por email.',
+  },
 ]
 
 const services = [
@@ -185,54 +227,105 @@ export default function PlataformaPage() {
         )}
 
         {/* Sistema Detalhe */}
-        {section === 'sistemas' && selectedSystem !== null && (
+        {section === 'sistemas' && selectedSystem !== null && (() => {
+          const s = systems[selectedSystem];
+          return (
           <div>
             <button onClick={() => setSelectedSystem(null)} className="text-sm text-gray-500 hover:text-gray-800 mb-6 flex items-center gap-1">← Voltar aos sistemas</button>
-            <div className="bg-white border border-gray-200 rounded-2xl p-8 shadow-sm max-w-3xl">
-              <div className="flex items-center gap-4 mb-6">
-                <span className="text-5xl">{systems[selectedSystem].icon}</span>
-                <div>
-                  <h1 className="text-2xl font-bold text-gray-800">{systems[selectedSystem].name}</h1>
-                  <p className="text-gray-500">{systems[selectedSystem].desc}</p>
-                  <span className={`inline-block mt-2 text-xs font-bold px-3 py-1 rounded-full ${statusColor(systems[selectedSystem].status)}`}>{systems[selectedSystem].status}</span>
+
+            {/* Header */}
+            <div className="bg-white border border-gray-200 rounded-2xl p-8 shadow-sm mb-6">
+              <div className="flex items-start gap-5 mb-4">
+                <span className="text-6xl">{s.icon}</span>
+                <div className="flex-1">
+                  <div className="flex items-center gap-3 mb-2">
+                    <h1 className="text-3xl font-bold text-gray-800">{s.name}</h1>
+                    <span className={`text-xs font-bold px-3 py-1 rounded-full ${statusColor(s.status)}`}>{s.status}</span>
+                  </div>
+                  <p className="text-gray-500 text-lg mb-3">{s.desc}</p>
+                  <p className="text-gray-600 leading-relaxed">{s.about}</p>
                 </div>
               </div>
-
-              <div className="grid md:grid-cols-2 gap-6 mb-6">
-                <div>
-                  <h3 className="text-sm font-bold text-gray-800 uppercase tracking-wider mb-3">Funcionalidades</h3>
-                  <ul className="space-y-2">
-                    {systems[selectedSystem].features.map(f => (
-                      <li key={f} className="flex items-center gap-2 text-sm text-gray-600">
-                        <span className="text-[#d4a017]">✓</span> {f}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-                <div className="space-y-4">
-                  <div className="bg-gray-50 rounded-xl p-4 border border-gray-100">
-                    <div className="text-xs font-bold text-gray-400 uppercase mb-1">Preço</div>
-                    <div className="text-lg font-bold text-[#d4a017]">{systems[selectedSystem].price}</div>
-                  </div>
-                  {systems[selectedSystem].rating > 0 && (
-                    <div className="bg-gray-50 rounded-xl p-4 border border-gray-100">
-                      <div className="text-xs font-bold text-gray-400 uppercase mb-1">Avaliação</div>
-                      <div className="text-lg font-bold text-gray-800">⭐ {systems[selectedSystem].rating} <span className="text-sm font-normal text-gray-500">({systems[selectedSystem].reviews} avaliações)</span></div>
-                    </div>
-                  )}
-                  {systems[selectedSystem].url !== '#' && (
-                    <a href={systems[selectedSystem].url} target={systems[selectedSystem].url.startsWith('http') ? '_blank' : '_self'} rel="noopener noreferrer" className="block text-center px-6 py-3 rounded-full bg-[#d4a017] text-white font-semibold hover:bg-[#b8860b] transition shadow-md">
-                      {systems[selectedSystem].status === 'Em Desenvolvimento' ? 'Ver página do produto' : 'Acessar sistema'}
-                    </a>
-                  )}
-                  <a href="https://wa.me/551152865790" target="_blank" rel="noopener noreferrer" className="block text-center px-6 py-3 rounded-full border-2 border-gray-300 text-gray-600 font-semibold hover:border-[#d4a017] hover:text-[#d4a017] transition">
-                    Falar com comercial
+              <div className="flex flex-wrap gap-3 mt-4">
+                {s.url !== '#' && (
+                  <a href={s.url} target={s.url.startsWith('http') ? '_blank' : '_self'} rel="noopener noreferrer" className="px-6 py-3 rounded-full bg-[#d4a017] text-white font-semibold hover:bg-[#b8860b] transition shadow-md">
+                    {s.status === 'Em Desenvolvimento' ? 'Ver página do produto' : 'Acessar sistema'}
                   </a>
-                </div>
+                )}
+                <a href="https://wa.me/551152865790" target="_blank" rel="noopener noreferrer" className="px-6 py-3 rounded-full border-2 border-gray-300 text-gray-600 font-semibold hover:border-[#d4a017] hover:text-[#d4a017] transition">
+                  Falar com comercial
+                </a>
               </div>
             </div>
+
+            <div className="grid md:grid-cols-3 gap-6 mb-6">
+              {/* Preço */}
+              <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
+                <div className="text-xs font-bold text-gray-400 uppercase mb-2">Preço</div>
+                <div className="text-2xl font-bold text-[#d4a017]">{s.price}</div>
+              </div>
+              {/* Avaliação */}
+              <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
+                <div className="text-xs font-bold text-gray-400 uppercase mb-2">Avaliação</div>
+                {s.rating > 0 ? (
+                  <div className="text-2xl font-bold text-gray-800">⭐ {s.rating} <span className="text-sm font-normal text-gray-500">({s.reviews})</span></div>
+                ) : (
+                  <div className="text-sm text-gray-400 italic">Em breve</div>
+                )}
+              </div>
+              {/* Tech */}
+              <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
+                <div className="text-xs font-bold text-gray-400 uppercase mb-2">Tecnologia</div>
+                <div className="text-sm text-gray-600">{s.techStack}</div>
+              </div>
+            </div>
+
+            {/* Como funciona */}
+            <div className="bg-white border border-gray-200 rounded-2xl p-8 shadow-sm mb-6">
+              <h2 className="text-lg font-bold text-gray-800 mb-4">📋 Como funciona</h2>
+              <div className="space-y-4">
+                {s.howItWorks.map((step, i) => (
+                  <div key={i} className="flex items-start gap-4">
+                    <div className="w-8 h-8 rounded-full bg-[#d4a017]/10 text-[#d4a017] font-bold text-sm flex items-center justify-center flex-shrink-0">{i + 1}</div>
+                    <p className="text-gray-600 pt-1">{step}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-6 mb-6">
+              {/* Funcionalidades */}
+              <div className="bg-white border border-gray-200 rounded-2xl p-8 shadow-sm">
+                <h2 className="text-lg font-bold text-gray-800 mb-4">⚡ Funcionalidades</h2>
+                <ul className="space-y-3">
+                  {s.features.map(f => (
+                    <li key={f} className="flex items-start gap-2 text-sm text-gray-600">
+                      <span className="text-[#d4a017] mt-0.5 font-bold">✓</span> {f}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* Benefícios */}
+              <div className="bg-white border border-gray-200 rounded-2xl p-8 shadow-sm">
+                <h2 className="text-lg font-bold text-gray-800 mb-4">🎯 Benefícios</h2>
+                <ul className="space-y-3">
+                  {s.benefits.map(b => (
+                    <li key={b} className="flex items-start gap-2 text-sm text-gray-600">
+                      <span className="text-emerald-500 mt-0.5 font-bold">→</span> {b}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+
+            {/* Suporte */}
+            <div className="bg-gray-50 border border-gray-200 rounded-2xl p-6">
+              <h2 className="text-sm font-bold text-gray-800 mb-2">💬 Suporte</h2>
+              <p className="text-sm text-gray-500">{s.support}</p>
+            </div>
           </div>
-        )}
+        );})()}
 
         {/* Serviços */}
         {section === 'servicos' && (

@@ -39,6 +39,25 @@ export default function Navbar() {
     router.push('/');
   }
 
+  // Hide full navbar on /plataforma — it has its own sidebar
+  if (pathname === '/plataforma') {
+    return (
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-black">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
+            <Link href="/" className="flex items-center flex-shrink-0">
+              <Image src="/images/logocjl.png" alt="CJL Consultoria" width={80} height={80} className="w-20 h-20 object-contain" />
+            </Link>
+            <div className="flex items-center gap-3">
+              <span className="text-sm text-gray-400">Plataforma CJL</span>
+              <button onClick={handleLogout} className="text-sm font-medium text-gray-400 hover:text-white transition-colors">Sair</button>
+            </div>
+          </div>
+        </div>
+      </nav>
+    );
+  }
+
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-black">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
