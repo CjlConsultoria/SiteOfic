@@ -36,20 +36,52 @@ const roadmap = [
 ]
 
 export default function SaplinkPage() {
-  const [formData, setFormData] = useState({ name: '', email: '', company: '' })
+  const [formData, setFormData] = useState({
+    nome: '', email: '', telefone: '', empresa: '', cnpj: '',
+    cargo: '', segmento: '', quantidadeClientes: '', mensagem: '', pessoaJuridica: false,
+  })
   const [submitted, setSubmitted] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
+
+  async function handleWaitlistSubmit(e: React.FormEvent) {
+    e.preventDefault()
+    setLoading(true)
+    setError('')
+    try {
+      const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8080/api'
+      const res = await fetch(`${apiUrl}/waitlist`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...formData,
+          quantidadeClientes: parseInt(formData.quantidadeClientes) || 0,
+        }),
+      })
+      if (res.ok) {
+        setSubmitted(true)
+      } else {
+        const data = await res.json().catch(() => null)
+        setError(data?.message || 'Erro ao cadastrar. Tente novamente.')
+      }
+    } catch {
+      setError('Erro de conexão. Tente novamente.')
+    } finally {
+      setLoading(false)
+    }
+  }
 
   return (
     <div className="bg-[#0f0b1a] text-[#e2e0ea]">
 
       {/* HERO */}
-      <section className="relative min-h-screen flex items-center overflow-hidden" style={{ background: 'linear-gradient(160deg, #0f0b1a 0%, #1a0e2e 30%, #0f1a2e 60%, #0f0b1a 100%)' }}>
+      <section className="relative flex items-center overflow-hidden" style={{ background: 'linear-gradient(160deg, #0f0b1a 0%, #1a0e2e 30%, #0f1a2e 60%, #0f0b1a 100%)' }}>
         <div className="absolute inset-0 pointer-events-none overflow-hidden">
           <div className="absolute w-[500px] h-[500px] rounded-full opacity-30 -top-[10%] -right-[10%]" style={{ background: 'radial-gradient(circle, #7c3aed 0%, transparent 70%)' }} />
           <div className="absolute w-[400px] h-[400px] rounded-full opacity-30 -bottom-[15%] -left-[5%]" style={{ background: 'radial-gradient(circle, #06b6d4 0%, transparent 70%)' }} />
           <div className="absolute w-[300px] h-[300px] rounded-full opacity-15 top-[40%] left-[30%]" style={{ background: 'radial-gradient(circle, #f43f5e 0%, transparent 70%)' }} />
         </div>
-        <div className="relative z-10 max-w-[800px] mx-auto text-center px-6 py-32">
+        <div className="relative z-10 max-w-[800px] mx-auto text-center px-6 pt-16 pb-20">
           <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-rose-500/15 border border-rose-500/30 text-rose-400 text-sm font-semibold mb-8">
             <span className="w-2 h-2 rounded-full bg-rose-400 animate-pulse" /> Em Desenvolvimento
           </div>
@@ -249,19 +281,86 @@ export default function SaplinkPage() {
             ))}
           </div>
           {!submitted ? (
-            <form onSubmit={(e) => { e.preventDefault(); setSubmitted(true) }} className="bg-[#1a1527] border border-white/[0.08] rounded-3xl p-8 md:p-10">
-              {[
-                { label: 'Seu nome', type: 'text', key: 'name', placeholder: 'Ex: João Silva' },
-                { label: 'Seu melhor e-mail', type: 'email', key: 'email', placeholder: 'joao@consultoria.com.br' },
-                { label: 'Nome da consultoria', type: 'text', key: 'company', placeholder: 'Ex: SAP Solutions Brasil' },
-              ].map(f => (
-                <div key={f.key} className="mb-5">
-                  <label className="block text-sm font-semibold text-[#e2e0ea] mb-2">{f.label}</label>
-                  <input type={f.type} placeholder={f.placeholder} required value={formData[f.key as keyof typeof formData]} onChange={e => setFormData({ ...formData, [f.key]: e.target.value })} className="w-full px-4 py-3.5 rounded-lg bg-[#0f0b1a] border border-white/[0.08] text-white placeholder:text-[#9b95ad]/60 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 outline-none transition" />
+            <form onSubmit={handleWaitlistSubmit} className="bg-[#1a1527] border border-white/[0.08] rounded-3xl p-8 md:p-10">
+              {error && <div className="mb-5 p-3 rounded-lg bg-red-500/10 border border-red-500/30 text-red-400 text-sm">{error}</div>}
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
+                <div>
+                  <label className="block text-sm font-semibold text-[#e2e0ea] mb-2">Nome completo *</label>
+                  <input type="text" required value={formData.nome} onChange={e => setFormData({...formData, nome: e.target.value})} placeholder="João Silva" className="w-full px-4 py-3 rounded-lg bg-[#0f0b1a] border border-white/[0.08] text-white placeholder:text-[#9b95ad]/60 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 outline-none transition" />
                 </div>
-              ))}
-              <button type="submit" className="w-full py-4 rounded-full bg-gradient-to-r from-purple-600 via-cyan-500 to-rose-500 text-white font-semibold text-lg shadow-lg shadow-purple-500/30 hover:-translate-y-0.5 transition-transform">Entrar na Lista de Espera</button>
-              <p className="text-center text-xs text-[#9b95ad] mt-4">Sem spam. Apenas atualizações sobre o lançamento.</p>
+                <div>
+                  <label className="block text-sm font-semibold text-[#e2e0ea] mb-2">E-mail *</label>
+                  <input type="email" required value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} placeholder="joao@consultoria.com.br" className="w-full px-4 py-3 rounded-lg bg-[#0f0b1a] border border-white/[0.08] text-white placeholder:text-[#9b95ad]/60 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 outline-none transition" />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
+                <div>
+                  <label className="block text-sm font-semibold text-[#e2e0ea] mb-2">Telefone *</label>
+                  <input type="tel" required value={formData.telefone} onChange={e => setFormData({...formData, telefone: e.target.value})} placeholder="(11) 99999-9999" className="w-full px-4 py-3 rounded-lg bg-[#0f0b1a] border border-white/[0.08] text-white placeholder:text-[#9b95ad]/60 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 outline-none transition" />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-[#e2e0ea] mb-2">Cargo</label>
+                  <input type="text" value={formData.cargo} onChange={e => setFormData({...formData, cargo: e.target.value})} placeholder="Ex: Sócio, Gerente, Consultor" className="w-full px-4 py-3 rounded-lg bg-[#0f0b1a] border border-white/[0.08] text-white placeholder:text-[#9b95ad]/60 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 outline-none transition" />
+                </div>
+              </div>
+
+              <div className="mb-5">
+                <label className="flex items-center gap-3 text-sm text-[#e2e0ea] cursor-pointer">
+                  <input type="checkbox" checked={formData.pessoaJuridica} onChange={e => setFormData({...formData, pessoaJuridica: e.target.checked})} className="rounded" />
+                  Pessoa Jurídica (PJ)
+                </label>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
+                <div>
+                  <label className="block text-sm font-semibold text-[#e2e0ea] mb-2">Nome da consultoria *</label>
+                  <input type="text" required value={formData.empresa} onChange={e => setFormData({...formData, empresa: e.target.value})} placeholder="SAP Solutions Brasil" className="w-full px-4 py-3 rounded-lg bg-[#0f0b1a] border border-white/[0.08] text-white placeholder:text-[#9b95ad]/60 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 outline-none transition" />
+                </div>
+                {formData.pessoaJuridica && (
+                  <div>
+                    <label className="block text-sm font-semibold text-[#e2e0ea] mb-2">CNPJ</label>
+                    <input type="text" maxLength={18} value={formData.cnpj} onChange={e => setFormData({...formData, cnpj: e.target.value})} placeholder="00.000.000/0001-00" className="w-full px-4 py-3 rounded-lg bg-[#0f0b1a] border border-white/[0.08] text-white placeholder:text-[#9b95ad]/60 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 outline-none transition" />
+                  </div>
+                )}
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
+                <div>
+                  <label className="block text-sm font-semibold text-[#e2e0ea] mb-2">Segmento</label>
+                  <select value={formData.segmento} onChange={e => setFormData({...formData, segmento: e.target.value})} className="w-full px-4 py-3 rounded-lg bg-[#0f0b1a] border border-white/[0.08] text-white focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 outline-none transition">
+                    <option value="">Selecione</option>
+                    <option value="Consultoria SAP">Consultoria SAP</option>
+                    <option value="Indústria">Indústria</option>
+                    <option value="Distribuição">Distribuição</option>
+                    <option value="Agronegócio">Agronegócio</option>
+                    <option value="Varejo">Varejo</option>
+                    <option value="Serviços">Serviços</option>
+                    <option value="Outro">Outro</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-[#e2e0ea] mb-2">Quantos clientes SAP gerencia?</label>
+                  <select value={formData.quantidadeClientes} onChange={e => setFormData({...formData, quantidadeClientes: e.target.value})} className="w-full px-4 py-3 rounded-lg bg-[#0f0b1a] border border-white/[0.08] text-white focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 outline-none transition">
+                    <option value="">Selecione</option>
+                    <option value="3">1 a 5</option>
+                    <option value="10">6 a 15</option>
+                    <option value="25">16 a 40</option>
+                    <option value="50">40+</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="mb-6">
+                <label className="block text-sm font-semibold text-[#e2e0ea] mb-2">Mensagem (opcional)</label>
+                <textarea value={formData.mensagem} onChange={e => setFormData({...formData, mensagem: e.target.value})} placeholder="Conte um pouco sobre sua consultoria e suas dores com SAP..." rows={3} className="w-full px-4 py-3 rounded-lg bg-[#0f0b1a] border border-white/[0.08] text-white placeholder:text-[#9b95ad]/60 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 outline-none transition resize-none" />
+              </div>
+
+              <button type="submit" disabled={loading} className="w-full py-4 rounded-full bg-gradient-to-r from-purple-600 via-cyan-500 to-rose-500 text-white font-semibold text-lg shadow-lg shadow-purple-500/30 hover:-translate-y-0.5 transition-transform disabled:opacity-50">
+                {loading ? 'Enviando...' : 'Entrar na Lista de Espera'}
+              </button>
+              <p className="text-center text-xs text-[#9b95ad] mt-4">Seus dados estão seguros. Apenas atualizações sobre o lançamento.</p>
             </form>
           ) : (
             <div className="text-center p-12 bg-[#1a1527] border border-emerald-500/30 rounded-3xl">
