@@ -1,0 +1,173 @@
+export const consultoriaPlans = [
+  {
+    name: 'Essencial',
+    price: 'R$ 297',
+    period: '/mês',
+    description: 'Ideal para quem está começando e precisa de orientação básica em TI.',
+    features: ['1 reunião mensal de acompanhamento', 'Suporte por e-mail e WhatsApp', 'Relatório mensal de status'],
+  },
+  {
+    name: 'Diagnóstico',
+    price: 'R$ 497',
+    period: '/mês',
+    description: 'Reunião inicial + diagnóstico técnico do ambiente atual.',
+    features: ['Diagnóstico completo do ambiente', 'Relatório com recomendações', 'Suporte por e-mail e WhatsApp'],
+  },
+  {
+    name: 'Orientação Técnica',
+    price: 'R$ 697',
+    period: '/mês',
+    description: 'Até 2 reuniões mensais com acesso a treinamentos.',
+    features: ['2 reuniões mensais', 'Acesso a treinamentos', 'Suporte técnico prioritário'],
+  },
+  {
+    name: 'Operacional',
+    price: 'R$ 997',
+    period: '/mês',
+    description: 'Até 4 reuniões mensais para acompanhamento operacional.',
+    features: ['4 reuniões mensais', 'Acompanhamento de projetos', 'Suporte dedicado'],
+  },
+  {
+    name: 'Otimização',
+    price: 'R$ 1.297',
+    period: '/mês',
+    description: 'Mapeamento de processos e automação com low-code/no-code.',
+    features: ['Mapeamento de processos', 'Automação low-code/no-code', 'Relatórios de performance'],
+  },
+  {
+    name: 'Transformação Digital',
+    price: 'R$ 1.697',
+    period: '/mês',
+    description: 'Roadmap de transformação digital + treinamento da equipe.',
+    features: ['Roadmap estratégico', 'Treinamento da equipe', 'Implementação assistida'],
+  },
+  {
+    name: 'Estratégico de TI',
+    price: 'R$ 2.497',
+    period: '/mês',
+    description: 'Planejamento estratégico de TI, KPIs e relatórios executivos.',
+    features: ['Planejamento estratégico', 'Definição de KPIs', 'Relatórios executivos'],
+  },
+  {
+    name: 'CTO as a Service',
+    price: 'R$ 3.997',
+    period: '/mês',
+    description: 'Liderança técnica externa — um CTO dedicado ao seu negócio.',
+    features: ['CTO dedicado', 'Liderança técnica completa', 'Gestão de equipe de TI'],
+  },
+  {
+    name: 'Full Stack Empresarial',
+    price: 'R$ 6.997',
+    period: '/mês',
+    description: 'Equipe de especialistas sob demanda para sua empresa.',
+    features: ['Equipe sob demanda', 'Cobertura full stack', 'Sprints semanais'],
+  },
+  {
+    name: 'Elite / C-Level',
+    price: 'R$ 9.997',
+    period: '/mês',
+    description: 'Consultoria confidencial de nível executivo.',
+    features: ['Consultoria C-Level', 'Confidencialidade total', 'Acesso ilimitado'],
+  },
+]
+
+export const softwarePlans = [
+  {
+    name: 'Starter / MVP',
+    price: 'R$ 1.497',
+    period: '/mês (3 meses)',
+    description: 'Validação rápida de ideia com MVP funcional.',
+    features: ['MVP em até 3 meses', 'Design responsivo', 'Deploy incluído'],
+  },
+  {
+    name: 'Essencial',
+    price: 'R$ 2.497',
+    period: '/mês',
+    description: 'Até 3 módulos funcionais para seu negócio.',
+    features: ['Até 3 módulos', 'Painel administrativo', 'Suporte mensal'],
+  },
+  {
+    name: 'Profissional',
+    price: 'R$ 3.497',
+    period: '/mês',
+    description: 'Autenticação, permissões e dashboards completos.',
+    features: ['Autenticação de usuários', 'Controle de permissões', 'Dashboards interativos'],
+  },
+  {
+    name: 'Corporativo',
+    price: 'R$ 5.497',
+    period: '/mês',
+    description: 'Microserviços, integração ERP e automação.',
+    features: ['Arquitetura microserviços', 'Integração com ERP', 'Automação de processos'],
+  },
+  {
+    name: 'Growth / Expansão',
+    price: 'R$ 6.997',
+    period: '/mês',
+    description: 'Relatórios avançados e otimização de performance.',
+    features: ['Relatórios avançados', 'Otimização de performance', 'Escalabilidade'],
+  },
+  {
+    name: 'SaaS',
+    price: 'R$ 8.997',
+    period: '/mês',
+    description: 'Sistema multi-empresa com cobrança integrada.',
+    features: ['Multi-tenancy', 'Sistema de billing', 'API pública'],
+  },
+  {
+    name: 'App + Web',
+    price: 'R$ 9.997',
+    period: '/mês',
+    description: 'Plataforma completa com aplicativo mobile.',
+    features: ['App iOS + Android', 'Plataforma web', 'Sincronização real-time'],
+  },
+  {
+    name: 'Integrações',
+    price: 'R$ 11.997',
+    period: '/mês',
+    description: 'ERPs, APIs, webhooks — conecte tudo.',
+    features: ['Integração com ERPs', 'APIs e webhooks', 'Middleware customizado'],
+  },
+  {
+    name: 'Full Outsourcing',
+    price: 'R$ 14.997',
+    period: '/mês',
+    description: 'Equipe dedicada com gestão de sprints.',
+    features: ['Equipe dedicada', 'Gestão de sprints', 'Entregas contínuas'],
+  },
+  {
+    name: 'Elite / CTO',
+    price: 'R$ 19.997',
+    period: '/mês',
+    description: 'Desenvolvimento contínuo + liderança estratégica.',
+    features: ['Dev contínuo', 'Liderança estratégica', 'Acesso total'],
+  },
+]
+
+export const testimonials = [
+  {
+    name: 'Carlos Henrique',
+    role: 'CEO, TechStart Solutions',
+    text: 'A CJL transformou completamente nossa infraestrutura de TI. Em poucos meses, conseguimos reduzir custos operacionais e aumentar a eficiência da equipe.',
+  },
+  {
+    name: 'Ana Paula Rodrigues',
+    role: 'Diretora de Operações, LogiMax',
+    text: 'O suporte da equipe é excepcional. Sempre disponíveis e com soluções rápidas para nossos problemas. Recomendo fortemente.',
+  },
+  {
+    name: 'Roberto Almeida',
+    role: 'Fundador, InnovateBR',
+    text: 'O sistema desenvolvido pela CJL superou nossas expectativas. Interface intuitiva, performance excelente e entrega dentro do prazo.',
+  },
+  {
+    name: 'Mariana Costa',
+    role: 'Gerente de TI, GroupNet',
+    text: 'A consultoria estratégica nos ajudou a definir um roadmap tecnológico claro e executável. Hoje temos muito mais clareza sobre nossas prioridades.',
+  },
+  {
+    name: 'Fernando Santos',
+    role: 'CTO, DataFlow Corp',
+    text: 'Profissionais altamente qualificados e comprometidos com resultados. A parceria com a CJL foi um divisor de águas para nossa empresa.',
+  },
+]
