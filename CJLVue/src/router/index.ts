@@ -6,6 +6,8 @@ import Servicos from '@/views/Servicos.vue'
 import Login from '@/views/Login.vue'
 import Registre from '@/views/Registre.vue'
 import Plataforma from '@/views/Plataforma.vue'
+import Saplink from '@/views/Saplink.vue'
+import Sistemas from '@/views/Sistemas.vue'
 
 
 
@@ -47,7 +49,17 @@ const router = createRouter({
       path: '/plataforma',
       name: 'Plataforma',
       component: Plataforma,
-    }
+    },
+    {
+      path: '/saplink',
+      name: 'Saplink',
+      component: Saplink,
+    },
+    {
+      path: '/sistemas',
+      name: 'Sistemas',
+      component: Sistemas,
+    },
 
   ],
 })

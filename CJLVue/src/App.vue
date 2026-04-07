@@ -173,6 +173,7 @@ div.layout-wrapper(:class="{ 'layout-plataforma': ehPlataforma }")
           RouterLink(to="/sobre") Sobre
           RouterLink(to="/servicos") Serviços
           RouterLink(to="/planos") Planos
+          RouterLink(to="/sistemas") Sistemas
           //-RouterLink(to="/plataforma") Plataforma
           .mobile-auth-buttons
             //-a.external-btn.link-btn(href="/login") Login
@@ -185,6 +186,7 @@ div.layout-wrapper(:class="{ 'layout-plataforma': ehPlataforma }")
           RouterLink(to="/sobre") Sobre
           RouterLink(to="/servicos") Serviços
           RouterLink(to="/planos") Planos
+          RouterLink(to="/sistemas") Sistemas
           //-RouterLink(to="/plataforma") Plataforma
 
         //- Botões de login/registro
