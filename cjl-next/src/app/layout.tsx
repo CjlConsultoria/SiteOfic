@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import BackendPing from "@/components/BackendPing";
 import "./globals.css";
 
 const inter = Inter({
@@ -23,6 +24,7 @@ export default function RootLayout({
   return (
     <html lang="pt-BR" className={`${inter.variable} h-full`}>
       <body className="min-h-full flex flex-col bg-white text-gray-800 font-[family-name:var(--font-inter)]">
+        <BackendPing />
         <Navbar />
         <main className="flex-1 pt-20">{children}</main>
         <Footer />
