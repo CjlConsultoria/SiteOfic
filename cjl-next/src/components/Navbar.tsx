@@ -16,71 +16,72 @@ const navLinks = [
 export default function Navbar() {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
-
-  useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 20);
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
 
   // Close mobile menu on route change
   useEffect(() => {
     setMenuOpen(false);
   }, [pathname]);
 
+  // Prevent body scroll when mobile menu is open
+  useEffect(() => {
+    if (menuOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [menuOpen]);
+
   return (
-    <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-300 ${
-        scrolled ? "bg-black/95 shadow-lg" : "bg-black/90"
-      } backdrop-blur-md`}
-    >
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-black">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
-          {/* Logo */}
-          <Link href="/" className="flex-shrink-0">
+          {/* Logo + Brand */}
+          <Link href="/" className="flex items-center gap-3 flex-shrink-0">
             <Image
               src="/images/logocjl.png"
               alt="CJL Consultoria"
-              width={60}
-              height={60}
-              className="rounded"
+              width={56}
+              height={56}
+              className="w-14 h-14 rounded"
             />
+            <span className="text-white text-xl font-bold tracking-tight">
+              CJL
+            </span>
           </Link>
 
-          {/* Desktop links */}
+          {/* Desktop links (centered) */}
           <div className="hidden md:flex items-center gap-8">
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className={`text-sm font-medium tracking-wide transition-colors duration-200 ${
-                  pathname === link.href
-                    ? "text-yellow-400"
-                    : "text-gray-300 hover:text-white"
-                }`}
-              >
-                {link.label}
-              </Link>
-            ))}
+            {navLinks.map((link) => {
+              const isActive = pathname === link.href;
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className={`relative text-sm font-medium tracking-wide transition-colors duration-200 pb-1 ${
+                    isActive
+                      ? "text-[#ff6b35]"
+                      : "text-white hover:text-[#ff6b35]"
+                  }`}
+                >
+                  {link.label}
+                  {isActive && (
+                    <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#ff6b35] rounded-full" />
+                  )}
+                </Link>
+              );
+            })}
           </div>
 
-          {/* Convivium button (desktop) */}
-          <div className="hidden md:block">
-            <a
-              href="https://convivium-front.onrender.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="border border-yellow-500 text-yellow-400 px-5 py-2 rounded-md text-sm font-semibold hover:bg-yellow-500 hover:text-black transition-all duration-200"
-            >
-              Convivium
-            </a>
-          </div>
+          {/* Spacer to balance the layout */}
+          <div className="hidden md:block w-[100px]" />
 
           {/* Mobile hamburger */}
           <button
             onClick={() => setMenuOpen(!menuOpen)}
-            className="md:hidden text-gray-300 hover:text-white focus:outline-none"
+            className="md:hidden text-white hover:text-[#ff6b35] focus:outline-none transition-colors duration-200"
             aria-label="Toggle menu"
           >
             <svg
@@ -109,33 +110,30 @@ export default function Navbar() {
       </div>
 
       {/* Mobile menu */}
-      {menuOpen && (
-        <div className="md:hidden border-t border-gray-800 bg-black/95 backdrop-blur-md">
-          <div className="px-4 py-4 space-y-3">
-            {navLinks.map((link) => (
+      <div
+        className={`md:hidden transition-all duration-300 ease-in-out overflow-hidden ${
+          menuOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
+        }`}
+      >
+        <div className="border-t border-gray-800 bg-black px-4 py-4 space-y-1">
+          {navLinks.map((link) => {
+            const isActive = pathname === link.href;
+            return (
               <Link
                 key={link.href}
                 href={link.href}
-                className={`block text-sm font-medium py-2 transition-colors duration-200 ${
-                  pathname === link.href
-                    ? "text-yellow-400"
-                    : "text-gray-300 hover:text-white"
+                className={`block text-sm font-medium py-3 px-3 rounded-lg transition-colors duration-200 ${
+                  isActive
+                    ? "text-[#ff6b35] bg-gray-900"
+                    : "text-white hover:text-[#ff6b35] hover:bg-gray-900"
                 }`}
               >
                 {link.label}
               </Link>
-            ))}
-            <a
-              href="https://convivium-front.onrender.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="block border border-yellow-500 text-yellow-400 px-4 py-2 rounded-md text-sm font-semibold text-center hover:bg-yellow-500 hover:text-black transition-all duration-200 mt-2"
-            >
-              Convivium
-            </a>
-          </div>
+            );
+          })}
         </div>
-      )}
+      </div>
     </nav>
   );
 }

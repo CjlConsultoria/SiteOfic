@@ -10,8 +10,9 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "CJL Consultoria",
-  description: "Soluções estratégicas em tecnologia",
+  title: "CJL Consultoria - Soluções em Tecnologia",
+  description:
+    "Soluções estratégicas em tecnologia para empresas que buscam eficiência, integração e inovação.",
 };
 
 export default function RootLayout({
@@ -21,7 +22,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-BR" className={`${inter.variable} h-full`}>
-      <body className="min-h-full flex flex-col bg-[#0a0a0a] text-white font-[family-name:var(--font-inter)]">
+      <body className="min-h-full flex flex-col bg-white text-gray-800 font-[family-name:var(--font-inter)]">
         <Navbar />
         <main className="flex-1 pt-20">{children}</main>
         <Footer />
