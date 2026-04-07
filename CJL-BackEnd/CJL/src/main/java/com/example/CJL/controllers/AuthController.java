@@ -134,8 +134,8 @@ public class AuthController {
         try {
             String token = loginService.LoginAuthentication(dto.getEmail(), dto.getSenha());
             return ResponseEntity.ok(new JwtResponseDTO(token));
-        } catch (UsernameNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Credenciais inválidas");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "Credenciais inválidas"));
         }
     }
 
