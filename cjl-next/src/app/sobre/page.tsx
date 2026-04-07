@@ -84,7 +84,7 @@ export default function SobrePage() {
             />
           </div>
           <div>
-            <div className="w-12 h-1 bg-[#ff6b35] rounded-full mb-6" />
+            <div className="w-12 h-1 bg-[#d4a017] rounded-full mb-6" />
             <h2 className="text-3xl sm:text-4xl font-bold text-[#0f172a] mb-6">
               Soluções sob medida
             </h2>
@@ -123,7 +123,7 @@ export default function SobrePage() {
                 key={stat.label}
                 className="bg-white rounded-2xl shadow-lg border border-gray-100 p-8 text-center"
               >
-                <div className="text-4xl sm:text-5xl font-extrabold text-[#ff6b35] mb-2">
+                <div className="text-4xl sm:text-5xl font-extrabold text-[#d4a017] mb-2">
                   {stat.value}
                 </div>
                 <div className="text-[#475569] font-medium">{stat.label}</div>
@@ -148,14 +148,14 @@ export default function SobrePage() {
                   type="button"
                   onClick={() => toggle(i)}
                   className={`w-full rounded-2xl bg-white text-left transition-all duration-300 shadow-md hover:shadow-lg border-2 ${
-                    isOpen ? "border-[#ff6b35]" : "border-gray-100"
+                    isOpen ? "border-[#d4a017]" : "border-gray-100"
                   }`}
                 >
                   <div className="flex items-center gap-4 px-6 py-5">
                     <div
                       className={`flex-shrink-0 w-10 h-10 rounded-xl flex items-center justify-center transition-colors duration-300 ${
                         isOpen
-                          ? "bg-[#ff6b35] text-white"
+                          ? "bg-[#d4a017] text-white"
                           : "bg-[#eff6ff] text-[#1e3a5f]"
                       }`}
                     >
@@ -164,7 +164,7 @@ export default function SobrePage() {
                     <span className="text-lg font-semibold text-[#0f172a] flex-1">{r.title}</span>
                     <span
                       className={`ml-4 shrink-0 text-2xl font-light transition-transform duration-300 ${
-                        isOpen ? "text-[#ff6b35]" : "text-[#94a3b8]"
+                        isOpen ? "text-[#d4a017]" : "text-[#94a3b8]"
                       }`}
                       style={{ transform: isOpen ? "rotate(45deg)" : "rotate(0deg)" }}
                     >
@@ -202,7 +202,7 @@ export default function SobrePage() {
             href="https://wa.me/551152865790"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-3 rounded-xl bg-[#ff6b35] px-8 py-4 font-bold text-white text-lg transition hover:bg-[#e85d2c] shadow-lg shadow-[#ff6b35]/25"
+            className="inline-flex items-center gap-3 rounded-xl bg-[#d4a017] px-8 py-4 font-bold text-white text-lg transition hover:bg-[#e85d2c] shadow-lg shadow-[#d4a017]/25"
           >
             <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
               <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z" />

@@ -92,7 +92,7 @@ export default function RegistrePage() {
         {/* Progress bar */}
         <div className="flex gap-1.5 mb-8">
           {steps.map((_, i) => (
-            <div key={i} className={`h-1.5 flex-1 rounded-full ${i <= step ? 'bg-[#ff6b35]' : 'bg-white/[0.08]'}`} />
+            <div key={i} className={`h-1.5 flex-1 rounded-full ${i <= step ? 'bg-[#d4a017]' : 'bg-white/[0.08]'}`} />
           ))}
         </div>
 
@@ -118,8 +118,8 @@ export default function RegistrePage() {
             <div className="space-y-4">
               <p className="text-sm text-gray-400">Você é Pessoa Jurídica?</p>
               <div className="flex gap-4">
-                <button type="button" onClick={() => update('ehPJ', false)} className={`flex-1 py-3 rounded-lg font-semibold text-sm border transition ${!form.ehPJ ? 'bg-[#ff6b35] text-black border-amber-500' : 'bg-transparent text-gray-400 border-white/[0.08] hover:border-amber-500/50'}`}>Não</button>
-                <button type="button" onClick={() => update('ehPJ', true)} className={`flex-1 py-3 rounded-lg font-semibold text-sm border transition ${form.ehPJ ? 'bg-[#ff6b35] text-black border-amber-500' : 'bg-transparent text-gray-400 border-white/[0.08] hover:border-amber-500/50'}`}>Sim</button>
+                <button type="button" onClick={() => update('ehPJ', false)} className={`flex-1 py-3 rounded-lg font-semibold text-sm border transition ${!form.ehPJ ? 'bg-[#d4a017] text-black border-amber-500' : 'bg-transparent text-gray-400 border-white/[0.08] hover:border-amber-500/50'}`}>Não</button>
+                <button type="button" onClick={() => update('ehPJ', true)} className={`flex-1 py-3 rounded-lg font-semibold text-sm border transition ${form.ehPJ ? 'bg-[#d4a017] text-black border-amber-500' : 'bg-transparent text-gray-400 border-white/[0.08] hover:border-amber-500/50'}`}>Sim</button>
               </div>
               {form.ehPJ && (
                 <>
@@ -181,14 +181,14 @@ export default function RegistrePage() {
           {/* Navigation */}
           <div className="flex gap-3 mt-8">
             {step > 0 && <button type="button" onClick={() => setStep(step - 1)} className="flex-1 py-3 rounded-full border border-white/[0.08] text-gray-400 font-semibold hover:bg-white/5 transition">Voltar</button>}
-            <button type="button" onClick={nextStep} disabled={loading} className="flex-1 py-3 rounded-full bg-[#ff6b35] text-black font-semibold hover:bg-amber-400 transition disabled:opacity-50">
+            <button type="button" onClick={nextStep} disabled={loading} className="flex-1 py-3 rounded-full bg-[#d4a017] text-black font-semibold hover:bg-amber-400 transition disabled:opacity-50">
               {loading ? 'Cadastrando...' : step === 5 ? 'Criar Conta' : 'Próximo'}
             </button>
           </div>
         </div>
 
         <p className="text-center text-sm text-gray-500 mt-6">
-          Já tem conta? <Link href="/login" className="text-[#ff6b35] hover:text-[#e55a2b] font-semibold">Entrar</Link>
+          Já tem conta? <Link href="/login" className="text-[#d4a017] hover:text-[#b8860b] font-semibold">Entrar</Link>
         </p>
       </div>
     </div>

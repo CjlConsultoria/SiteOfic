@@ -37,19 +37,16 @@ export default function Navbar() {
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-black">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-20">
+        <div className="flex items-center justify-between h-16">
           {/* Logo + Brand */}
-          <Link href="/" className="flex items-center gap-3 flex-shrink-0">
+          <Link href="/" className="flex items-center flex-shrink-0">
             <Image
               src="/images/logocjl.png"
               alt="CJL Consultoria"
-              width={56}
-              height={56}
-              className="w-14 h-14 rounded"
+              width={80}
+              height={80}
+              className="w-20 h-20 object-contain"
             />
-            <span className="text-white text-xl font-bold tracking-tight">
-              CJL
-            </span>
           </Link>
 
           {/* Desktop links (centered) */}
@@ -62,13 +59,13 @@ export default function Navbar() {
                   href={link.href}
                   className={`relative text-sm font-medium tracking-wide transition-colors duration-200 pb-1 ${
                     isActive
-                      ? "text-[#ff6b35]"
-                      : "text-white hover:text-[#ff6b35]"
+                      ? "text-[#d4a017]"
+                      : "text-white hover:text-[#d4a017]"
                   }`}
                 >
                   {link.label}
                   {isActive && (
-                    <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#ff6b35] rounded-full" />
+                    <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#d4a017] rounded-full" />
                   )}
                 </Link>
               );
@@ -81,7 +78,7 @@ export default function Navbar() {
           {/* Mobile hamburger */}
           <button
             onClick={() => setMenuOpen(!menuOpen)}
-            className="md:hidden text-white hover:text-[#ff6b35] focus:outline-none transition-colors duration-200"
+            className="md:hidden text-white hover:text-[#d4a017] focus:outline-none transition-colors duration-200"
             aria-label="Toggle menu"
           >
             <svg
@@ -124,8 +121,8 @@ export default function Navbar() {
                 href={link.href}
                 className={`block text-sm font-medium py-3 px-3 rounded-lg transition-colors duration-200 ${
                   isActive
-                    ? "text-[#ff6b35] bg-gray-900"
-                    : "text-white hover:text-[#ff6b35] hover:bg-gray-900"
+                    ? "text-[#d4a017] bg-gray-900"
+                    : "text-white hover:text-[#d4a017] hover:bg-gray-900"
                 }`}
               >
                 {link.label}

@@ -44,23 +44,23 @@ export default function LoginPage() {
           )}
           <div className="mb-5">
             <label className="block text-sm font-semibold text-gray-700 mb-2">E-mail</label>
-            <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="seu@email.com" required className="w-full px-4 py-3 rounded-lg bg-[#f8fafc] border border-gray-200 text-gray-800 placeholder:text-gray-400 focus:border-[#ff6b35] focus:ring-2 focus:ring-orange-200 outline-none transition" />
+            <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="seu@email.com" required className="w-full px-4 py-3 rounded-lg bg-[#f8fafc] border border-gray-200 text-gray-800 placeholder:text-gray-400 focus:border-[#d4a017] focus:ring-2 focus:ring-amber-200 outline-none transition" />
           </div>
           <div className="mb-5">
             <label className="block text-sm font-semibold text-gray-700 mb-2">Senha</label>
-            <input type={showPassword ? 'text' : 'password'} value={senha} onChange={e => setSenha(e.target.value)} placeholder="Sua senha" required className="w-full px-4 py-3 rounded-lg bg-[#f8fafc] border border-gray-200 text-gray-800 placeholder:text-gray-400 focus:border-[#ff6b35] focus:ring-2 focus:ring-orange-200 outline-none transition" />
+            <input type={showPassword ? 'text' : 'password'} value={senha} onChange={e => setSenha(e.target.value)} placeholder="Sua senha" required className="w-full px-4 py-3 rounded-lg bg-[#f8fafc] border border-gray-200 text-gray-800 placeholder:text-gray-400 focus:border-[#d4a017] focus:ring-2 focus:ring-amber-200 outline-none transition" />
           </div>
           <label className="flex items-center gap-2 text-sm text-gray-500 mb-6 cursor-pointer">
             <input type="checkbox" checked={showPassword} onChange={e => setShowPassword(e.target.checked)} className="rounded border-gray-600" />
             Mostrar senha
           </label>
-          <button type="submit" disabled={loading} className="w-full py-3.5 rounded-full bg-[#ff6b35] text-white font-semibold hover:bg-[#e55a2b] transition-colors disabled:opacity-50">
+          <button type="submit" disabled={loading} className="w-full py-3.5 rounded-full bg-[#d4a017] text-white font-semibold hover:bg-[#b8860b] transition-colors disabled:opacity-50">
             {loading ? 'Entrando...' : 'Entrar'}
           </button>
         </form>
 
         <p className="text-center text-sm text-gray-500 mt-6">
-          Não tem conta? <Link href="/registre" className="text-[#ff6b35] hover:text-[#e55a2b] font-semibold">Registre-se</Link>
+          Não tem conta? <Link href="/registre" className="text-[#d4a017] hover:text-[#b8860b] font-semibold">Registre-se</Link>
         </p>
       </div>
     </div>

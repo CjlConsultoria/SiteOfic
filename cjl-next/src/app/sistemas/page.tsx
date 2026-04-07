@@ -47,7 +47,7 @@ const systems = [
       'Conteúdo educativo para investidores',
     ],
     audience: 'Investidores individuais, assessores e entusiastas do mercado financeiro.',
-    link: 'https://tradelinkinvest.com',
+    link: 'https://tradelinkinvest.com.br',
     linkText: 'Acessar TradeLinkInvest',
     external: true,
   },
@@ -83,8 +83,8 @@ export default function SistemasPage() {
       {/* Hero */}
       <section className="bg-gradient-to-b from-[#eff6ff] to-white py-20 px-6">
         <div className="max-w-4xl mx-auto text-center">
-          <span className="inline-block px-4 py-1.5 rounded-full bg-orange-100 text-orange-600 text-sm font-semibold mb-6">Nossos Sistemas</span>
-          <h1 className="text-4xl md:text-5xl font-black text-[#0f172a] mb-6">Sistemas desenvolvidos pela <span className="text-[#ff6b35]">CJL Consultoria</span></h1>
+          <span className="inline-block px-4 py-1.5 rounded-full bg-amber-100 text-amber-600 text-sm font-semibold mb-6">Nossos Sistemas</span>
+          <h1 className="text-4xl md:text-5xl font-black text-[#0f172a] mb-6">Sistemas desenvolvidos pela <span className="text-[#d4a017]">CJL Consultoria</span></h1>
           <p className="text-lg text-gray-600 leading-relaxed">Soluções próprias que já estão no mercado resolvendo problemas reais. Cada sistema foi construído para atender necessidades específicas com tecnologia moderna.</p>
         </div>
       </section>
@@ -113,7 +113,7 @@ export default function SistemasPage() {
                     <ul className="space-y-2 mb-6">
                       {sys.features.map(f => (
                         <li key={f} className="flex items-start gap-2 text-gray-600">
-                          <span className="text-[#ff6b35] font-bold mt-0.5">›</span>
+                          <span className="text-[#d4a017] font-bold mt-0.5">›</span>
                           <span>{f}</span>
                         </li>
                       ))}
@@ -133,9 +133,9 @@ export default function SistemasPage() {
                       <div className="font-semibold text-gray-700">{sys.platform}</div>
                     </div>
                     {sys.external ? (
-                      <a href={sys.link} target="_blank" rel="noopener noreferrer" className="block text-center px-6 py-3.5 rounded-full bg-[#ff6b35] text-white font-semibold hover:bg-[#e55a2b] transition shadow-lg shadow-orange-200">{sys.linkText}</a>
+                      <a href={sys.link} target="_blank" rel="noopener noreferrer" className="block text-center px-6 py-3.5 rounded-full bg-[#d4a017] text-white font-semibold hover:bg-[#b8860b] transition shadow-lg shadow-amber-200">{sys.linkText}</a>
                     ) : (
-                      <Link href={sys.link} className="block text-center px-6 py-3.5 rounded-full bg-[#ff6b35] text-white font-semibold hover:bg-[#e55a2b] transition shadow-lg shadow-orange-200">{sys.linkText}</Link>
+                      <Link href={sys.link} className="block text-center px-6 py-3.5 rounded-full bg-[#d4a017] text-white font-semibold hover:bg-[#b8860b] transition shadow-lg shadow-amber-200">{sys.linkText}</Link>
                     )}
                     <a href="https://wa.me/551152865790" target="_blank" rel="noopener noreferrer" className="block text-center px-6 py-3.5 rounded-full border-2 border-[#1e3a5f] text-[#1e3a5f] font-semibold hover:bg-[#1e3a5f] hover:text-white transition">Falar com comercial</a>
                   </div>
@@ -150,7 +150,7 @@ export default function SistemasPage() {
       <section className="bg-[#1e3a5f] py-16 px-6 text-center">
         <h2 className="text-3xl font-bold text-white mb-4">Precisa de um sistema sob medida?</h2>
         <p className="text-blue-200 text-lg mb-8 max-w-xl mx-auto">A CJL desenvolve soluções personalizadas para o seu negócio. Do levantamento à entrega, com suporte contínuo.</p>
-        <a href="https://wa.me/551152865790?text=Olá,%20gostaria%20de%20um%20orçamento%20para%20desenvolvimento%20de%20sistema." target="_blank" rel="noopener noreferrer" className="inline-block px-8 py-4 rounded-full bg-[#ff6b35] text-white font-semibold text-lg hover:bg-[#e55a2b] transition shadow-lg">Solicitar orçamento</a>
+        <a href="https://wa.me/551152865790?text=Olá,%20gostaria%20de%20um%20orçamento%20para%20desenvolvimento%20de%20sistema." target="_blank" rel="noopener noreferrer" className="inline-block px-8 py-4 rounded-full bg-[#d4a017] text-white font-semibold text-lg hover:bg-[#b8860b] transition shadow-lg">Solicitar orçamento</a>
       </section>
     </div>
   )

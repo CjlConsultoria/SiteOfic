@@ -41,9 +41,9 @@ const services = [
 ];
 
 const stats = [
-  { value: "1000+", label: "Projetos Entregues", color: "#ff6b35" },
+  { value: "1000+", label: "Projetos Entregues", color: "#d4a017" },
   { value: "2500+", label: "Clientes Satisfeitos", color: "#0ea5e9" },
-  { value: "30 min", label: "Tempo de Resposta", color: "#ff6b35" },
+  { value: "30 min", label: "Tempo de Resposta", color: "#d4a017" },
   { value: "4000+", label: "Suportes Realizados", color: "#0ea5e9" },
 ];
 
@@ -69,7 +69,7 @@ const systems = [
     accent: "#0ea5e9",
     icon: "\u{1F4C8}",
     badge: null,
-    link: "https://tradelinkinvest.com",
+    link: "https://tradelinkinvest.com.br",
   },
   {
     name: "SAPLINK",
@@ -179,7 +179,7 @@ export default function Home() {
             <div className="mt-8 flex flex-col gap-4 sm:flex-row">
               <Link
                 href="/servicos"
-                className="inline-flex items-center justify-center rounded-xl bg-[#ff6b35] px-7 py-3.5 font-semibold text-white shadow-lg shadow-[#ff6b35]/25 transition hover:bg-[#e5612f] hover:shadow-xl"
+                className="inline-flex items-center justify-center rounded-xl bg-[#d4a017] px-7 py-3.5 font-semibold text-white shadow-lg shadow-[#d4a017]/25 transition hover:bg-[#e5612f] hover:shadow-xl"
               >
                 Nossos Servicos
               </Link>
@@ -196,7 +196,7 @@ export default function Home() {
 
           {/* Image */}
           <div className="relative mx-auto w-full max-w-lg">
-            <div className="absolute -inset-4 rounded-3xl bg-gradient-to-tr from-[#ff6b35]/20 to-[#0ea5e9]/20 blur-2xl" />
+            <div className="absolute -inset-4 rounded-3xl bg-gradient-to-tr from-[#d4a017]/20 to-[#0ea5e9]/20 blur-2xl" />
             <Image
               src="/images/consultoria.webp"
               alt="Consultoria em tecnologia"
@@ -247,7 +247,7 @@ export default function Home() {
               <div
                 key={s.title}
                 className="group rounded-2xl border border-[#e2e8f0] bg-white p-8 shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
-                style={{ borderLeftWidth: 4, borderLeftColor: "#ff6b35" }}
+                style={{ borderLeftWidth: 4, borderLeftColor: "#d4a017" }}
               >
                 <span className="text-4xl">{s.icon}</span>
                 <h3 className="mt-4 text-xl font-semibold text-[#0f172a]">
@@ -263,7 +263,7 @@ export default function Home() {
           <div className="mt-12 text-center">
             <Link
               href="/servicos"
-              className="inline-flex items-center gap-2 font-semibold text-[#ff6b35] transition hover:underline"
+              className="inline-flex items-center gap-2 font-semibold text-[#d4a017] transition hover:underline"
             >
               Ver todos os servicos
               <svg
@@ -307,7 +307,7 @@ export default function Home() {
             <ul className="mt-8 space-y-5">
               {whyUs.map((item) => (
                 <li key={item} className="flex items-start gap-3">
-                  <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#ff6b35] text-sm text-white">
+                  <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#d4a017] text-sm text-white">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       className="h-4 w-4"
@@ -452,7 +452,7 @@ export default function Home() {
               >
                 {/* Quote icon */}
                 <svg
-                  className="absolute top-6 right-6 h-10 w-10 text-[#ff6b35]/15"
+                  className="absolute top-6 right-6 h-10 w-10 text-[#d4a017]/15"
                   fill="currentColor"
                   viewBox="0 0 24 24"
                 >
@@ -539,7 +539,7 @@ export default function Home() {
                   className="overflow-hidden rounded-2xl bg-white shadow-md transition-shadow"
                   style={
                     isOpen
-                      ? { borderLeft: "4px solid #ff6b35" }
+                      ? { borderLeft: "4px solid #d4a017" }
                       : { borderLeft: "4px solid transparent" }
                   }
                 >
@@ -554,7 +554,7 @@ export default function Home() {
                       className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-lg font-bold transition-colors"
                       style={
                         isOpen
-                          ? { backgroundColor: "#ff6b35", color: "#fff" }
+                          ? { backgroundColor: "#d4a017", color: "#fff" }
                           : { backgroundColor: "#f1f5f9", color: "#64748b" }
                       }
                     >
@@ -609,7 +609,7 @@ export default function Home() {
                   href="https://wa.me/551152865790"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center rounded-xl bg-[#ff6b35] px-7 py-3.5 font-semibold text-white shadow-lg shadow-[#ff6b35]/25 transition hover:bg-[#e5612f]"
+                  className="inline-flex items-center justify-center rounded-xl bg-[#d4a017] px-7 py-3.5 font-semibold text-white shadow-lg shadow-[#d4a017]/25 transition hover:bg-[#e5612f]"
                 >
                   Fale pelo WhatsApp
                 </a>
@@ -635,7 +635,7 @@ export default function Home() {
                 onChange={(e) =>
                   setFormData({ ...formData, nome: e.target.value })
                 }
-                className="rounded-xl border border-white/20 bg-white/10 px-5 py-3.5 text-white placeholder-white/50 outline-none transition focus:border-[#ff6b35]"
+                className="rounded-xl border border-white/20 bg-white/10 px-5 py-3.5 text-white placeholder-white/50 outline-none transition focus:border-[#d4a017]"
               />
               <input
                 type="email"
@@ -645,7 +645,7 @@ export default function Home() {
                 onChange={(e) =>
                   setFormData({ ...formData, email: e.target.value })
                 }
-                className="rounded-xl border border-white/20 bg-white/10 px-5 py-3.5 text-white placeholder-white/50 outline-none transition focus:border-[#ff6b35]"
+                className="rounded-xl border border-white/20 bg-white/10 px-5 py-3.5 text-white placeholder-white/50 outline-none transition focus:border-[#d4a017]"
               />
               <input
                 type="tel"
@@ -654,7 +654,7 @@ export default function Home() {
                 onChange={(e) =>
                   setFormData({ ...formData, telefone: e.target.value })
                 }
-                className="rounded-xl border border-white/20 bg-white/10 px-5 py-3.5 text-white placeholder-white/50 outline-none transition focus:border-[#ff6b35]"
+                className="rounded-xl border border-white/20 bg-white/10 px-5 py-3.5 text-white placeholder-white/50 outline-none transition focus:border-[#d4a017]"
               />
               <textarea
                 placeholder="Mensagem"
@@ -664,11 +664,11 @@ export default function Home() {
                 onChange={(e) =>
                   setFormData({ ...formData, mensagem: e.target.value })
                 }
-                className="resize-none rounded-xl border border-white/20 bg-white/10 px-5 py-3.5 text-white placeholder-white/50 outline-none transition focus:border-[#ff6b35]"
+                className="resize-none rounded-xl border border-white/20 bg-white/10 px-5 py-3.5 text-white placeholder-white/50 outline-none transition focus:border-[#d4a017]"
               />
               <button
                 type="submit"
-                className="mt-2 rounded-xl bg-[#ff6b35] px-8 py-3.5 font-semibold text-white transition hover:bg-[#e5612f]"
+                className="mt-2 rounded-xl bg-[#d4a017] px-8 py-3.5 font-semibold text-white transition hover:bg-[#e5612f]"
               >
                 Enviar Mensagem
               </button>

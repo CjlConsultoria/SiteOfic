@@ -72,14 +72,14 @@ export default function PlataformaPage() {
           <div className="flex items-center gap-3 p-3 rounded-xl bg-gray-50">
             <img src={user.fotoUrl || '/images/perfil.jpg'} alt="" className="w-10 h-10 rounded-full object-cover" />
             <div className="min-w-0">
-              <p className="text-sm font-semibold text-white truncate">{user.nomeCompleto || 'Usuário'}</p>
+              <p className="text-sm font-semibold text-gray-800 truncate">{user.nomeCompleto || 'Usuário'}</p>
               <p className="text-xs text-gray-500 truncate">{user.email}</p>
             </div>
           </div>
         </div>
         <nav className="flex-1 px-3 space-y-1">
           {menuItems.map(m => (
-            <button key={m.key} onClick={() => { setSection(m.key); setSidebarOpen(false) }} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition ${section === m.key ? 'bg-orange-50 text-[#ff6b35]' : 'text-gray-400 hover:bg-gray-50 hover:text-white'}`}>
+            <button key={m.key} onClick={() => { setSection(m.key); setSidebarOpen(false) }} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition ${section === m.key ? 'bg-amber-50 text-[#d4a017]' : 'text-gray-400 hover:bg-gray-50 hover:text-gray-800'}`}>
               <span>{m.icon}</span> {m.label}
             </button>
           ))}
@@ -102,25 +102,25 @@ export default function PlataformaPage() {
         {/* Dashboard Home */}
         {section === 'home' && (
           <div>
-            <h1 className="text-2xl font-bold text-white mb-2">Olá, {user.nomeCompleto?.split(' ')[0] || 'Usuário'}!</h1>
+            <h1 className="text-2xl font-bold text-[#0f172a] mb-2">Olá, {user.nomeCompleto?.split(' ')[0] || 'Usuário'}!</h1>
             <p className="text-gray-500 mb-8">Bem-vindo à plataforma CJL Consultoria.</p>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
               {[['Sistemas', systems.length.toString(), '💻'], ['Serviços', services.length.toString(), '⚙️'], ['Avaliação Média', '4.7', '⭐']].map(([label, value, icon]) => (
                 <div key={label} className="bg-white border border-gray-200 shadow-sm rounded-xl p-6">
                   <div className="text-2xl mb-2">{icon}</div>
-                  <div className="text-2xl font-bold text-white">{value}</div>
+                  <div className="text-2xl font-bold text-gray-800">{value}</div>
                   <div className="text-sm text-gray-500">{label}</div>
                 </div>
               ))}
             </div>
-            <h2 className="text-lg font-semibold text-white mb-4">Sistemas Disponíveis</h2>
+            <h2 className="text-lg font-semibold text-gray-800 mb-4">Sistemas Disponíveis</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {systems.slice(0, 6).map(s => (
-                <div key={s.name} className="bg-white border border-gray-200 shadow-sm rounded-xl p-5 hover:border-orange-300 transition">
-                  <h3 className="text-sm font-semibold text-white mb-1">{s.name}</h3>
+                <div key={s.name} className="bg-white border border-gray-200 shadow-sm rounded-xl p-5 hover:border-amber-300 transition">
+                  <h3 className="text-sm font-semibold text-gray-800 mb-1">{s.name}</h3>
                   <p className="text-xs text-gray-500 mb-3">{s.desc}</p>
                   <div className="flex items-center gap-2 text-xs text-gray-400">
-                    <span className="text-[#ff6b35]">⭐ {s.rating}</span>
+                    <span className="text-[#d4a017]">⭐ {s.rating}</span>
                     <span>({s.reviews} avaliações)</span>
                   </div>
                 </div>
@@ -132,14 +132,14 @@ export default function PlataformaPage() {
         {/* Sistemas */}
         {section === 'sistemas' && (
           <div>
-            <h1 className="text-2xl font-bold text-white mb-6">Sistemas</h1>
+            <h1 className="text-2xl font-bold text-gray-800 mb-6">Sistemas</h1>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {systems.map(s => (
-                <div key={s.name} className="bg-white border border-gray-200 shadow-sm rounded-xl p-6 hover:border-orange-300 transition">
-                  <h3 className="text-base font-semibold text-white mb-2">{s.name}</h3>
+                <div key={s.name} className="bg-white border border-gray-200 shadow-sm rounded-xl p-6 hover:border-amber-300 transition">
+                  <h3 className="text-base font-semibold text-gray-800 mb-2">{s.name}</h3>
                   <p className="text-sm text-gray-500 mb-4">{s.desc}</p>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-[#ff6b35]">⭐ {s.rating}</span>
+                    <span className="text-sm text-[#d4a017]">⭐ {s.rating}</span>
                     <span className="text-xs text-gray-500">{s.reviews} avaliações</span>
                   </div>
                 </div>
@@ -151,12 +151,12 @@ export default function PlataformaPage() {
         {/* Serviços */}
         {section === 'servicos' && (
           <div>
-            <h1 className="text-2xl font-bold text-white mb-6">Serviços</h1>
+            <h1 className="text-2xl font-bold text-gray-800 mb-6">Serviços</h1>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {services.map(s => (
-                <div key={s.name} className="bg-white border border-gray-200 shadow-sm rounded-xl p-6 hover:border-orange-300 transition">
+                <div key={s.name} className="bg-white border border-gray-200 shadow-sm rounded-xl p-6 hover:border-amber-300 transition">
                   <div className="text-3xl mb-3">{s.icon}</div>
-                  <h3 className="text-base font-semibold text-white mb-2">{s.name}</h3>
+                  <h3 className="text-base font-semibold text-gray-800 mb-2">{s.name}</h3>
                   <p className="text-sm text-gray-500">{s.desc}</p>
                 </div>
               ))}
@@ -167,12 +167,12 @@ export default function PlataformaPage() {
         {/* Perfil */}
         {section === 'perfil' && (
           <div>
-            <h1 className="text-2xl font-bold text-white mb-6">Meu Perfil</h1>
+            <h1 className="text-2xl font-bold text-gray-800 mb-6">Meu Perfil</h1>
             <div className="bg-white border border-gray-200 shadow-sm rounded-xl p-8 max-w-lg">
               <div className="flex items-center gap-4 mb-6">
                 <img src={user.fotoUrl || '/images/perfil.jpg'} alt="" className="w-20 h-20 rounded-full object-cover" />
                 <div>
-                  <h2 className="text-lg font-bold text-white">{user.nomeCompleto}</h2>
+                  <h2 className="text-lg font-bold text-gray-800">{user.nomeCompleto}</h2>
                   <p className="text-sm text-gray-500">{user.email}</p>
                 </div>
               </div>
@@ -184,12 +184,12 @@ export default function PlataformaPage() {
         {/* Ajuda */}
         {section === 'ajuda' && (
           <div>
-            <h1 className="text-2xl font-bold text-white mb-6">Ajuda</h1>
+            <h1 className="text-2xl font-bold text-gray-800 mb-6">Ajuda</h1>
             <div className="max-w-lg space-y-3">
               {faqs.map((f, i) => (
                 <div key={i} className="bg-white border border-gray-200 shadow-sm rounded-xl overflow-hidden">
                   <button onClick={() => setFaqOpen(faqOpen === i ? null : i)} className="w-full flex items-center justify-between px-6 py-4 text-left">
-                    <span className="text-sm font-semibold text-white">{f.q}</span>
+                    <span className="text-sm font-semibold text-gray-800">{f.q}</span>
                     <span className="text-gray-500">{faqOpen === i ? '−' : '+'}</span>
                   </button>
                   {faqOpen === i && <div className="px-6 pb-4 text-sm text-gray-400">{f.a}</div>}
@@ -197,7 +197,7 @@ export default function PlataformaPage() {
               ))}
             </div>
             <div className="mt-8">
-              <a href="https://wa.me/551152865790" target="_blank" rel="noopener noreferrer" className="inline-flex px-6 py-3 rounded-full bg-[#ff6b35] text-white font-semibold hover:bg-[#e55a2b] transition">Falar com suporte via WhatsApp</a>
+              <a href="https://wa.me/551152865790" target="_blank" rel="noopener noreferrer" className="inline-flex px-6 py-3 rounded-full bg-[#d4a017] text-gray-800 font-semibold hover:bg-[#b8860b] transition">Falar com suporte via WhatsApp</a>
             </div>
           </div>
         )}
