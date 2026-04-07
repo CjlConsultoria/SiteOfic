@@ -1,8 +1,5 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted } from 'vue'
-import { useRouter } from 'vue-router'
-
-const router = useRouter()
+import { onMounted, onUnmounted, nextTick } from 'vue'
 
 function checkReveal() {
   const reveals = document.querySelectorAll('.sys-reveal:not(.sys-visible)')
@@ -16,11 +13,17 @@ function checkReveal() {
 
 onMounted(() => {
   window.addEventListener('scroll', checkReveal, { passive: true })
-  checkReveal()
+  window.addEventListener('resize', checkReveal)
+  nextTick(() => {
+    checkReveal()
+    setTimeout(checkReveal, 150)
+    setTimeout(checkReveal, 500)
+  })
 })
 
 onUnmounted(() => {
   window.removeEventListener('scroll', checkReveal)
+  window.removeEventListener('resize', checkReveal)
 })
 </script>
 

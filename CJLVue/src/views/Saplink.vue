@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref } from 'vue'
+import { onMounted, onUnmounted, ref, nextTick } from 'vue'
 
 const formData = ref({ name: '', email: '', company: '' })
 const formSubmitted = ref(false)
@@ -21,11 +21,17 @@ function submitForm() {
 
 onMounted(() => {
   window.addEventListener('scroll', checkReveal, { passive: true })
-  checkReveal()
+  window.addEventListener('resize', checkReveal)
+  nextTick(() => {
+    checkReveal()
+    setTimeout(checkReveal, 150)
+    setTimeout(checkReveal, 500)
+  })
 })
 
 onUnmounted(() => {
   window.removeEventListener('scroll', checkReveal)
+  window.removeEventListener('resize', checkReveal)
 })
 </script>
 
