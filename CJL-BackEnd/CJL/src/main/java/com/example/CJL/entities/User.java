@@ -38,13 +38,6 @@ public class User {
     private String cidade;
     private String estado;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "tb_user_roles",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id")
-    )
-
     @ManyToOne
     @JoinColumn(name = "empresa_id")
     private Empresa empresa;

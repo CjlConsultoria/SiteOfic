@@ -12,10 +12,17 @@ import java.util.Date;
 @Component
 public class JwtUtil {
 
-    private final String secret = "minha-chave-secreta-super-segura-com-mais-de-64-caracteres!!!1234567890";
+    @org.springframework.beans.factory.annotation.Value("${jwt.secret:minha-chave-secreta-super-segura-com-mais-de-64-caracteres!!!1234567890}")
+    private String secret;
+
     private final long expirationMs = 86400000;
 
-    private final Key key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
+    private Key key;
+
+    @jakarta.annotation.PostConstruct
+    private void init() {
+        key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
+    }
 
     public String generateToken(String email){
         return Jwts.builder()
