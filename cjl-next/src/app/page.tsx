@@ -57,11 +57,11 @@ const whyUs = [
 const systems = [
   {
     name: "Convivium",
-    desc: "Gestao para alimentacao e hospitalidade",
+    desc: "Gestão de condomínios e prédios residenciais",
     accent: "#22c55e",
-    icon: "\u{1F37D}\uFE0F",
+    icon: "\u{1F3E2}",
     badge: null,
-    link: "#",
+    link: "https://convivium-front.onrender.com",
   },
   {
     name: "TradeLinkInvest",
